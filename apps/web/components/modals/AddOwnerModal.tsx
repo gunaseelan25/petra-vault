@@ -198,6 +198,7 @@ export default function AddOwnerModal({
                 className="flex-1"
                 onClick={createProposal}
                 isLoading={isPending}
+                data-testid="add-owner-create-proposal-button"
               >
                 <Pencil1Icon />
                 Create Proposal

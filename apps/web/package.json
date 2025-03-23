@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "next dev --port 3000",
     "build": "next build",
+    "build:injection": "tsup --config tests/lib/injection/tsup.config.ts",
     "start": "next start",
+    "test": "vitest",
+    "test:e2e": "pnpm build:injection && playwright test",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
@@ -29,20 +32,20 @@
     "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@radix-ui/react-tooltip": "^1.1.8",
-    "@tailwindcss/postcss": "^4.0.9",
+    "@tailwindcss/postcss": "^4.0.15",
     "@tanstack/query-sync-storage-persister": "^5.69.0",
-    "@tanstack/react-query": "^5.67.1",
+    "@tanstack/react-query": "^5.69.0",
     "@tanstack/react-query-persist-client": "^5.69.0",
     "aptos-avatars-react": "^2.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
     "constate": "^3.3.2",
-    "keyv": "npm:@keyvhq/core@~1.6.6",
+    "keyv": "npm:@keyvhq/core@~1.6.26",
     "lucide-react": "^0.477.0",
-    "motion": "^12.4.10",
+    "motion": "^12.5.0",
     "next": "^15.2.3",
-    "next-themes": "^0.4.4",
+    "next-themes": "^0.4.6",
     "pako": "^2.1.0",
     "postcss": "^8.5.3",
     "qrcode.react": "^4.2.0",
@@ -54,8 +57,8 @@
     "react-use-measure": "^2.1.7",
     "sonner": "^2.0.1",
     "tailwind-merge": "^3.0.2",
-    "tailwindcss": "^4.0.9",
-    "tw-animate-css": "^1.2.2",
+    "tailwindcss": "^4.0.15",
+    "tw-animate-css": "^1.2.4",
     "use-debounce": "^10.0.4",
     "zod": "^3.24.2",
     "zustand": "^5.0.3"
@@ -63,8 +66,13 @@
   "devDependencies": {
     "@aptos-labs/eslint-config-petra-vault": "workspace:*",
     "@aptos-labs/typescript-config-petra-vault": "workspace:*",
+    "@aptos-labs/wallet-standard": "^0.3.0",
+    "@playwright/test": "^1.51.1",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
-    "shiki": "^3.1.0"
+    "buffer": "^6.0.3",
+    "playwright": "^1.51.1",
+    "shiki": "^3.2.1",
+    "tsup": "^8.4.0"
   }
 }

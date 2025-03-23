@@ -197,6 +197,7 @@ export default function PublishContractPage() {
                   !file || !jsonData || !isSimulationSuccess || !isOwner
                 }
                 onClick={() => setPage("confirm")}
+                data-testid="publish-contract-confirm-draft-button"
               >
                 Confirm Draft
               </Button>
@@ -348,6 +349,7 @@ export default function PublishContractPage() {
                             <Button
                               onClick={createProposal}
                               isLoading={isCreatingProposal}
+                              data-testid="publish-contract-create-proposal-button"
                             >
                               Create Proposal
                             </Button>

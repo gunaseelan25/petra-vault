@@ -40,7 +40,7 @@ export default function AppProviders({
   children: React.ReactNode;
 }) {
   return (
-    <AptosWalletAdapterProvider autoConnect>
+    <AptosWalletAdapterProvider autoConnect onError={console.error}>
       <PersistQueryClientProvider
         client={queryClient}
         persistOptions={{ persister: localStoragePersister }}

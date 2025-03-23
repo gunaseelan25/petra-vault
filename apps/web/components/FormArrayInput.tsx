@@ -9,7 +9,11 @@ interface ArrayInputProps {
   onChange: (value: string[]) => void;
 }
 
-export default function FormArrayInput({ value, onChange }: ArrayInputProps) {
+export default function FormArrayInput({
+  value,
+  onChange,
+  ...props
+}: ArrayInputProps) {
   const [values, setValues] = useState<string[]>(value ?? []);
 
   const handleChange = (index: number, value: string) => {
@@ -27,7 +31,7 @@ export default function FormArrayInput({ value, onChange }: ArrayInputProps) {
   };
 
   return (
-    <div>
+    <div {...props}>
       <div className="grid gap-2">
         {values?.map((value, index) => (
           <div key={index}>
@@ -35,6 +39,7 @@ export default function FormArrayInput({ value, onChange }: ArrayInputProps) {
               <Input
                 value={value}
                 onChange={(e) => handleChange(index, e.target.value)}
+                data-testid={`array-input-${index}`}
               />
               <Button
                 type="button"
@@ -54,6 +59,7 @@ export default function FormArrayInput({ value, onChange }: ArrayInputProps) {
           type="button"
           variant="outline"
           onClick={() => setValues([...values, ""])}
+          data-testid="add-array-input"
         >
           <PlusIcon className="w-4 h-4" />
           Add Argument

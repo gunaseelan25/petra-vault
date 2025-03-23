@@ -8,6 +8,7 @@ import { Skeleton } from "./ui/skeleton";
 import { formatUnits } from "@aptos-labs/js-pro";
 import { AnimatePresence, motion } from "motion/react";
 import { Network } from "@aptos-labs/ts-sdk";
+
 export default function VaultRow({ vault }: { vault: Vault }) {
   const { data: balance, isLoading: isLoadingBalance } = useAptBalance({
     address: vault.address,
@@ -15,7 +16,10 @@ export default function VaultRow({ vault }: { vault: Vault }) {
   });
 
   return (
-    <Link href={`/vault/${createVaultId(vault)}`}>
+    <Link
+      href={`/vault/${createVaultId(vault)}`}
+      data-testid={`vault-row-${vault.address.toString()}`}
+    >
       <motion.div className="flex items-center border rounded-md p-2 gap-2 hover:bg-secondary transition-colors cursor-pointer">
         <AptosAvatar value={vault.address.toString()} size={32} />
         <div className="flex flex-col">

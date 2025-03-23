@@ -100,7 +100,11 @@ export default function VaultConfigurationsForm({
                       <FormItem className="flex-1">
                         {index === 0 && <FormLabel>Name</FormLabel>}
                         <FormControl>
-                          <Input placeholder="Signer name" {...field} />
+                          <Input
+                            placeholder="Signer name"
+                            data-testid={`owner-name-input-${index}`}
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -117,6 +121,7 @@ export default function VaultConfigurationsForm({
                             <Input
                               placeholder="0x..."
                               {...field}
+                              data-testid={`owner-address-input-${index}`}
                               value={
                                 index === 0
                                   ? (account?.address?.toString() ?? "")
@@ -160,6 +165,7 @@ export default function VaultConfigurationsForm({
               size="sm"
               variant="outline"
               onClick={() => append({ address: AccountAddress.ZERO, name: "" })}
+              data-testid="onboarding-add-owner-button"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Owner
@@ -186,13 +192,17 @@ export default function VaultConfigurationsForm({
                     defaultValue={field.value.toString()}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger data-testid="signatures-required-select">
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {Array.from({ length: fields.length }, (_, i) => (
-                        <SelectItem key={i} value={(i + 1).toString()}>
+                        <SelectItem
+                          key={i}
+                          value={(i + 1).toString()}
+                          data-testid={`signatures-required-select-item-${i + 1}`}
+                        >
                           {i + 1}
                         </SelectItem>
                       ))}
@@ -205,7 +215,11 @@ export default function VaultConfigurationsForm({
           </div>
         </div>
 
-        <Button type="submit" className="w-full">
+        <Button
+          type="submit"
+          className="w-full"
+          data-testid="save-vault-config-button"
+        >
           Save Configuration
         </Button>
       </form>

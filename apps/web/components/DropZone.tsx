@@ -87,7 +87,11 @@ export default function DropZone({
           Invalid file type. Please upload a JSON file.
         </p>
       )}
-      <input {...getInputProps()} className="cursor-pointer hidden" />
+      <input
+        {...getInputProps()}
+        className="cursor-pointer hidden"
+        data-testid="drop-zone"
+      />
     </div>
   );
 }

@@ -157,6 +157,7 @@ export default function OnboardingAddOrImport() {
                     variant="link"
                     size="sm"
                     className="py-0 text-xs h-fit"
+                    data-testid="import-vaults-json-button"
                   >
                     JSON Import
                   </Button>

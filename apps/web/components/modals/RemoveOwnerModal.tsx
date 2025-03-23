@@ -71,6 +71,11 @@ export default function RemoveOwnerModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess]);
 
+  const newSignaturesRequired =
+    signaturesRequired.data &&
+    owners.data &&
+    Math.min(signaturesRequired.data, owners.data.length - 1);
+
   return (
     <DialogContent>
       <div className="w-full flex flex-col gap-4">
@@ -108,15 +113,15 @@ export default function RemoveOwnerModal({
             </div>
           </div>
 
-          {signaturesRequired.data && owners.data && (
+          {newSignaturesRequired && owners.data && (
             <div className="w-full">
               <h3 className="font-display text-lg font-semibold tracking-wide">
                 New Signatures Required
               </h3>
               <div className="flex items-center mt-2 gap-2 font-display">
                 <span className="font-medium">
-                  {signaturesRequired.data} signature
-                  {signaturesRequired.data === 1 ? "" : "s"}
+                  {newSignaturesRequired} signature
+                  {newSignaturesRequired === 1 ? "" : "s"}
                 </span>{" "}
                 <span className="text-muted-foreground">
                   required out of {owners.data.length - 1} owners
@@ -150,6 +155,7 @@ export default function RemoveOwnerModal({
               className="flex-1"
               onClick={createProposal}
               isLoading={isPending}
+              data-testid="remove-owner-create-proposal-button"
             >
               <Pencil1Icon />
               Create Proposal

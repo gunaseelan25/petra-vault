@@ -59,6 +59,7 @@ export function NavUser() {
                     size="lg"
                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     disabled={!connected}
+                    data-testid={`nav-user-${account.address.toString()}`}
                   >
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AptosAvatar

@@ -45,7 +45,7 @@ export default function ExportSettingsPage() {
             </div>
             <br />
             <div className="flex gap-2">
-              <Button asChild>
+              <Button asChild data-testid="export-vaults-button">
                 <a
                   href={`data:text/json;charset=utf-8,${exportVaultsJSON}`}
                   download="petra-vaults-export.json"

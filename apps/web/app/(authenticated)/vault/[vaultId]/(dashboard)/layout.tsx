@@ -85,6 +85,7 @@ export default function VaultLayout({ children }: PropsWithChildren) {
               className="px-6"
               onClick={() => setIsSendCoinsModalOpen(true)}
               disabled={!isOwner}
+              data-testid="send-coins-button"
             >
               Send <ArrowTopRightIcon className="w-6 h-6" />
             </Button>
@@ -116,6 +117,7 @@ export default function VaultLayout({ children }: PropsWithChildren) {
                   ? "text-primary cursor-default"
                   : "hover:opacity-80 active:opacity-60 cursor-pointer"
               )}
+              data-testid={`home-tab-item-${tab.id}`}
             >
               <VerticalCutReveal transition={{ delay: i * 0.05 }}>
                 {tab.label}

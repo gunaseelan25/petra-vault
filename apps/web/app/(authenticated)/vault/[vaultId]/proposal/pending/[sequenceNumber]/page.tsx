@@ -39,6 +39,7 @@ import SimulationCoinRow from "@/components/SimulationCoinRow";
 import { PendingTransactionRow } from "@/components/PendingTransactionRow";
 import { useRouter } from "next/navigation";
 import { jsonStringify } from "@/lib/storage";
+import Link from "next/link";
 
 export default function ProposalPage() {
   const queryClient = useQueryClient();
@@ -329,6 +330,7 @@ export default function ProposalPage() {
                 className="flex-1"
                 isLoading={isSecondaryActionLoading}
                 onClick={() => handleSecondaryAction(false)}
+                data-testid="reject-transaction-button"
               >
                 Reject
               </Button>
@@ -340,6 +342,7 @@ export default function ProposalPage() {
                 className="flex-1"
                 isLoading={isSecondaryActionLoading}
                 onClick={() => handleSecondaryAction(true)}
+                data-testid="approve-transaction-button"
               >
                 Approve
               </Button>
@@ -352,6 +355,7 @@ export default function ProposalPage() {
                   disabled={!canExecute.data || !isNext}
                   isLoading={isPrimaryActionLoading}
                   onClick={() => handlePrimaryAction("execute")}
+                  data-testid="execute-transaction-button"
                 >
                   Execute Transaction
                 </Button>
@@ -361,6 +365,7 @@ export default function ProposalPage() {
                   disabled={!isNext || !hasEnoughRejections}
                   isLoading={isPrimaryActionLoading}
                   onClick={() => handlePrimaryAction("remove")}
+                  data-testid="remove-transaction-button"
                 >
                   Remove Transaction
                 </Button>
@@ -436,7 +441,7 @@ export default function ProposalPage() {
                   {pendingTransactionsAhead?.map((transaction, i) => {
                     const sequenceNumber = latestSequenceNumber + i + 1;
                     return (
-                      <a
+                      <Link
                         key={transaction.payloadHash}
                         href={`/vault/${id}/proposal/pending/${sequenceNumber}`}
                       >
@@ -446,7 +451,7 @@ export default function ProposalPage() {
                           sequenceNumber={sequenceNumber}
                           showSequenceNumber={false}
                         />
-                      </a>
+                      </Link>
                     );
                   })}
                 </CardContent>

@@ -117,6 +117,7 @@ export default function CreateProposalEntryFunctionForm({
                           type="text"
                           {...field}
                           onChange={(e) => handleOnChange(e.target.value)}
+                          data-testid="entry-function-input"
                         />
                       </FormControl>
                       <FormDescription>

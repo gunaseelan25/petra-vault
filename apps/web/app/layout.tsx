@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Petra Vault",
     description: "Non-custodial multisig wallet solution on the Aptos Network",
-    images: [{ url: "/og-image.jpeg", width: 1200, height: 630 }],
+    images: [{ url: "/og_image.jpeg", width: 1200, height: 630 }],
     url: "https://vault.petra.app",
     type: "website",
     siteName: "Petra Vault",
@@ -27,9 +27,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Petra Vault",
     description: "Non-custodial multisig wallet solution on the Aptos Network",
-    images: [{ url: "/og-image.jpeg", width: 1200, height: 630 }],
+    images: [{ url: "/og_image.jpeg", width: 1200, height: 630 }],
     site: "@PetraWallet",
   },
+  metadataBase: new URL("https://vault.petra.app"),
 };
 
 export default function RootLayout({

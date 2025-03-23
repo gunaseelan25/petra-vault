@@ -49,7 +49,11 @@ export default function VaultNameForm({ onSubmit }: VaultNameFormProps) {
           )}
         />
         <br />
-        <Button type="submit" className="w-full">
+        <Button
+          type="submit"
+          className="w-full"
+          data-testid="create-vault-button"
+        >
           Create a New Vault
         </Button>
       </form>

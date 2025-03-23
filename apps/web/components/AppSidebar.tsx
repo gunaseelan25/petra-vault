@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { LifeBuoy, Send } from "lucide-react";
+import { Send } from "lucide-react";
 
 import { NavVaults } from "@/components/NavVaults";
 import { NavUser } from "@/components/NavUser";

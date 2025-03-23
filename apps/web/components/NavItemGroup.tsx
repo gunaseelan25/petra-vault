@@ -66,6 +66,7 @@ export function NavItemGroup({
                 className={
                   isActive ? "hover:!bg-transparent" : "hover:!bg-accent/40"
                 }
+                data-testid={`nav-item-${item.name.toLowerCase()}`}
               >
                 <Link
                   href={item.url ?? "/"}

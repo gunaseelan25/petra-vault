@@ -90,6 +90,7 @@ export default function UploadImportJSONModal({
             disabled={!vaults}
             isLoading={isLoading}
             onClick={handleImport}
+            data-testid="confirm-import-vaults-json-button"
           >
             {!vaults && "Upload a JSON File"}
             {vaults &&

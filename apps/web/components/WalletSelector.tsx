@@ -95,7 +95,12 @@ export function WalletSelector(walletSortingOptions: WalletSortingOptions) {
   ) : (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button isLoading={isLoading || isDialogOpen}>Connect a Wallet</Button>
+        <Button
+          isLoading={isLoading || isDialogOpen}
+          data-testid="connect-wallet-button"
+        >
+          Connect a Wallet
+        </Button>
       </DialogTrigger>
       <ConnectWalletDialog close={closeDialog} {...walletSortingOptions} />
     </Dialog>
@@ -175,7 +180,12 @@ function ConnectWalletDialog({
           {!!installableWallets.length && (
             <Collapsible className="flex flex-col gap-3">
               <CollapsibleTrigger asChild>
-                <Button size="sm" variant="ghost" className="gap-2">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="gap-2"
+                  data-testid="more-wallets-button"
+                >
                   More wallets <ChevronDown />
                 </Button>
               </CollapsibleTrigger>
@@ -218,7 +228,12 @@ function WalletRow({ wallet, onConnect }: WalletRowProps) {
         </Button>
       ) : (
         <WalletItem.ConnectButton asChild>
-          <Button size="sm">Connect</Button>
+          <Button
+            size="sm"
+            data-testid={`connect-wallet-button-${wallet.name.toLowerCase()}`}
+          >
+            Connect
+          </Button>
         </WalletItem.ConnectButton>
       )}
     </WalletItem>

@@ -51,7 +51,10 @@ export function NavVaults() {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger
+            asChild
+            data-testid="nav-vaults-dropdown-menu-trigger"
+          >
             <SidebarMenuButton
               size="lg"
               variant="outline"
@@ -97,6 +100,7 @@ export function NavVaults() {
                     router.push(`/vault/${createVaultId(vault)}`);
                   }}
                   className="flex p-2"
+                  data-testid={`nav-vault-${vault.address.toString()}-${vault.network}`}
                 >
                   <AptosAvatar value={vault.address.toString()} size={32} />
                   <div className="flex leading-none min-w-56">

@@ -26,6 +26,7 @@ export default function PageVaultHeader({ title }: PageVaultHeaderProps) {
             navigator.clipboard.writeText(vaultAddress.toString());
             toast.success("Address copied to clipboard!");
           }}
+          data-testid="vault-address"
         >
           <VerticalCutReveal splitBy="words">
             {`${vault?.name ?? ""} (${truncateAddress(vaultAddress)})`}

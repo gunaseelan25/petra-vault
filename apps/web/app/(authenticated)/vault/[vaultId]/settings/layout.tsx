@@ -46,6 +46,7 @@ export default function VaultSettingsLayout({ children }: PropsWithChildren) {
                   ? "text-primary cursor-default"
                   : "hover:opacity-80 active:opacity-60 cursor-pointer"
               )}
+              data-testid={`settings-tab-item-${tab.id}`}
             >
               <VerticalCutReveal transition={{ delay: i * 0.05 }}>
                 {tab.label}

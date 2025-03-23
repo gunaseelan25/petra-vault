@@ -204,6 +204,7 @@ export default function CreateProposalPage() {
             <Button
               disabled={!simulation.data?.success || !isFormValid.value}
               onClick={() => setPage("confirm")}
+              data-testid="create-proposal-confirm-draft-button"
             >
               {!isSimulationError ? "Confirm Draft" : "Simulation Errors Found"}
             </Button>
@@ -371,6 +372,7 @@ export default function CreateProposalPage() {
                             <Button
                               onClick={createProposal}
                               isLoading={isCreatingProposal}
+                              data-testid="create-proposal-create-proposal-button"
                             >
                               Create Proposal
                             </Button>

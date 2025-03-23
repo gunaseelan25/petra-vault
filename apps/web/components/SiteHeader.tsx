@@ -32,6 +32,7 @@ export function SiteHeader() {
         <Link
           href="/"
           className="flex items-center gap-3 font-semibold font-display tracking-wide"
+          data-testid="site-header-logo"
         >
           <img src="/petra_logo.png" alt="Petra Vault" className="w-4" />
           Petra Vault

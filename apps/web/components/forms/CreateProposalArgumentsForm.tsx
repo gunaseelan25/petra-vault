@@ -145,6 +145,7 @@ export default function CreateProposalArgumentsForm({
                                   form.getValues("typeArguments")
                                 );
                               }}
+                              data-testid={`type-argument-input-${i}`}
                             />
                           </FormControl>
                           <FormMessage />
@@ -185,6 +186,7 @@ export default function CreateProposalArgumentsForm({
                                     form.getValues("functionArguments")
                                   );
                                 }}
+                                data-testid={`function-argument-array-input-${i}`}
                               />
                             ) : (
                               <Input
@@ -197,6 +199,7 @@ export default function CreateProposalArgumentsForm({
                                     form.getValues("functionArguments")
                                   );
                                 }}
+                                data-testid={`function-argument-input-${i}`}
                               />
                             )}
                           </FormControl>

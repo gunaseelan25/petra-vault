@@ -222,10 +222,10 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Successfully created the transaction");
+      queryClient.invalidateQueries();
       onClose?.();
       reset();
       router.push(`/vault/${id}/transactions`);
-      queryClient.invalidateQueries();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess]);
@@ -298,7 +298,11 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
               <div className="flex flex-col gap-2 w-full">
                 <Label>Recipient</Label>
                 <div className="flex items-center gap-2">
-                  <Input value={recipient} onChange={handleRecipientChange} />
+                  <Input
+                    value={recipient}
+                    onChange={handleRecipientChange}
+                    data-testid="send-coins-recipient-input"
+                  />
 
                   {(isResolvingAddress || recipient) && (
                     <motion.div
@@ -339,9 +343,10 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                           value={amount}
                           onChange={(e) => setAmount(e.target.value)}
                           className="w-full pr-12"
+                          data-testid="send-coins-amount-input"
                         />
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground font-display">
-                          APT
+                          {selectedCoin.metadata?.symbol}
                         </div>
                       </div>
                       <Button
@@ -383,6 +388,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
               <Button
                 onClick={() => setPage("confirm")}
                 disabled={!recipient || !amount || !isPayloadValid}
+                data-testid="send-coins-review-draft-button"
               >
                 Review Draft
               </Button>
@@ -545,6 +551,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                     className="flex-1"
                     onClick={createProposal}
                     isLoading={isPending}
+                    data-testid="send-coins-create-proposal-button"
                   >
                     <Pencil1Icon />
                     Create Proposal

@@ -78,6 +78,7 @@ export default function AddOwnerProposalForm({
                   placeholder={`Owner ${owners.length + 1}`}
                   type="text"
                   {...field}
+                  data-testid="add-owner-name-input"
                 />
               </FormControl>
               <FormMessage />
@@ -92,7 +93,12 @@ export default function AddOwnerProposalForm({
             <FormItem className="w-full">
               <FormLabel>Address</FormLabel>
               <FormControl>
-                <Input className="w-full" placeholder="0x..." {...field} />
+                <Input
+                  className="w-full"
+                  placeholder="0x..."
+                  {...field}
+                  data-testid="add-owner-address-input"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -141,7 +147,9 @@ export default function AddOwnerProposalForm({
           </div>
         </div>
 
-        <Button type="submit">Draft Proposal</Button>
+        <Button type="submit" data-testid="add-owner-draft-button">
+          Draft Proposal
+        </Button>
       </form>
     </Form>
   );

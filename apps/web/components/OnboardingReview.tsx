@@ -38,7 +38,7 @@ export default function OnboardingReview() {
             <div className="grid grid-cols-2 gap-2">
               {vaultSigners.current.map((e) => (
                 <div
-                  key={e.toString()}
+                  key={e.address.toString()}
                   className="flex items-center gap-2 mt-2"
                 >
                   <AptosAvatar value={e.address.toString()} size={20} />
@@ -75,6 +75,7 @@ export default function OnboardingReview() {
           isLoading={
             isSigningAndSubmittingCreation || isWaitingForCreationTransaction
           }
+          data-testid="sign-and-submit-create-vault-button"
         >
           Create Vault
         </Button>

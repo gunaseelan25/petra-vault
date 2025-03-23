@@ -72,7 +72,10 @@ export default function VaultSettingsPage() {
                   {owners.data?.map((owner) => (
                     <div key={owner} className="flex items-center gap-2">
                       <AptosAvatar value={owner} size={20} />
-                      <p className="font-display text-sm font-medium ml-1">
+                      <p
+                        className="font-display text-sm font-medium ml-1"
+                        data-testid={`vault-owner-${owner}`}
+                      >
                         {truncateAddress(owner)}
                       </p>
                       <div className="flex items-center gap-2">
@@ -100,6 +103,7 @@ export default function VaultSettingsPage() {
                                 size="icon"
                                 variant="destructive"
                                 className="size-7 bg-transparent text-destructive-foreground shadow-none hover:bg-destructive/10"
+                                data-testid={`remove-owner-button-${owner}`}
                               >
                                 <TrashIcon />
                               </Button>
@@ -125,6 +129,7 @@ export default function VaultSettingsPage() {
                     disabled={
                       !owners.data || !signaturesRequired.data || !isOwner
                     }
+                    data-testid="settings-add-owner-button"
                   >
                     <PlusIcon />
                     Add Owner
@@ -157,7 +162,10 @@ export default function VaultSettingsPage() {
                 <Skeleton className="w-full h-8" />
               ) : (
                 <div className="flex items-center mt-4 gap-2 font-display">
-                  <span className="font-semibold">
+                  <span
+                    className="font-semibold"
+                    data-testid={`signatures-required-count-${signaturesRequired.data}`}
+                  >
                     {signaturesRequired.data} signature
                     {signaturesRequired.data === 1 ? "" : "s"}
                   </span>{" "}
@@ -190,7 +198,10 @@ export default function VaultSettingsPage() {
               <br />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive">
+                  <Button
+                    variant="destructive"
+                    data-testid="delete-vault-button"
+                  >
                     <TrashIcon />
                     Delete Vault
                   </Button>
@@ -216,6 +227,7 @@ export default function VaultSettingsPage() {
                           deleteVault(AccountAddress.from(vaultAddress));
                           router.push("/");
                         }}
+                        data-testid="confirm-delete-vault-button"
                       >
                         Delete Vault
                       </Button>

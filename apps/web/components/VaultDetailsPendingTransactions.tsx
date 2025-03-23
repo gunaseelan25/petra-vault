@@ -32,6 +32,7 @@ export default function VaultDetailsPendingTransactions() {
     useMultisigPendingTransactions({
       address: vaultAddress,
       network: { network },
+      refetchInterval: 10 * 1000,
     });
 
   const { data: sequenceNumber, isLoading: isSequenceNumberLoading } =
@@ -42,6 +43,7 @@ export default function VaultDetailsPendingTransactions() {
 
   const isLoading =
     isPendingTransactionsLoading || isSequenceNumberLoading || !hasWindow();
+    
   const isEmpty =
     !pendingTransactions?.[0] ||
     sequenceNumber === undefined ||
@@ -80,7 +82,9 @@ export default function VaultDetailsPendingTransactions() {
           <Card>
             <CardHeader>
               <CardTitle>Pending Transactions</CardTitle>
-              <CardDescription>No pending transactions found</CardDescription>
+              <CardDescription data-testid="pending-transactions-empty">
+                No pending transactions found
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Button asChild>
@@ -124,8 +128,9 @@ export default function VaultDetailsPendingTransactions() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.2, delay: index * 0.1 }}
+                      data-testid={`pending-transaction-${proposalSequenceNumber}`}
                     >
-                      <a
+                      <Link
                         href={`/vault/${id}/proposal/pending/${proposalSequenceNumber}`}
                       >
                         <PendingTransactionRow
@@ -133,7 +138,7 @@ export default function VaultDetailsPendingTransactions() {
                           sequenceNumber={proposalSequenceNumber}
                           isNext={sequenceNumber + 1 === proposalSequenceNumber}
                         />
-                      </a>
+                      </Link>
                     </motion.div>
                   );
                 })}

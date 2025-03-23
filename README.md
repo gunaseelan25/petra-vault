@@ -1,8 +1,12 @@
 # Petra Vault
 
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+## Overview
+
 Petra Vault is a multisig wallet solution for the Aptos blockchain, developed by Aptos Labs. It provides a secure way to manage digital assets with multi-signature authorization requirements.
 
-## Features
+### Features
 
 - **Multisig Wallet Management**: Create and manage multisig vaults on Aptos
 - **Proposal System**: Create, review, and execute transaction proposals
