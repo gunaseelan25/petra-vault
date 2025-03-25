@@ -190,8 +190,9 @@ export default function VaultSettingsPage() {
             <CardHeader>
               <CardTitle className="font-medium">Delete Vault</CardTitle>
               <CardDescription>
-                Permanently delete this vault from local storage. This action
-                cannot be undone.
+                Remove this vault from local storage. This action cannot be
+                undone. The vault will still be available on-chain and can be
+                re-imported using a backup file or vault address.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -203,16 +204,16 @@ export default function VaultSettingsPage() {
                     data-testid="delete-vault-button"
                   >
                     <TrashIcon />
-                    Delete Vault
+                    Remove Vault
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Vault</AlertDialogTitle>
+                    <AlertDialogTitle>Remove Vault</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Permanently delete this vault from local storage. This
-                      action cannot be undone. The vault will still be available
-                      on the blockchain.
+                      Remove this vault from local storage. This action cannot
+                      be undone. The vault will still be available on-chain and
+                      can be re-imported using a backup file or vault address.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
 
@@ -229,7 +230,7 @@ export default function VaultSettingsPage() {
                         }}
                         data-testid="confirm-delete-vault-button"
                       >
-                        Delete Vault
+                        Remove Vault
                       </Button>
                     </AlertDialogAction>
                   </AlertDialogFooter>

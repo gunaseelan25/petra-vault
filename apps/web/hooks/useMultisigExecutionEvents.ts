@@ -90,6 +90,9 @@ export default function useMultisigExecutionEvents({
           return acc;
         }
 
+        // Normalize the sender address to fix zero prefixed addresses
+        transaction.sender = AccountAddress.from(transaction.sender).toString();
+
         if (
           event.indexed_type ===
             "0x1::multisig_account::TransactionExecutionSucceeded" ||

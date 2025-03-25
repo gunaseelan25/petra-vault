@@ -3,11 +3,12 @@ import { useActiveVault } from "@/context/ActiveVaultProvider";
 import { QRCodeSVG } from "qrcode.react";
 import { motion } from "motion/react";
 import { Button } from "../ui/button";
-import { CopyIcon, ShareIcon } from "lucide-react";
+import { ShareIcon } from "lucide-react";
 import { toast } from "sonner";
 import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
 import { AptosAvatar } from "aptos-avatars-react";
 import VerticalCutReveal from "../ui/vertical-cut-reveal";
+import CopyButton from "../CopyButton";
 export default function ReceiveModal() {
   const { vaultAddress, vault } = useActiveVault();
 
@@ -117,16 +118,7 @@ export default function ReceiveModal() {
             transition={{ duration: 1, type: "spring", delay: 0.3 }}
           >
             <div className="flex flex-col items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => {
-                  navigator.clipboard.writeText(vaultAddress);
-                  toast.success("Address copied to clipboard");
-                }}
-              >
-                <CopyIcon />
-              </Button>
+              <CopyButton text={vaultAddress} />
               <p className="text-sm text-muted-foreground">Copy</p>
             </div>
 

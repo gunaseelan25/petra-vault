@@ -27,15 +27,16 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
 import VerticalCutReveal from "../ui/vertical-cut-reveal";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { isAddress, isEns } from "@/lib/address";
 import ExpandingContainer from "../ExpandingContainer";
 import { LoadingSpinner } from "../LoaderSpinner";
-import { isNumber } from "@/lib/units";
+import { formatBigIntToNumber, isNumber } from "@/lib/units";
 import { Abis } from "@/lib/abis";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import { jsonStringify } from "@/lib/storage";
+import CoinAvatar from "../CoinAvatar";
 
 interface SendCoinsModalProps {
   onClose?: () => void;
@@ -50,7 +51,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
 
   const [recipient, setRecipient] = useState<string>("");
   const [amount, setAmount] = useState<string>("0");
-  const [debouncedAmount] = useDebounce(amount, 400);
+  const [debouncedAmount] = useDebounce(amount, 250);
 
   const [selectedCoin, setSelectedCoin] = useState<ProcessedCoin>();
 
@@ -164,8 +165,17 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
   const { data: isPayloadValid, error: payloadError } = useQuery({
     queryKey: ["is-payload-valid", simulationData?.hash],
     queryFn: async () => {
-      if (!selectedCoin || !recipient || !debouncedAmount)
+      if (
+        !selectedCoin ||
+        !recipient ||
+        !debouncedAmount ||
+        !recipientAddress ||
+        debouncedAmount === ""
+      )
         throw new Error("Please enter a valid recipient and amount");
+
+      if (debouncedAmount === "0")
+        throw new Error("Amount must be greater than 0");
 
       if (!isNumber(debouncedAmount))
         throw new Error("Amount is not a valid number");
@@ -356,10 +366,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                         onClick={() => setPage("select-coin")}
                       >
                         <div className="flex items-center gap-2">
-                          <img
-                            src={selectedCoin.metadata?.logo_url}
-                            className="w-4 h-4"
-                          />
+                          <CoinAvatar coin={selectedCoin} className="w-4 h-4" />
                           <span>{selectedCoin.metadata?.symbol}</span>
                         </div>
                       </Button>
@@ -393,11 +400,33 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                 Review Draft
               </Button>
 
-              {payloadError && (
-                <p className="text-destructive-foreground text-center text-sm">
-                  {payloadError.message}
-                </p>
-              )}
+              <AnimatePresence mode="popLayout">
+                {payloadError && (
+                  <motion.p
+                    key={`payload-error-${payloadError.message}`}
+                    initial={{ opacity: 0, y: 5, filter: "blur(10px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, y: -10, filter: "blur(10px)" }}
+                    className="text-destructive-foreground text-center text-sm font-display"
+                  >
+                    {payloadError.message}
+                  </motion.p>
+                )}
+                {recipient !== "" &&
+                  !simulationData?.hash &&
+                  !recipientAddress && (
+                    <motion.p
+                      key="recipient-error"
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      className="text-destructive-foreground text-center text-sm font-display"
+                    >
+                      Please enter a valid recipient address to create a
+                      proposal.
+                    </motion.p>
+                  )}
+              </AnimatePresence>
             </div>
           )}
 
@@ -442,8 +471,9 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                           role="option"
                         >
                           <div className="flex items-center gap-2">
-                            <img
-                              src={c.metadata?.logo_url}
+                            <CoinAvatar
+                              asset={c.balance.assetType}
+                              logoUrl={c.metadata?.logo_url}
                               className="w-8 h-8"
                             />
 
@@ -468,11 +498,9 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                                 <span className="text-xs text-muted-foreground">
                                   $
                                   {(
-                                    Number(
-                                      formatUnits(
-                                        BigInt(c.balance.amount),
-                                        c.balance.metadata.decimals
-                                      )
+                                    formatBigIntToNumber(
+                                      BigInt(c.balance.amount),
+                                      c.balance.metadata.decimals
                                     ) * c.price.usd
                                   ).toLocaleString()}
                                 </span>
@@ -511,10 +539,8 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                   <div className="flex justify-between items-center">
                     <h3 className="font-display text-sm">Amount</h3>
                     <div className="flex items-center gap-2">
-                      <img
-                        src={selectedCoin?.metadata?.logo_url}
-                        className="w-4 h-4"
-                      />
+                      <CoinAvatar coin={selectedCoin} size="sm" />
+
                       <span className="font-display font-medium">
                         {amount} {selectedCoin?.balance.metadata.symbol}
                       </span>

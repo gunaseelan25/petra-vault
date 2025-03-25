@@ -1,10 +1,9 @@
 import { useCoins } from "@/context/CoinsProvider";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { AptosCoinAvatar } from "aptos-avatars-react";
 import { cn } from "@/lib/utils";
 import { formatUnits } from "@aptos-labs/js-pro";
 import { useFungibleAssetMetadata } from "@aptos-labs/react";
 import { useActiveVault } from "@/context/ActiveVaultProvider";
+import CoinAvatar from "./CoinAvatar";
 
 interface SimulationCoinRowProps {
   asset: string;
@@ -47,12 +46,7 @@ export default function SimulationCoinRow({
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <Avatar className="w-8 h-8">
-          <AvatarImage src={metadata.logoUrl} />
-          <AvatarFallback>
-            <AptosCoinAvatar value={asset} />
-          </AvatarFallback>
-        </Avatar>
+        <CoinAvatar asset={asset} logoUrl={metadata.logoUrl} />
         <div>
           <p className="font-display">{metadata.name}</p>
           <p className="text-xs text-muted-foreground">{metadata.symbol}</p>

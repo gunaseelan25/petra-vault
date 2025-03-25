@@ -110,7 +110,7 @@ export default function CreateProposalEntryFunctionForm({
                   };
 
                   return (
-                    <FormItem>
+                    <FormItem className="w-full">
                       <FormLabel>Entry Function</FormLabel>
                       <FormControl>
                         <Input
@@ -125,23 +125,21 @@ export default function CreateProposalEntryFunctionForm({
                         <span className="font-mono text-xs">{`0x{address}::{module_name}::{function_name}`}</span>
                       </FormDescription>
                       {!field.value && !disabled && (
-                        <>
-                          <div className="text-sm text-muted-foreground mt-0.5 flex items-center gap-2">
-                            <span className="font-display text-sm font-medium mr-1">
-                              Presets{" "}
-                            </span>
-                            {entryFunctionPresets.map((preset) => (
-                              <Badge
-                                key={preset.value}
-                                variant="secondary"
-                                className="text-muted-foreground text-xs font-display cursor-pointer"
-                                onClick={() => handleOnChange(preset.value)}
-                              >
-                                {preset.label}
-                              </Badge>
-                            ))}
-                          </div>
-                        </>
+                        <div className="text-sm text-muted-foreground mt-0.5 flex items-center gap-2 w-full overflow-x-scroll">
+                          <span className="font-display text-sm font-medium mr-1">
+                            Presets{" "}
+                          </span>
+                          {entryFunctionPresets.map((preset) => (
+                            <Badge
+                              key={preset.value}
+                              variant="secondary"
+                              className="text-muted-foreground text-xs font-display cursor-pointer"
+                              onClick={() => handleOnChange(preset.value)}
+                            >
+                              {preset.label}
+                            </Badge>
+                          ))}
+                        </div>
                       )}
                     </FormItem>
                   );

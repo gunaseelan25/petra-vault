@@ -38,7 +38,19 @@ export const [CoinsProvider, useCoins] = constate(() => {
 
     const balances = coinBalances?.pages.flatMap((e) => e.balances);
 
-    return balances.map((balance) => {
+    const filteredBalances = balances.filter((e) => {
+      if (
+        e.assetType !== "0x1::aptos_coin::AptosCoin" &&
+        (e.metadata.name === "Aptos Coin" || e.metadata.symbol === "APT")
+      ) {
+        // Filter out any APT scam coins
+        return false;
+      }
+
+      return true;
+    });
+
+    return filteredBalances.map((balance) => {
       const price = coinPrices[balance.metadata.assetType];
       const metadata = coinMetadataList.data.find(
         (e) => e.asset_type === balance.metadata.assetType

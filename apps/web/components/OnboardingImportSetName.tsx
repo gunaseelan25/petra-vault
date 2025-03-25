@@ -43,7 +43,7 @@ export default function OnboardingImportSetName() {
         damping: 21,
       }}
     >
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-lg">
         <CardContent>
           <VaultImportNameForm
             address={importVaultAddress.current}

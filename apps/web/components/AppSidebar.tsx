@@ -17,10 +17,12 @@ import { usePathname } from "next/navigation";
 import {
   FilePlusIcon,
   GearIcon,
+  GlobeIcon,
   HomeIcon,
   Pencil1Icon,
 } from "@radix-ui/react-icons";
 import { NavItemGroup } from "./NavItemGroup";
+import { getExplorerUrl } from "@aptos-labs/js-pro";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
@@ -61,6 +63,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       ],
 
       management: [
+        {
+          name: "View in Explorer",
+          url: activeVaultId
+            ? getExplorerUrl({
+                network: parseVaultId(activeVaultId)?.network,
+                path: `account/${parseVaultId(activeVaultId)?.address.toString()}`,
+              })
+            : undefined,
+          icon: GlobeIcon,
+          target: "_blank",
+        },
         {
           name: "Settings",
           url: activeVaultId ? `/vault/${activeVaultId}/settings` : undefined,

@@ -11,7 +11,6 @@ import { useAccount, useClients, useNetwork } from "@aptos-labs/react";
 import { AptosAvatar } from "aptos-avatars-react";
 import { ExternalLinkIcon } from "lucide-react";
 import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
-import { DownloadIcon } from "@radix-ui/react-icons";
 import { useOnboarding } from "@/context/OnboardingProvider";
 import ExpandingContainer from "./ExpandingContainer";
 import { hasWindow } from "@/lib/utils";
@@ -103,7 +102,7 @@ export default function OnboardingAddOrImport() {
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
     >
-      <Card className="w-full max-w-md">
+      <Card className="w-full">
         <CardContent>
           <MultisigNameForm
             onSubmit={(values) => {
@@ -127,7 +126,7 @@ export default function OnboardingAddOrImport() {
         </div>
         <div className="flex gap-2">
           <Input
-            placeholder="Search for a vault"
+            placeholder="Enter a vault address"
             value={importVaultAddress.current}
             onChange={(e) => importVaultAddress.set(e.target.value)}
           />
@@ -147,10 +146,15 @@ export default function OnboardingAddOrImport() {
         </div>
         <Card className="flex gap-2 mt-2 p-0">
           <CardContent className="py-6">
-            <div className="flex items-center justify-between">
-              <h3 className="font-display text-sm font-semibold">
-                Discovered Vaults
-              </h3>
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <h3 className="font-display text-sm font-semibold">
+                  Discovered Vaults
+                </h3>
+                <p className="font-display text-xs text-muted-foreground">
+                  Import an existing vault related to your wallet
+                </p>
+              </div>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button
@@ -159,12 +163,13 @@ export default function OnboardingAddOrImport() {
                     className="py-0 text-xs h-fit"
                     data-testid="import-vaults-json-button"
                   >
-                    JSON Import
+                    Backup Import
                   </Button>
                 </DialogTrigger>
                 <UploadImportJSONModal onImport={handleImportVaults} />
               </Dialog>
             </div>
+
             <ExpandingContainer debounce={100}>
               {isLoadingDiscoveredAccounts || !hasWindow() ? (
                 <div
@@ -195,6 +200,23 @@ export default function OnboardingAddOrImport() {
                       <p className="font-display text-sm font-medium ml-1">
                         {truncateAddress(e.toString())}
                       </p>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="size-7"
+                        asChild
+                      >
+                        <a
+                          href={getExplorerUrl({
+                            network: network.network,
+                            path: `account/${e.toString()}`,
+                          })}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <ExternalLinkIcon />
+                        </a>
+                      </Button>
                       <div className="flex items-center gap-2 ml-auto">
                         <Button
                           variant="link"
@@ -204,24 +226,7 @@ export default function OnboardingAddOrImport() {
                             handleLookUpAndImportAccount(e.toString());
                           }}
                         >
-                          <DownloadIcon />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="size-7"
-                          asChild
-                        >
-                          <a
-                            href={getExplorerUrl({
-                              network: network.network,
-                              path: `account/${e.toString()}`,
-                            })}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <ExternalLinkIcon />
-                          </a>
+                          Import
                         </Button>
                       </div>
                     </div>

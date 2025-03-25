@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useMemo } from "react";
 import { parseUnits } from "@aptos-labs/js-pro";
 import { Skeleton } from "@/components/ui/skeleton";
+import CoinAvatar from "@/components/CoinAvatar";
 
 export default function VaultPage() {
   const { coins } = useCoins();
@@ -88,7 +89,6 @@ export default function VaultPage() {
 
               const symbol = metadata?.symbol || balance.metadata.symbol;
               const name = metadata?.name || balance.metadata.name;
-              const logoUrl = metadata?.logo_url;
 
               // Calculate USD value if price is available
               const usdValue = price?.usd
@@ -107,19 +107,7 @@ export default function VaultPage() {
                   transition={{ delay: index * 0.05 }}
                   className="flex items-center gap-4 p-4 rounded-lg border hover:bg-accent/50 transition-colors"
                 >
-                  <div className="h-10 w-10 rounded-full bg-accent/30 flex items-center justify-center overflow-hidden">
-                    {logoUrl ? (
-                      <img
-                        src={logoUrl}
-                        alt={symbol}
-                        width={40}
-                        height={40}
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="font-bold text-lg">{symbol?.[0]}</div>
-                    )}
-                  </div>
+                  <CoinAvatar coin={coin} size="lg" />
 
                   <div className="flex-1">
                     <div className="font-medium font-display">{name}</div>

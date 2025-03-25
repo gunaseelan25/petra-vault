@@ -19,7 +19,10 @@ const queryClient = new QueryClient({
   },
 });
 
-export const ALLOWED_PERSISTED_QUERY_KEYS: string[] = ["view-module"];
+export const ALLOWED_PERSISTED_QUERY_KEYS: string[] = [
+  "view-module",
+  "multisig-discovered-accounts",
+];
 
 const localStoragePersister = createSyncStoragePersister({
   storage: hasWindow() ? window.localStorage : null,

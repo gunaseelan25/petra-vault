@@ -26,6 +26,7 @@ export default function useMultisigDiscoveredAccounts({
   const enabled = Boolean(address && (options.enabled ?? true));
 
   const query = useQuery<UseMultisigDiscoveredAccountResult>({
+    staleTime: 1000 * 60 * 1,
     ...options,
     enabled,
     queryKey: ["multisig-discovered-accounts", address, activeNetwork],

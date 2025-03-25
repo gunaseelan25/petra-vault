@@ -70,16 +70,16 @@ export default function UploadImportJSONModal({
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Import JSON</DialogTitle>
+        <DialogTitle>Import using Backup File</DialogTitle>
         <DialogDescription>
-          Upload your JSON file to import your vaults.
+          Upload your backup file to import your vaults.
         </DialogDescription>
       </DialogHeader>
       <div className="flex flex-col items-center">
         <br />
         <DropZone
-          title="Upload JSON"
-          description="Upload your JSON file to import your vaults."
+          title="Upload Backup File"
+          description={`Upload your backup file to import your vaults. The file should be a JSON file using the "Export Vaults" feature.`}
           onFileUpload={setFile}
           className="w-full"
         />
@@ -92,7 +92,7 @@ export default function UploadImportJSONModal({
             onClick={handleImport}
             data-testid="confirm-import-vaults-json-button"
           >
-            {!vaults && "Upload a JSON File"}
+            {!vaults && "Upload a Backup File"}
             {vaults &&
               `Import ${vaults.length} vault${vaults.length > 1 ? "s" : ""}`}
           </Button>
@@ -100,7 +100,7 @@ export default function UploadImportJSONModal({
         {error && (
           <p className="text-destructive text-sm mt-4">
             {error instanceof ZodError
-              ? "The JSON is not in a proper format."
+              ? "The backup file is not in a proper format."
               : error.message}
           </p>
         )}

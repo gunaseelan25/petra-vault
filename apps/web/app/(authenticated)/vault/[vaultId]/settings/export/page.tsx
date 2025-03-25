@@ -30,9 +30,9 @@ export default function ExportSettingsPage() {
         </div>
         <section>
           <CardHeader>
-            <CardTitle className="font-medium">Export JSON</CardTitle>
+            <CardTitle className="font-medium">Export Backup File</CardTitle>
             <CardDescription>
-              This JSON can be used to import all your vaults onto other
+              This backup file can be used to import all your vaults onto other
               devices.
             </CardDescription>
           </CardHeader>
@@ -51,7 +51,7 @@ export default function ExportSettingsPage() {
                   download="petra-vaults-export.json"
                 >
                   <DownloadIcon />
-                  Download JSON
+                  Download Backup File
                 </a>
               </Button>
 

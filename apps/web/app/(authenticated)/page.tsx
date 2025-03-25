@@ -41,7 +41,7 @@ export default function Home() {
 
   return (
     <div className="flex items-center justify-center w-full h-full">
-      <div className="max-w-md w-full flex flex-col gap-2 items-center">
+      <div className="max-w-lg w-full flex flex-col gap-2 items-center">
         <h1 className="font-display text-2xl font-bold">
           <VerticalCutReveal
             splitBy="characters"
@@ -73,7 +73,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: i * 0.1 }}
-              key={vault.address.toString()}
+              key={`${vault.address.toString()}-${vault.network}`}
             >
               <VaultRow vault={vault} />
             </motion.div>
@@ -83,7 +83,11 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: vaults.length * 0.1 }}
           >
-            <Button asChild variant="secondary" data-testid="authenticated-create-vault-button">
+            <Button
+              asChild
+              variant="secondary"
+              data-testid="authenticated-create-vault-button"
+            >
               <Link href="/onboarding" className="w-full">
                 Create Vault
               </Link>
