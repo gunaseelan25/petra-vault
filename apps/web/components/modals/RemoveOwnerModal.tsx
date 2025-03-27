@@ -1,33 +1,33 @@
-import { Separator } from "../ui/separator";
+import { Separator } from '../ui/separator';
 
-import { DialogTitle } from "../ui/dialog";
+import { DialogTitle } from '../ui/dialog';
 
-import { DialogContent, DialogHeader } from "../ui/dialog";
+import { DialogContent, DialogHeader } from '../ui/dialog';
 
-import { DialogDescription } from "../ui/dialog";
-import { useEffect, useMemo } from "react";
-import { createMultisigTransactionPayloadData } from "@/lib/payloads";
-import { useActiveVault } from "@/context/ActiveVaultProvider";
-import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
-import CodeBlock from "../CodeBlock";
-import { Button } from "../ui/button";
-import { ExternalLinkIcon, Pencil1Icon } from "@radix-ui/react-icons";
-import { toast } from "sonner";
-import { getExplorerUrl } from "@aptos-labs/js-pro";
-import { AptosAvatar } from "aptos-avatars-react";
-import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
+import { DialogDescription } from '../ui/dialog';
+import { useEffect, useMemo } from 'react';
+import { createMultisigTransactionPayloadData } from '@/lib/payloads';
+import { useActiveVault } from '@/context/ActiveVaultProvider';
+import { InputEntryFunctionData } from '@aptos-labs/ts-sdk';
+import CodeBlock from '../CodeBlock';
+import { Button } from '../ui/button';
+import { ExternalLinkIcon, Pencil1Icon } from '@radix-ui/react-icons';
+import { toast } from 'sonner';
+import { getExplorerUrl } from '@aptos-labs/js-pro';
+import { AptosAvatar } from 'aptos-avatars-react';
+import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
 import {
   useSignAndSubmitTransaction,
-  useWaitForTransaction,
-} from "@aptos-labs/react";
-import { useRouter } from "next/navigation";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { Abis } from "@/lib/abis";
-import { jsonStringify } from "@/lib/storage";
-import useAnalytics from "@/hooks/useAnalytics";
+  useWaitForTransaction
+} from '@aptos-labs/react';
+import { useRouter } from 'next/navigation';
+import { DialogClose } from '@radix-ui/react-dialog';
+import { Abis } from '@/lib/abis';
+import { jsonStringify } from '@/lib/storage';
+import useAnalytics from '@/hooks/useAnalytics';
 
 export default function RemoveOwnerModal({
-  ownerToRemove,
+  ownerToRemove
 }: {
   ownerToRemove: string;
 }) {
@@ -40,17 +40,17 @@ export default function RemoveOwnerModal({
 
   const { transactionPayload, innerPayload } = useMemo(() => {
     const innerPayload = {
-      function: "0x1::multisig_account::remove_owner",
+      function: '0x1::multisig_account::remove_owner',
       functionArguments: [ownerToRemove],
-      typeArguments: [],
+      typeArguments: []
     } satisfies InputEntryFunctionData;
 
     const payload = createMultisigTransactionPayloadData({
       vaultAddress,
       payload: {
-        abi: Abis["0x1::multisig_account::remove_owner"],
-        ...innerPayload,
-      },
+        abi: Abis['0x1::multisig_account::remove_owner'],
+        ...innerPayload
+      }
     });
 
     return { transactionPayload: payload, innerPayload };
@@ -59,8 +59,8 @@ export default function RemoveOwnerModal({
   const { hash, signAndSubmitTransaction, isPending } =
     useSignAndSubmitTransaction({
       onSuccess: (data) => {
-        trackEvent("create_remove_owner_proposal", { hash: data.hash });
-      },
+        trackEvent('create_remove_owner_proposal', { hash: data.hash });
+      }
     });
 
   const { isSuccess, isError } = useWaitForTransaction({ hash });
@@ -72,10 +72,10 @@ export default function RemoveOwnerModal({
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Successfully created the transaction");
+      toast.success('Successfully created the transaction');
       router.push(`/vault/${id}/transactions`);
     } else if (isError) {
-      toast.error("Failed to create the transaction");
+      toast.error('Failed to create the transaction');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, isError]);
@@ -110,7 +110,7 @@ export default function RemoveOwnerModal({
                   <a
                     href={getExplorerUrl({
                       network,
-                      path: `account/${ownerToRemove}`,
+                      path: `account/${ownerToRemove}`
                     })}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -130,8 +130,8 @@ export default function RemoveOwnerModal({
               <div className="flex items-center mt-2 gap-2 font-display">
                 <span className="font-medium">
                   {newSignaturesRequired} signature
-                  {newSignaturesRequired === 1 ? "" : "s"}
-                </span>{" "}
+                  {newSignaturesRequired === 1 ? '' : 's'}
+                </span>{' '}
                 <span className="text-muted-foreground">
                   required out of {owners.data.length - 1} owners
                 </span>

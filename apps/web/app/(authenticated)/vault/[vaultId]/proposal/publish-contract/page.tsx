@@ -1,56 +1,56 @@
-"use client";
+'use client';
 
-import PageVaultHeader from "@/components/PageVaultHeader";
+import PageVaultHeader from '@/components/PageVaultHeader';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import DropZone from "@/components/DropZone";
-import { Button } from "@/components/ui/button";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
+  CardTitle
+} from '@/components/ui/card';
+import DropZone from '@/components/DropZone';
+import { Button } from '@/components/ui/button';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
 import {
   useSignAndSubmitTransaction,
   useSimulateTransaction,
-  useWaitForTransaction,
-} from "@aptos-labs/react";
+  useWaitForTransaction
+} from '@aptos-labs/react';
 import {
   AccountAddress,
   InputGenerateTransactionPayloadData,
-  MoveVector,
-} from "@aptos-labs/ts-sdk";
+  MoveVector
+} from '@aptos-labs/ts-sdk';
 import {
   createMultisigTransactionPayloadData,
-  formatPayloadWithAbi,
-} from "@/lib/payloads";
-import { useActiveVault } from "@/context/ActiveVaultProvider";
-import { motion } from "motion/react";
-import { AnimatePresence } from "motion/react";
-import ExpandingContainer from "@/components/ExpandingContainer";
-import { LoadingSpinner } from "@/components/LoaderSpinner";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import CodeBlock from "@/components/CodeBlock";
-import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { Separator } from "@/components/ui/separator";
-import Callout from "@/components/Callout";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { Abis } from "@/lib/abis";
-import { getSimulationQueryErrors } from "@/lib/simulations/shared";
-import { jsonStringify } from "@/lib/storage";
-import useAnalytics from "@/hooks/useAnalytics";
+  formatPayloadWithAbi
+} from '@/lib/payloads';
+import { useActiveVault } from '@/context/ActiveVaultProvider';
+import { motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import ExpandingContainer from '@/components/ExpandingContainer';
+import { LoadingSpinner } from '@/components/LoaderSpinner';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import CodeBlock from '@/components/CodeBlock';
+import { ArrowLeftIcon } from '@radix-ui/react-icons';
+import { Separator } from '@/components/ui/separator';
+import Callout from '@/components/Callout';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { Abis } from '@/lib/abis';
+import { getSimulationQueryErrors } from '@/lib/simulations/shared';
+import { jsonStringify } from '@/lib/storage';
+import useAnalytics from '@/hooks/useAnalytics';
 const publishModuleJsonSchema = z.object({
   function_id: z.string(),
   type_args: z.array(z.object({ type: z.string(), value: z.string() })),
   args: z.tuple([
     z.object({ type: z.string(), value: z.string() }),
-    z.object({ type: z.string(), value: z.array(z.string()) }),
-  ]),
+    z.object({ type: z.string(), value: z.array(z.string()) })
+  ])
 });
 
 export default function PublishContractPage() {
@@ -62,17 +62,17 @@ export default function PublishContractPage() {
 
   const [file, setFile] = useState<File | null>(null);
 
-  const [page, setPage] = useState<"draft" | "confirm">("draft");
+  const [page, setPage] = useState<'draft' | 'confirm'>('draft');
 
   const { data: jsonData, isError: isJsonError } = useQuery({
-    queryKey: ["publish-module", file?.lastModified],
+    queryKey: ['publish-module', file?.lastModified],
     queryFn: async () => {
-      if (!file) throw new Error("No file uploaded");
+      if (!file) throw new Error('No file uploaded');
       const json = JSON.parse(await file.text());
       return publishModuleJsonSchema.parse(json);
     },
     enabled: !!file,
-    retry: false,
+    retry: false
   });
 
   const { transactionPayload, innerPayload } = useMemo(() => {
@@ -86,8 +86,8 @@ export default function PublishContractPage() {
         typeArguments: [],
         functionArguments: [
           MoveVector.U8(jsonData.args[0].value),
-          new MoveVector(jsonData.args[1].value.map(MoveVector.U8)),
-        ],
+          new MoveVector(jsonData.args[1].value.map(MoveVector.U8))
+        ]
       } satisfies InputGenerateTransactionPayloadData;
 
       return {
@@ -96,9 +96,9 @@ export default function PublishContractPage() {
           vaultAddress,
           payload: {
             ...innerPayload,
-            abi: Abis["0x1::code::publish_package_txn"],
-          },
-        }),
+            abi: Abis['0x1::code::publish_package_txn']
+          }
+        })
       };
     } catch (error) {
       console.warn(error);
@@ -109,11 +109,11 @@ export default function PublishContractPage() {
   const {
     hash,
     signAndSubmitTransaction,
-    isPending: isSigningAndSubmitting,
+    isPending: isSigningAndSubmitting
   } = useSignAndSubmitTransaction({
     onSuccess: (data) => {
-      trackEvent("create_publish_contract_proposal", { hash: data.hash });
-    },
+      trackEvent('create_publish_contract_proposal', { hash: data.hash });
+    }
   });
 
   const { isSuccess, isLoading: isWaitingForTransaction } =
@@ -130,7 +130,7 @@ export default function PublishContractPage() {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Proposal created");
+      toast.success('Proposal created');
       router.push(`/vault/${id}/transactions`);
       queryClient.invalidateQueries();
     }
@@ -143,9 +143,9 @@ export default function PublishContractPage() {
     options: {
       estimateMaxGasAmount: true,
       estimateGasUnitPrice: true,
-      estimatePrioritizedGasUnitPrice: true,
+      estimatePrioritizedGasUnitPrice: true
     },
-    enabled: innerPayload !== undefined,
+    enabled: innerPayload !== undefined
   });
 
   const [isSimulationError, simulationError] =
@@ -163,7 +163,7 @@ export default function PublishContractPage() {
       <br />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
-        {page === "draft" && (
+        {page === 'draft' && (
           <Card className="">
             <CardHeader>
               <CardTitle>Publish Contract</CardTitle>
@@ -201,7 +201,7 @@ export default function PublishContractPage() {
                 disabled={
                   !file || !jsonData || !isSimulationSuccess || !isOwner
                 }
-                onClick={() => setPage("confirm")}
+                onClick={() => setPage('confirm')}
                 data-testid="publish-contract-confirm-draft-button"
               >
                 Confirm Draft
@@ -211,7 +211,7 @@ export default function PublishContractPage() {
         )}
 
         <Card
-          className={cn("w-full h-fit", page === "confirm" && "col-span-2")}
+          className={cn('w-full h-fit', page === 'confirm' && 'col-span-2')}
         >
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -231,9 +231,15 @@ export default function PublishContractPage() {
               {!file ? (
                 <motion.div
                   key="simulation-loading"
-                  initial={{ opacity: 0, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, filter: "blur(10px)" }}
+                  initial={{
+                    opacity: 0,
+                    filter: 'blur(10px)'
+                  }}
+                  animate={{
+                    opacity: 1,
+                    filter: 'blur(0px)'
+                  }}
+                  exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
                   <CardContent>
@@ -245,9 +251,15 @@ export default function PublishContractPage() {
               ) : simulationData.isLoading ? (
                 <motion.div
                   key="simulation-loading"
-                  initial={{ opacity: 0, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, filter: "blur(10px)" }}
+                  initial={{
+                    opacity: 0,
+                    filter: 'blur(10px)'
+                  }}
+                  animate={{
+                    opacity: 1,
+                    filter: 'blur(0px)'
+                  }}
+                  exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
                   <CardContent>
@@ -259,9 +271,15 @@ export default function PublishContractPage() {
               ) : isSimulationError || isJsonError ? (
                 <motion.div
                   key="simulation-error"
-                  initial={{ opacity: 0, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, filter: "blur(10px)" }}
+                  initial={{
+                    opacity: 0,
+                    filter: 'blur(10px)'
+                  }}
+                  animate={{
+                    opacity: 1,
+                    filter: 'blur(0px)'
+                  }}
+                  exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
                   <CardContent>
@@ -269,7 +287,7 @@ export default function PublishContractPage() {
                       <div className="text-destructive bg-destructive/10 p-4 rounded-lg text-sm border border-destructive border-dashed">
                         <>
                           {isJsonError
-                            ? "There is an issue with your JSON file. Please check the file and try again."
+                            ? 'There is an issue with your JSON file. Please check the file and try again.'
                             : simulationError}
                         </>
                       </div>
@@ -279,16 +297,22 @@ export default function PublishContractPage() {
               ) : isSimulationSuccess ? (
                 <motion.div
                   key="simulation-success"
-                  initial={{ opacity: 0, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, filter: "blur(10px)" }}
+                  initial={{
+                    opacity: 0,
+                    filter: 'blur(10px)'
+                  }}
+                  animate={{
+                    opacity: 1,
+                    filter: 'blur(0px)'
+                  }}
+                  exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className={"grid grid-cols-2 divide-x"}>
+                  <CardContent className={'grid grid-cols-2 divide-x'}>
                     <div
                       className={cn(
-                        "flex flex-col gap-6",
-                        page === "draft" ? "col-span-2" : "pr-12"
+                        'flex flex-col gap-6',
+                        page === 'draft' ? 'col-span-2' : 'pr-12'
                       )}
                     >
                       <div>
@@ -300,7 +324,7 @@ export default function PublishContractPage() {
                             value={jsonStringify(
                               formatPayloadWithAbi(
                                 innerPayload,
-                                Abis["0x1::code::publish_package_txn"]
+                                Abis['0x1::code::publish_package_txn']
                               )
                             )}
                             className="[&>pre]:!bg-transparent"
@@ -332,7 +356,7 @@ export default function PublishContractPage() {
                         </div>
                       </div>
 
-                      {page === "confirm" && (
+                      {page === 'confirm' && (
                         <>
                           <Callout
                             title="Always Verify"
@@ -344,7 +368,7 @@ export default function PublishContractPage() {
                             <Button
                               variant="ghost"
                               onClick={() => {
-                                setPage("draft");
+                                setPage('draft');
                                 setFile(null);
                               }}
                             >
@@ -363,7 +387,7 @@ export default function PublishContractPage() {
                       )}
                     </div>
 
-                    {page === "confirm" && (
+                    {page === 'confirm' && (
                       <div className="flex flex-col gap-6 pl-12">
                         <div>
                           <h3 className="font-display text-lg font-semibold tracking-wide">

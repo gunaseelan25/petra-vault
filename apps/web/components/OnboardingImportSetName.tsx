@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { CardContent } from "@/components/ui/card";
-import { Card } from "@/components/ui/card";
-import { motion } from "motion/react";
-import VaultImportNameForm from "@/components/forms/VaultImportNameForm";
-import { useOnboarding } from "@/context/OnboardingProvider";
-import useMultisigOwners from "@/hooks/useMultisigOwners";
-import { Label } from "./ui/label";
-import { AptosAvatar } from "aptos-avatars-react";
-import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
-import useMultisigSignaturesRequired from "@/hooks/useMultisigSignaturesRequired";
-import { toast } from "sonner";
-import { AccountAddress } from "@aptos-labs/ts-sdk";
-import { useNetwork } from "@aptos-labs/react";
-import useAnalytics from "@/hooks/useAnalytics";
+import { CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
+import { motion } from 'motion/react';
+import VaultImportNameForm from '@/components/forms/VaultImportNameForm';
+import { useOnboarding } from '@/context/OnboardingProvider';
+import useMultisigOwners from '@/hooks/useMultisigOwners';
+import { Label } from './ui/label';
+import { AptosAvatar } from 'aptos-avatars-react';
+import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
+import useMultisigSignaturesRequired from '@/hooks/useMultisigSignaturesRequired';
+import { toast } from 'sonner';
+import { AccountAddress } from '@aptos-labs/ts-sdk';
+import { useNetwork } from '@aptos-labs/react';
+import useAnalytics from '@/hooks/useAnalytics';
 
 export default function OnboardingImportSetName() {
   const trackEvent = useAnalytics();
@@ -21,34 +21,34 @@ export default function OnboardingImportSetName() {
   const network = useNetwork();
 
   const { data: owners } = useMultisigOwners({
-    address: importVaultAddress.current,
+    address: importVaultAddress.current
   });
 
   const { data: signaturesRequired } = useMultisigSignaturesRequired({
-    address: importVaultAddress.current,
+    address: importVaultAddress.current
   });
 
   const handleImportVault = (name: string) => {
     if (!owners || !signaturesRequired) {
-      toast.error("Failed to fetch owners or signatures required");
+      toast.error('Failed to fetch owners or signatures required');
       return;
     }
 
-    trackEvent("create_imported_vault", {
+    trackEvent('create_imported_vault', {
       signatures_required: signaturesRequired,
-      owners: owners.length,
+      owners: owners.length
     });
 
     importVault({
-      type: "framework",
+      type: 'framework',
       name: name,
       signers: owners.map((e, i) => ({
         address: AccountAddress.from(e),
-        name: `Owner ${i + 1}`,
+        name: `Owner ${i + 1}`
       })),
       signaturesRequired,
       address: AccountAddress.from(importVaultAddress.current),
-      network: network.network,
+      network: network.network
     });
   };
 
@@ -64,9 +64,9 @@ export default function OnboardingImportSetName() {
       exit={{ opacity: 0, y: -10 }}
       transition={{
         duration: 0.3,
-        type: "spring",
+        type: 'spring',
         stiffness: 200,
-        damping: 21,
+        damping: 21
       }}
     >
       <Card className="w-full max-w-lg">
@@ -95,7 +95,7 @@ export default function OnboardingImportSetName() {
               <div className="text-muted-foreground text-sm mt-4">
                 <span className="font-display text-foreground font-semibold">
                   Requires {signaturesRequired} of {owners?.length} owners
-                </span>{" "}
+                </span>{' '}
                 to execute a transaction.
               </div>
             </div>

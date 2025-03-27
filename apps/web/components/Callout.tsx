@@ -1,62 +1,62 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 import {
   CheckIcon,
   ExclamationTriangleIcon,
-  GlobeIcon,
-} from "@radix-ui/react-icons";
-import { cva, type VariantProps } from "class-variance-authority";
-import React from "react";
+  GlobeIcon
+} from '@radix-ui/react-icons';
+import { cva, type VariantProps } from 'class-variance-authority';
+import React from 'react';
 
-const calloutVariants = cva("flex items-center gap-4 rounded-md p-4", {
+const calloutVariants = cva('flex items-center gap-4 rounded-md p-4', {
   variants: {
     status: {
-      loading: "bg-yellow-400/10 text-yellow-700",
-      error: "bg-red-400/10 text-red-700",
-      success: "bg-green-400/10 text-green-700",
-    },
+      loading: 'bg-yellow-400/10 text-yellow-700',
+      error: 'bg-red-400/10 text-red-700',
+      success: 'bg-green-400/10 text-green-700'
+    }
   },
   defaultVariants: {
-    status: "success",
-  },
+    status: 'success'
+  }
 });
 
-const iconContainerVariants = cva("rounded-full", {
+const iconContainerVariants = cva('rounded-full', {
   variants: {
     status: {
-      loading: "bg-yellow-400 outline-yellow-400",
-      error: "bg-red-400 outline-red-400",
-      success: "bg-green-400 outline-green-400",
-    },
+      loading: 'bg-yellow-400 outline-yellow-400',
+      error: 'bg-red-400 outline-red-400',
+      success: 'bg-green-400 outline-green-400'
+    }
   },
   defaultVariants: {
-    status: "success",
-  },
+    status: 'success'
+  }
 });
 
-const titleVariants = cva("font-display font-bold", {
+const titleVariants = cva('font-display font-bold', {
   variants: {
     status: {
-      loading: "text-yellow-700",
-      error: "text-red-700",
-      success: "text-green-700",
-    },
+      loading: 'text-yellow-700',
+      error: 'text-red-700',
+      success: 'text-green-700'
+    }
   },
   defaultVariants: {
-    status: "success",
-  },
+    status: 'success'
+  }
 });
 
-const descriptionVariants = cva("text-sm", {
+const descriptionVariants = cva('text-sm', {
   variants: {
     status: {
-      loading: "text-yellow-700/50",
-      error: "text-red-700/50",
-      success: "text-green-700/50",
-    },
+      loading: 'text-yellow-700/50',
+      error: 'text-red-700/50',
+      success: 'text-green-700/50'
+    }
   },
   defaultVariants: {
-    status: "success",
-  },
+    status: 'success'
+  }
 });
 
 type CalloutProps = VariantProps<typeof calloutVariants> & {
@@ -67,22 +67,22 @@ type CalloutProps = VariantProps<typeof calloutVariants> & {
 };
 
 export default function Callout({
-  status = "success",
+  status = 'success',
   title,
   description,
   icon,
-  className,
+  className
 }: CalloutProps) {
   // Default icons based on status
   const getDefaultIcon = () => {
     switch (status) {
-      case "loading":
+      case 'loading':
         return <GlobeIcon className="w-6 h-6 p-1 text-white" />;
-      case "error":
+      case 'error':
         return (
           <ExclamationTriangleIcon className="w-6 h-6 p-1.5 overflow-visible text-white" />
         );
-      case "success":
+      case 'success':
       default:
         return <CheckIcon className="w-6 h-6 text-white" />;
     }

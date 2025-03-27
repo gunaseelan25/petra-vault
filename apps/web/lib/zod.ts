@@ -1,6 +1,6 @@
-import { TypeTag, TypeTagVector } from "@aptos-labs/ts-sdk";
-import { z, ZodTypeAny } from "zod";
-import { isAddress } from "./address";
+import { TypeTag, TypeTagVector } from '@aptos-labs/ts-sdk';
+import { z, ZodTypeAny } from 'zod';
+import { isAddress } from './address';
 
 export const arrayFromString = <T extends ZodTypeAny>(schema: T) => {
   return z.preprocess((obj: unknown) => {
@@ -10,7 +10,7 @@ export const arrayFromString = <T extends ZodTypeAny>(schema: T) => {
     if (Array.isArray(obj)) {
       return obj;
     }
-    if (typeof obj === "string") {
+    if (typeof obj === 'string') {
       return JSON.parse(obj);
     }
 
@@ -21,7 +21,7 @@ export const arrayFromString = <T extends ZodTypeAny>(schema: T) => {
 export const transformTypeTagToZod = (typeTag: TypeTag): ZodTypeAny => {
   if ((typeTag as TypeTag).isAddress()) {
     return z.string().refine((val) => isAddress(val), {
-      message: "Invalid Aptos address",
+      message: 'Invalid Aptos address'
     });
   }
 
@@ -34,7 +34,7 @@ export const transformTypeTagToZod = (typeTag: TypeTag): ZodTypeAny => {
   }
 
   if ((typeTag as TypeTag).isBool()) {
-    return z.enum(["true", "false"]).transform((value) => value === "true");
+    return z.enum(['true', 'false']).transform((value) => value === 'true');
   }
 
   if ((typeTag as TypeTag).isVector()) {
@@ -56,8 +56,8 @@ export const getTypeTagDefaultZodValue = (typeTag: TypeTag): unknown => {
     (typeTag as TypeTag).isU128() ||
     (typeTag as TypeTag).isU256()
   ) {
-    return "0";
+    return '0';
   }
 
-  return "";
+  return '';
 };

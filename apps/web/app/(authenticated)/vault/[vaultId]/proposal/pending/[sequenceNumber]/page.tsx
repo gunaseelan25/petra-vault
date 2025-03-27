@@ -1,46 +1,46 @@
-"use client";
+'use client';
 
-import PageVaultHeader from "@/components/PageVaultHeader";
-import { Badge } from "@/components/ui/badge";
+import PageVaultHeader from '@/components/PageVaultHeader';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { AptosAvatar } from "aptos-avatars-react";
-import { AccountAddress, truncateAddress } from "@aptos-labs/ts-sdk";
-import { CheckCircledIcon } from "@radix-ui/react-icons";
-import { CrossCircledIcon } from "@radix-ui/react-icons";
-import { useActiveProposal } from "@/context/ActiveProposalProvider";
-import { QuestionMarkCircledIcon } from "@radix-ui/react-icons";
-import CodeBlock from "@/components/CodeBlock";
+  CardTitle
+} from '@/components/ui/card';
+import { AptosAvatar } from 'aptos-avatars-react';
+import { AccountAddress, truncateAddress } from '@aptos-labs/ts-sdk';
+import { CheckCircledIcon } from '@radix-ui/react-icons';
+import { CrossCircledIcon } from '@radix-ui/react-icons';
+import { useActiveProposal } from '@/context/ActiveProposalProvider';
+import { QuestionMarkCircledIcon } from '@radix-ui/react-icons';
+import CodeBlock from '@/components/CodeBlock';
 import {
   createMultisigVoteTransactionPayloadData,
-  formatPayloadWithAbi,
-} from "@/lib/payloads";
-import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+  formatPayloadWithAbi
+} from '@/lib/payloads';
+import { Button } from '@/components/ui/button';
+import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   useSignAndSubmitTransaction,
-  useWaitForTransaction,
-} from "@aptos-labs/react";
-import { toast } from "sonner";
-import { useActiveVault } from "@/context/ActiveVaultProvider";
-import Callout from "@/components/Callout";
-import { Separator } from "@/components/ui/separator";
-import { AnimatePresence, motion } from "motion/react";
-import { LoadingSpinner } from "@/components/LoaderSpinner";
-import SimulationParser from "@/lib/simulations/parsers/SimulationParser";
-import SimulationCoinRow from "@/components/SimulationCoinRow";
-import { PendingTransactionRow } from "@/components/PendingTransactionRow";
-import { useRouter } from "next/navigation";
-import { jsonStringify } from "@/lib/storage";
-import Link from "next/link";
-import useAnalytics from "@/hooks/useAnalytics";
+  useWaitForTransaction
+} from '@aptos-labs/react';
+import { toast } from 'sonner';
+import { useActiveVault } from '@/context/ActiveVaultProvider';
+import Callout from '@/components/Callout';
+import { Separator } from '@/components/ui/separator';
+import { AnimatePresence, motion } from 'motion/react';
+import { LoadingSpinner } from '@/components/LoaderSpinner';
+import SimulationParser from '@/lib/simulations/parsers/SimulationParser';
+import SimulationCoinRow from '@/components/SimulationCoinRow';
+import { PendingTransactionRow } from '@/components/PendingTransactionRow';
+import { useRouter } from 'next/navigation';
+import { jsonStringify } from '@/lib/storage';
+import Link from 'next/link';
+import useAnalytics from '@/hooks/useAnalytics';
 
 export default function ProposalPage() {
   const trackEvent = useAnalytics();
@@ -66,7 +66,7 @@ export default function ProposalPage() {
     pendingTransactionsAhead,
     latestSequenceNumber: { data: latestSequenceNumber },
     isNext,
-    hasUserCastedVote,
+    hasUserCastedVote
   } = useActiveProposal();
 
   const balanceChanges = simulation.data
@@ -80,31 +80,31 @@ export default function ProposalPage() {
   const {
     hash: secondaryActionHash,
     signAndSubmitTransaction: signAndSubmitSecondaryAction,
-    isPending: isSignAndSubmitSecondaryActionPending,
+    isPending: isSignAndSubmitSecondaryActionPending
   } = useSignAndSubmitTransaction({
     onSuccess(data, variables) {
-      trackEvent("vote_proposal", {
+      trackEvent('vote_proposal', {
         hash: data.hash,
         action:
-          "data" in variables &&
-          "function" in variables.data &&
+          'data' in variables &&
+          'function' in variables.data &&
           variables.data.function ===
-            "0x1::multisig_account::approve_transaction"
-            ? "approve"
-            : "reject",
+            '0x1::multisig_account::approve_transaction'
+            ? 'approve'
+            : 'reject'
       });
-    },
+    }
   });
 
   const {
     isSuccess: isSecondaryActionSuccess,
-    isLoading: isSecondaryTransactionLoading,
+    isLoading: isSecondaryTransactionLoading
   } = useWaitForTransaction({ hash: secondaryActionHash });
 
   useEffect(() => {
     if (isSecondaryActionSuccess) {
       queryClient.invalidateQueries();
-      toast.success("Transaction voted!");
+      toast.success('Transaction voted!');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSecondaryActionSuccess]);
@@ -114,8 +114,8 @@ export default function ProposalPage() {
       data: createMultisigVoteTransactionPayloadData({
         vaultAddress,
         sequenceNumber,
-        approve,
-      }),
+        approve
+      })
     });
 
   const isSecondaryActionLoading =
@@ -126,57 +126,57 @@ export default function ProposalPage() {
   const {
     hash: primaryActionHash,
     signAndSubmitTransaction: signAndSubmitPrimaryAction,
-    isPending: isSignAndSubmitPrimaryActionPending,
+    isPending: isSignAndSubmitPrimaryActionPending
   } = useSignAndSubmitTransaction({
     onSuccess(data, variables) {
-      if ("data" in variables && "function" in variables.data) {
+      if ('data' in variables && 'function' in variables.data) {
         if (
           variables.data.function ===
-          "0x1::multisig_account::execute_transaction"
+          '0x1::multisig_account::execute_transaction'
         ) {
-          trackEvent("execute_proposal", {
-            hash: data.hash,
+          trackEvent('execute_proposal', {
+            hash: data.hash
           });
         } else if (
           variables.data.function ===
-          "0x1::multisig_account::execute_rejected_transaction"
+          '0x1::multisig_account::execute_rejected_transaction'
         ) {
-          trackEvent("remove_proposal", { hash: data.hash });
+          trackEvent('remove_proposal', { hash: data.hash });
         }
       }
-    },
+    }
   });
 
   const {
     isSuccess: isPrimaryActionSuccess,
-    isLoading: isPrimaryTransactionLoading,
+    isLoading: isPrimaryTransactionLoading
   } = useWaitForTransaction({ hash: primaryActionHash });
 
   useEffect(() => {
     if (isPrimaryActionSuccess) {
       queryClient.invalidateQueries();
-      toast.success("Transaction executed!");
+      toast.success('Transaction executed!');
       router.push(`/vault/${id}/transactions`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPrimaryActionSuccess]);
 
-  const handlePrimaryAction = async (action: "execute" | "remove") => {
-    if (action === "remove") {
+  const handlePrimaryAction = async (action: 'execute' | 'remove') => {
+    if (action === 'remove') {
       signAndSubmitPrimaryAction({
         data: {
-          function: "0x1::multisig_account::execute_rejected_transaction",
-          functionArguments: [vaultAddress],
-        },
+          function: '0x1::multisig_account::execute_rejected_transaction',
+          functionArguments: [vaultAddress]
+        }
       });
     }
 
-    if (action === "execute") {
+    if (action === 'execute') {
       const transaction = await transactionPayload.refetch();
 
       if (!transaction.data) {
         return toast.error(
-          "There was an issue building your transaction, please try again."
+          'There was an issue building your transaction, please try again.'
         );
       }
 
@@ -229,9 +229,18 @@ export default function ProposalPage() {
                   {simulation.isLoading ? (
                     <motion.div
                       key="simulation-loading"
-                      initial={{ opacity: 0, filter: "blur(10px)" }}
-                      animate={{ opacity: 1, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, filter: "blur(10px)" }}
+                      initial={{
+                        opacity: 0,
+                        filter: 'blur(10px)'
+                      }}
+                      animate={{
+                        opacity: 1,
+                        filter: 'blur(0px)'
+                      }}
+                      exit={{
+                        opacity: 0,
+                        filter: 'blur(10px)'
+                      }}
                       transition={{ duration: 0.3 }}
                     >
                       <div className="w-full flex justify-center items-center py-8">
@@ -241,9 +250,18 @@ export default function ProposalPage() {
                   ) : simulation.isError ? (
                     <motion.div
                       key="simulation-error"
-                      initial={{ opacity: 0, filter: "blur(10px)" }}
-                      animate={{ opacity: 1, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, filter: "blur(10px)" }}
+                      initial={{
+                        opacity: 0,
+                        filter: 'blur(10px)'
+                      }}
+                      animate={{
+                        opacity: 1,
+                        filter: 'blur(0px)'
+                      }}
+                      exit={{
+                        opacity: 0,
+                        filter: 'blur(10px)'
+                      }}
                       transition={{ duration: 0.3 }}
                     >
                       <CardTitle>Transaction Simulation</CardTitle>
@@ -260,9 +278,18 @@ export default function ProposalPage() {
                   ) : simulation.isSuccess ? (
                     <motion.div
                       key="simulation-success"
-                      initial={{ opacity: 0, filter: "blur(10px)" }}
-                      animate={{ opacity: 1, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, filter: "blur(10px)" }}
+                      initial={{
+                        opacity: 0,
+                        filter: 'blur(10px)'
+                      }}
+                      animate={{
+                        opacity: 1,
+                        filter: 'blur(0px)'
+                      }}
+                      exit={{
+                        opacity: 0,
+                        filter: 'blur(10px)'
+                      }}
                       transition={{ duration: 0.3 }}
                       className="flex flex-col gap-4"
                     >
@@ -388,7 +415,7 @@ export default function ProposalPage() {
                   className="flex-1"
                   disabled={!canExecute.data || !isNext}
                   isLoading={isPrimaryActionLoading}
-                  onClick={() => handlePrimaryAction("execute")}
+                  onClick={() => handlePrimaryAction('execute')}
                   data-testid="execute-transaction-button"
                 >
                   Execute Transaction
@@ -398,7 +425,7 @@ export default function ProposalPage() {
                   className="flex-1"
                   disabled={!isNext || !hasEnoughRejections}
                   isLoading={isPrimaryActionLoading}
-                  onClick={() => handlePrimaryAction("remove")}
+                  onClick={() => handlePrimaryAction('remove')}
                   data-testid="remove-transaction-button"
                 >
                   Remove Transaction
@@ -413,7 +440,7 @@ export default function ProposalPage() {
               <CardTitle>Confirmations</CardTitle>
               <CardDescription>
                 The transaction requires {signaturesRequired} approval
-                {signaturesRequired === 1 ? "" : "s"} from the owners to
+                {signaturesRequired === 1 ? '' : 's'} from the owners to
                 execute.
               </CardDescription>
             </CardHeader>
@@ -439,10 +466,10 @@ export default function ProposalPage() {
                       <Badge
                         variant={
                           isApproved
-                            ? "success"
+                            ? 'success'
                             : isRejected
-                              ? "destructive"
-                              : "secondary"
+                              ? 'destructive'
+                              : 'secondary'
                         }
                       >
                         {isApproved ? (

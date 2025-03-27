@@ -1,34 +1,34 @@
-"use client";
+'use client';
 
-import VerticalCutReveal from "@/components/ui/vertical-cut-reveal";
-import { useCoins } from "@/context/CoinsProvider";
-import { useActiveVault } from "@/context/ActiveVaultProvider";
-import { cn, hasWindow } from "@/lib/utils";
-import { AnimatePresence, motion } from "motion/react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { PropsWithChildren, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowTopRightIcon } from "@radix-ui/react-icons";
-import { ArrowDownRightIcon } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import ReceiveModal from "@/components/modals/ReceiveModal";
-import PageVaultHeader from "@/components/PageVaultHeader";
-import SendCoinsModal from "@/components/modals/SendCoinsModal";
-import useAnalytics from "@/hooks/useAnalytics";
+import VerticalCutReveal from '@/components/ui/vertical-cut-reveal';
+import { useCoins } from '@/context/CoinsProvider';
+import { useActiveVault } from '@/context/ActiveVaultProvider';
+import { cn, hasWindow } from '@/lib/utils';
+import { AnimatePresence, motion } from 'motion/react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { PropsWithChildren, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { ArrowTopRightIcon } from '@radix-ui/react-icons';
+import { ArrowDownRightIcon } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import ReceiveModal from '@/components/modals/ReceiveModal';
+import PageVaultHeader from '@/components/PageVaultHeader';
+import SendCoinsModal from '@/components/modals/SendCoinsModal';
+import useAnalytics from '@/hooks/useAnalytics';
 
 const tabs = [
   {
-    id: "coins",
-    label: "Coins",
-    href: "/vault/[vaultId]",
+    id: 'coins',
+    label: 'Coins',
+    href: '/vault/[vaultId]'
   },
   {
-    id: "transactions",
-    label: "Transactions",
-    href: "/vault/[vaultId]/transactions",
-  },
+    id: 'transactions',
+    label: 'Transactions',
+    href: '/vault/[vaultId]/transactions'
+  }
 ] as const;
 
 export default function VaultLayout({ children }: PropsWithChildren) {
@@ -86,7 +86,7 @@ export default function VaultLayout({ children }: PropsWithChildren) {
               size="lg"
               className="px-6"
               onClick={() => {
-                trackEvent("send_coins_review_draft", {});
+                trackEvent('send_coins_review_draft', {});
                 setIsSendCoinsModalOpen(true);
               }}
               disabled={!isOwner}
@@ -111,16 +111,16 @@ export default function VaultLayout({ children }: PropsWithChildren) {
 
       <div className="flex border-b border-border-dark">
         {tabs.map((tab, i) => {
-          const isActive = pathname === tab.href.replace("[vaultId]", id);
+          const isActive = pathname === tab.href.replace('[vaultId]', id);
           return (
             <Link
               key={tab.id}
-              href={tab.href.replace("[vaultId]", id)}
+              href={tab.href.replace('[vaultId]', id)}
               className={cn(
-                "px-4 py-2 relative font-display font-semibold tracking-wide transition-all",
+                'px-4 py-2 relative font-display font-semibold tracking-wide transition-all',
                 isActive
-                  ? "text-primary cursor-default"
-                  : "hover:opacity-80 active:opacity-60 cursor-pointer"
+                  ? 'text-primary cursor-default'
+                  : 'hover:opacity-80 active:opacity-60 cursor-pointer'
               )}
               data-testid={`home-tab-item-${tab.id}`}
             >
@@ -131,7 +131,11 @@ export default function VaultLayout({ children }: PropsWithChildren) {
                 <motion.div
                   layoutId="underline-dashboard"
                   id="underline-dashboard"
-                  transition={{ type: "spring", stiffness: 200, damping: 21 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 200,
+                    damping: 21
+                  }}
                   className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 />
               ) : null}

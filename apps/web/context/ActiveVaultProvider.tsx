@@ -1,10 +1,10 @@
-import { createVaultId } from "@/lib/vaults";
-import { AccountAddress, Network } from "@aptos-labs/ts-sdk";
-import constate from "constate";
-import { useVaults } from "./useVaults";
-import useMultisigSignaturesRequired from "@/hooks/useMultisigSignaturesRequired";
-import useMultisigOwners from "@/hooks/useMultisigOwners";
-import { useAccount } from "@aptos-labs/react";
+import { createVaultId } from '@/lib/vaults';
+import { AccountAddress, Network } from '@aptos-labs/ts-sdk';
+import constate from 'constate';
+import { useVaults } from './useVaults';
+import useMultisigSignaturesRequired from '@/hooks/useMultisigSignaturesRequired';
+import useMultisigOwners from '@/hooks/useMultisigOwners';
+import { useAccount } from '@aptos-labs/react';
 
 export const [ActiveVaultProvider, useActiveVault] = constate(
   ({ vaultAddress, network }: { vaultAddress: string; network: Network }) => {
@@ -18,12 +18,12 @@ export const [ActiveVaultProvider, useActiveVault] = constate(
 
     const owners = useMultisigOwners({
       address: vaultAddress.toString(),
-      network: { network },
+      network: { network }
     });
 
     const signaturesRequired = useMultisigSignaturesRequired({
       address: vaultAddress.toString(),
-      network: { network },
+      network: { network }
     });
 
     const isOwner = owners.data?.some((owner) =>
@@ -35,12 +35,12 @@ export const [ActiveVaultProvider, useActiveVault] = constate(
       network,
       id: createVaultId({
         address: AccountAddress.from(vaultAddress),
-        network,
+        network
       }),
       vault,
       owners,
       signaturesRequired,
-      isOwner,
+      isOwner
     };
   }
 );

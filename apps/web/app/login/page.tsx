@@ -1,5 +1,5 @@
-import Login from "@/components/Login";
-import Link from "next/link";
+import Login from '@/components/Login';
+import Link from 'next/link';
 
 export default function LoginPage() {
   return (

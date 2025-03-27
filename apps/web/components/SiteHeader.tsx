@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { SidebarIcon } from "lucide-react";
+import { SidebarIcon } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { useSidebar } from "@/components/ui/sidebar";
-import Link from "next/link";
-import { useIsMobile } from "@/hooks/useMobile";
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { useSidebar } from '@/components/ui/sidebar';
+import Link from 'next/link';
+import { useIsMobile } from '@/hooks/useMobile';
 
 export function SiteHeader() {
   const isMobile = useIsMobile();

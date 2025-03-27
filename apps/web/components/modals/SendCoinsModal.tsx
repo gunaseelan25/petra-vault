@@ -1,43 +1,43 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
-import { ProcessedCoin, useCoins } from "@/context/CoinsProvider";
-import { Separator } from "../ui/separator";
-import { ArrowLeftIcon, Pencil1Icon } from "@radix-ui/react-icons";
-import { formatUnits, parseUnits } from "@aptos-labs/js-pro";
-import CodeBlock from "../CodeBlock";
-import { AptosAvatar } from "aptos-avatars-react";
-import { AccountAddress, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
-import { createMultisigTransactionPayloadData } from "@/lib/payloads";
-import { useActiveVault } from "@/context/ActiveVaultProvider";
+  DialogTitle
+} from '../ui/dialog';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Button } from '../ui/button';
+import { ProcessedCoin, useCoins } from '@/context/CoinsProvider';
+import { Separator } from '../ui/separator';
+import { ArrowLeftIcon, Pencil1Icon } from '@radix-ui/react-icons';
+import { formatUnits, parseUnits } from '@aptos-labs/js-pro';
+import CodeBlock from '../CodeBlock';
+import { AptosAvatar } from 'aptos-avatars-react';
+import { AccountAddress, InputEntryFunctionData } from '@aptos-labs/ts-sdk';
+import { createMultisigTransactionPayloadData } from '@/lib/payloads';
+import { useActiveVault } from '@/context/ActiveVaultProvider';
 import {
   useAddressFromName,
   useSignAndSubmitTransaction,
   useSimulateTransaction,
-  useWaitForTransaction,
-} from "@aptos-labs/react";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
-import VerticalCutReveal from "../ui/vertical-cut-reveal";
-import { AnimatePresence, motion } from "motion/react";
-import { isAddress, isEns } from "@/lib/address";
-import ExpandingContainer from "../ExpandingContainer";
-import { LoadingSpinner } from "../LoaderSpinner";
-import { formatBigIntToNumber, isNumber } from "@/lib/units";
-import { Abis } from "@/lib/abis";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useDebounce } from "use-debounce";
-import { jsonStringify } from "@/lib/storage";
-import CoinAvatar from "../CoinAvatar";
-import useAnalytics from "@/hooks/useAnalytics";
+  useWaitForTransaction
+} from '@aptos-labs/react';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
+import VerticalCutReveal from '../ui/vertical-cut-reveal';
+import { AnimatePresence, motion } from 'motion/react';
+import { isAddress, isEns } from '@/lib/address';
+import ExpandingContainer from '../ExpandingContainer';
+import { LoadingSpinner } from '../LoaderSpinner';
+import { formatBigIntToNumber, isNumber } from '@/lib/units';
+import { Abis } from '@/lib/abis';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useDebounce } from 'use-debounce';
+import { jsonStringify } from '@/lib/storage';
+import CoinAvatar from '../CoinAvatar';
+import useAnalytics from '@/hooks/useAnalytics';
 interface SendCoinsModalProps {
   onClose?: () => void;
 }
@@ -47,16 +47,16 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
   const queryClient = useQueryClient();
 
   const [page, setPage] = useState<
-    "recipient-and-amount" | "select-coin" | "confirm"
-  >("recipient-and-amount");
+    'recipient-and-amount' | 'select-coin' | 'confirm'
+  >('recipient-and-amount');
 
-  const [recipient, setRecipient] = useState<string>("");
-  const [amount, setAmount] = useState<string>("0");
+  const [recipient, setRecipient] = useState<string>('');
+  const [amount, setAmount] = useState<string>('0');
   const [debouncedAmount] = useDebounce(amount, 250);
 
   const [selectedCoin, setSelectedCoin] = useState<ProcessedCoin>();
 
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState<string>('');
 
   const router = useRouter();
 
@@ -67,7 +67,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
   const { data: resolvedAddress, isLoading: isResolvingAddress } =
     useAddressFromName({
       name: isEns(recipient) ? recipient : undefined,
-      enabled: !!recipient && isEns(recipient),
+      enabled: !!recipient && isEns(recipient)
     });
 
   const recipientAddress = useMemo(() => {
@@ -98,12 +98,12 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
   };
 
   const filteredCoins = coins?.filter((c) => {
-    const formattedSearch = search?.toLowerCase() ?? "";
+    const formattedSearch = search?.toLowerCase() ?? '';
     return matchesSearch(c, formattedSearch);
   });
 
   const { transactionPayload, innerPayload } = useMemo(() => {
-    const amount = debouncedAmount ?? "0";
+    const amount = debouncedAmount ?? '0';
 
     if (!selectedCoin || !recipient || !amount || !isNumber(amount)) {
       return { transactionPayload: undefined, innerPayload: undefined };
@@ -120,38 +120,38 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
     let transactionPayload;
     let innerPayload: InputEntryFunctionData;
 
-    if (selectedCoin.balance.assetType.includes("::")) {
+    if (selectedCoin.balance.assetType.includes('::')) {
       innerPayload = {
-        function: "0x1::aptos_account::transfer_coins",
+        function: '0x1::aptos_account::transfer_coins',
         functionArguments: [
           recipient,
-          parseUnits(amount, selectedCoin.balance.metadata.decimals).toString(),
+          parseUnits(amount, selectedCoin.balance.metadata.decimals).toString()
         ],
-        typeArguments: [selectedCoin.balance.assetType],
+        typeArguments: [selectedCoin.balance.assetType]
       };
       transactionPayload = createMultisigTransactionPayloadData({
         vaultAddress,
         payload: {
           ...innerPayload,
-          abi: Abis["0x1::aptos_account::transfer_coins"],
-        },
+          abi: Abis['0x1::aptos_account::transfer_coins']
+        }
       });
     } else {
       innerPayload = {
-        function: "0x1::primary_fungible_store::transfer",
+        function: '0x1::primary_fungible_store::transfer',
         functionArguments: [
           selectedCoin.balance.assetType,
           recipient,
-          parseUnits(amount, selectedCoin.balance.metadata.decimals).toString(),
+          parseUnits(amount, selectedCoin.balance.metadata.decimals).toString()
         ],
-        typeArguments: ["0x1::fungible_asset::Metadata"],
+        typeArguments: ['0x1::fungible_asset::Metadata']
       };
       transactionPayload = createMultisigTransactionPayloadData({
         vaultAddress,
         payload: {
           ...innerPayload,
-          abi: Abis["0x1::primary_fungible_store::transfer"],
-        },
+          abi: Abis['0x1::primary_fungible_store::transfer']
+        }
       });
     }
 
@@ -160,26 +160,26 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
 
   const { data: simulationData } = useSimulateTransaction({
     data: innerPayload,
-    network: { network },
+    network: { network }
   });
 
   const { data: isPayloadValid, error: payloadError } = useQuery({
-    queryKey: ["is-payload-valid", simulationData?.hash],
+    queryKey: ['is-payload-valid', simulationData?.hash],
     queryFn: async () => {
       if (
         !selectedCoin ||
         !recipient ||
         !debouncedAmount ||
         !recipientAddress ||
-        debouncedAmount === ""
+        debouncedAmount === ''
       )
-        throw new Error("Please enter a valid recipient and amount");
+        throw new Error('Please enter a valid recipient and amount');
 
-      if (debouncedAmount === "0")
-        throw new Error("Amount must be greater than 0");
+      if (debouncedAmount === '0')
+        throw new Error('Amount must be greater than 0');
 
       if (!isNumber(debouncedAmount))
-        throw new Error("Amount is not a valid number");
+        throw new Error('Amount is not a valid number');
 
       if (
         Number(debouncedAmount) >
@@ -190,7 +190,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
           )
         )
       ) {
-        throw new Error("Insufficient balance to send");
+        throw new Error('Insufficient balance to send');
       }
 
       if (!simulationData?.success)
@@ -199,22 +199,22 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
       return true;
     },
     enabled: simulationData !== undefined,
-    retry: 0,
+    retry: 0
   });
 
   const { hash, signAndSubmitTransaction, isPending } =
     useSignAndSubmitTransaction({
       onSuccess: (data) => {
         if (!selectedCoin) return;
-        trackEvent("create_send_coins_proposal", {
+        trackEvent('create_send_coins_proposal', {
           hash: data.hash,
           asset: selectedCoin?.balance.assetType,
           asset_name: selectedCoin.balance.metadata.name,
           asset_symbol: selectedCoin.balance.metadata.symbol,
           amount: amount,
-          recipient: AccountAddress.from(recipient).toStringWithoutPrefix(),
+          recipient: AccountAddress.from(recipient).toStringWithoutPrefix()
         });
-      },
+      }
     });
 
   const { isSuccess } = useWaitForTransaction({ hash });
@@ -225,9 +225,9 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
   };
 
   const reset = () => {
-    setPage("recipient-and-amount");
-    setRecipient("");
-    setAmount("");
+    setPage('recipient-and-amount');
+    setRecipient('');
+    setAmount('');
     setSelectedCoin(coins?.[0]);
   };
 
@@ -244,7 +244,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Successfully created the transaction");
+      toast.success('Successfully created the transaction');
       queryClient.invalidateQueries();
       onClose?.();
       reset();
@@ -298,7 +298,11 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
               splitBy="characters"
               staggerDuration={0.025}
               staggerFrom="first"
-              transition={{ type: "spring", stiffness: 200, damping: 21 }}
+              transition={{
+                type: 'spring',
+                stiffness: 200,
+                damping: 21
+              }}
             >
               Send Coins
             </VerticalCutReveal>
@@ -308,7 +312,11 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
               splitBy="characters"
               staggerDuration={0.015}
               staggerFrom="first"
-              transition={{ type: "spring", stiffness: 200, damping: 21 }}
+              transition={{
+                type: 'spring',
+                stiffness: 200,
+                damping: 21
+              }}
             >
               Create a proposal to send coins to another wallet.
             </VerticalCutReveal>
@@ -316,7 +324,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
         </div>
 
         <ExpandingContainer className="p-6 pt-2">
-          {page === "recipient-and-amount" && (
+          {page === 'recipient-and-amount' && (
             <div className="h-full flex flex-col gap-4">
               <div className="flex flex-col gap-2 w-full">
                 <Label>Recipient</Label>
@@ -376,7 +384,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                         variant="outline"
                         className="w-fit px-4"
                         asChild
-                        onClick={() => setPage("select-coin")}
+                        onClick={() => setPage('select-coin')}
                       >
                         <div className="flex items-center gap-2">
                           <CoinAvatar coin={selectedCoin} className="w-4 h-4" />
@@ -397,7 +405,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                         {formatUnits(
                           BigInt(selectedCoin.balance.amount),
                           selectedCoin.balance.metadata.decimals
-                        ).toLocaleString()}{" "}
+                        ).toLocaleString()}{' '}
                         {selectedCoin.metadata?.symbol}
                       </button>
                     </div>
@@ -406,7 +414,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
               )}
 
               <Button
-                onClick={() => setPage("confirm")}
+                onClick={() => setPage('confirm')}
                 disabled={!recipient || !amount || !isPayloadValid}
                 data-testid="send-coins-review-draft-button"
               >
@@ -417,15 +425,27 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                 {payloadError && (
                   <motion.p
                     key={`payload-error-${payloadError.message}`}
-                    initial={{ opacity: 0, y: 5, filter: "blur(10px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: -10, filter: "blur(10px)" }}
+                    initial={{
+                      opacity: 0,
+                      y: 5,
+                      filter: 'blur(10px)'
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      filter: 'blur(0px)'
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: -10,
+                      filter: 'blur(10px)'
+                    }}
                     className="text-destructive-foreground text-center text-sm font-display"
                   >
                     {payloadError.message}
                   </motion.p>
                 )}
-                {recipient !== "" &&
+                {recipient !== '' &&
                   !simulationData?.hash &&
                   !recipientAddress && (
                     <motion.p
@@ -443,14 +463,14 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
             </div>
           )}
 
-          {page === "select-coin" && (
+          {page === 'select-coin' && (
             <div className="flex flex-col w-full items-center gap-4 min-h-96">
               <div className="flex items-center gap-2 w-full">
                 <Button
                   variant="secondary"
                   onClick={() => {
-                    setPage("recipient-and-amount");
-                    setSearch("");
+                    setPage('recipient-and-amount');
+                    setSearch('');
                   }}
                 >
                   <ArrowLeftIcon />
@@ -465,7 +485,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                 {(filteredCoins?.length ?? 0) > 0 ? (
                   filteredCoins
                     ?.filter((c) => {
-                      const formattedSearch = search?.toLowerCase() ?? "";
+                      const formattedSearch = search?.toLowerCase() ?? '';
                       return matchesSearch(c, formattedSearch);
                     })
                     .map((c) => (
@@ -478,8 +498,8 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                           className="border w-full px-4 py-2 rounded-md hover:bg-secondary cursor-pointer"
                           onClick={() => {
                             setSelectedCoin(c);
-                            setSearch("");
-                            setPage("recipient-and-amount");
+                            setSearch('');
+                            setPage('recipient-and-amount');
                           }}
                           role="option"
                         >
@@ -504,7 +524,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                                 {formatUnits(
                                   BigInt(c.balance.amount),
                                   c.balance.metadata.decimals
-                                )}{" "}
+                                )}{' '}
                                 {c.balance.metadata.symbol}
                               </span>
                               {c.price?.usd && (
@@ -532,7 +552,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
             </div>
           )}
 
-          {page === "confirm" &&
+          {page === 'confirm' &&
             innerPayload &&
             transactionPayload &&
             selectedCoin && (
@@ -581,7 +601,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setPage("recipient-and-amount")}
+                    onClick={() => setPage('recipient-and-amount')}
                   >
                     Back
                   </Button>

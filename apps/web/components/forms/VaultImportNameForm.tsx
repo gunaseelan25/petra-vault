@@ -1,25 +1,25 @@
-"use client";
-import { Input } from "../ui/input";
+'use client';
+import { Input } from '../ui/input';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Button } from "../ui/button";
-import { PropsWithChildren } from "react";
+  FormMessage
+} from '@/components/ui/form';
+import { Button } from '../ui/button';
+import { PropsWithChildren } from 'react';
 
 const formSchema = z.object({
   address: z.string(),
   name: z.string().min(2, {
-    message: "The name must be at least 2 characters.",
-  }),
+    message: 'The name must be at least 2 characters.'
+  })
 });
 
 interface VaultImportNameFormProps extends PropsWithChildren {
@@ -30,14 +30,14 @@ interface VaultImportNameFormProps extends PropsWithChildren {
 export default function VaultImportNameForm({
   address,
   onSubmit,
-  children,
+  children
 }: VaultImportNameFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       address,
-      name: "My Petra Vault",
-    },
+      name: 'My Petra Vault'
+    }
   });
 
   return (

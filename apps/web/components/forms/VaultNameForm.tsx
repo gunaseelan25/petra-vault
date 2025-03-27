@@ -1,23 +1,23 @@
-"use client";
-import { Input } from "../ui/input";
+'use client';
+import { Input } from '../ui/input';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Button } from "../ui/button";
+  FormMessage
+} from '@/components/ui/form';
+import { Button } from '../ui/button';
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "The name must be at least 2 characters.",
-  }),
+    message: 'The name must be at least 2 characters.'
+  })
 });
 
 interface VaultNameFormProps {
@@ -28,8 +28,8 @@ export default function VaultNameForm({ onSubmit }: VaultNameFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "My Petra Vault",
-    },
+      name: 'My Petra Vault'
+    }
   });
 
   return (

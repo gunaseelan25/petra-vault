@@ -1,6 +1,6 @@
-import { AccountAddressInput, Aptos, AptosConfig } from "@aptos-labs/ts-sdk";
-import { Page } from "@playwright/test";
-import WalletFixture from "./WalletFixture";
+import { AccountAddressInput, Aptos, AptosConfig } from '@aptos-labs/ts-sdk';
+import { Page } from '@playwright/test';
+import WalletFixture from './WalletFixture';
 
 export class AptosFixture {
   constructor(

@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 
-import { test as baseTest } from "@playwright/test";
-import { OnboardingFixture } from "./OnboardingFixture";
-import WalletFixture from "./WalletFixture";
-import { AptosFixture } from "./AptosFixture";
-import path from "path";
-import { NavigationFixture } from "./NavigationFixture";
-import { VaultFixture } from "./VaultFixture";
-import { ProposalFixture } from "./ProposalFixture";
+import { test as baseTest } from '@playwright/test';
+import { OnboardingFixture } from './OnboardingFixture';
+import WalletFixture from './WalletFixture';
+import { AptosFixture } from './AptosFixture';
+import path from 'path';
+import { NavigationFixture } from './NavigationFixture';
+import { VaultFixture } from './VaultFixture';
+import { ProposalFixture } from './ProposalFixture';
 
 export const test = baseTest.extend<{
   onboarding: OnboardingFixture;
@@ -34,13 +34,13 @@ export const test = baseTest.extend<{
   },
   proposal: async ({ page, navigation }, use) => {
     await use(new ProposalFixture(page, navigation));
-  },
+  }
 });
 
 test.beforeEach(async ({ page }) => {
   // IMPORTANT: When using `page.goto`, the script will reload causing a fresh set of wallet instances.
   // Please make sure to only call `page.goto` once for the duration of a single test.
   await page.addInitScript({
-    path: path.join(process.cwd(), "tests/lib/injection/build/index.global.js"),
+    path: path.join(process.cwd(), 'tests/lib/injection/build/index.global.js')
   });
 });

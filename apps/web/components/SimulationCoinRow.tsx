@@ -1,9 +1,9 @@
-import { useCoins } from "@/context/CoinsProvider";
-import { cn } from "@/lib/utils";
-import { formatUnits } from "@aptos-labs/js-pro";
-import { useFungibleAssetMetadata } from "@aptos-labs/react";
-import { useActiveVault } from "@/context/ActiveVaultProvider";
-import CoinAvatar from "./CoinAvatar";
+import { useCoins } from '@/context/CoinsProvider';
+import { cn } from '@/lib/utils';
+import { formatUnits } from '@aptos-labs/js-pro';
+import { useFungibleAssetMetadata } from '@aptos-labs/react';
+import { useActiveVault } from '@/context/ActiveVaultProvider';
+import CoinAvatar from './CoinAvatar';
 
 interface SimulationCoinRowProps {
   asset: string;
@@ -12,7 +12,7 @@ interface SimulationCoinRowProps {
 
 export default function SimulationCoinRow({
   asset,
-  delta,
+  delta
 }: SimulationCoinRowProps) {
   const { network } = useActiveVault();
 
@@ -27,7 +27,7 @@ export default function SimulationCoinRow({
   const { data: faMetadata } = useFungibleAssetMetadata({
     asset,
     network: { network },
-    enabled: coinMetadata === undefined,
+    enabled: coinMetadata === undefined
   });
 
   const metadata = {
@@ -35,7 +35,7 @@ export default function SimulationCoinRow({
     symbol: coinMetadata?.symbol ?? faMetadata?.symbol ?? undefined,
     logoUrl: coinMetadata?.logo_url ?? faMetadata?.iconUri ?? undefined,
     decimals: coinMetadata?.decimals ?? faMetadata?.decimals ?? 8,
-    price: coinPrice?.usd,
+    price: coinPrice?.usd
   };
 
   const formattedDelta = formatUnits(delta, metadata.decimals);
@@ -55,11 +55,11 @@ export default function SimulationCoinRow({
       <div className="flex flex-col items-end">
         <div
           className={cn(
-            "font-display",
-            delta > 0n ? "text-green-600" : "text-red-600"
+            'font-display',
+            delta > 0n ? 'text-green-600' : 'text-red-600'
           )}
         >
-          {delta > 0n ? "+" : ""}
+          {delta > 0n ? '+' : ''}
           {formatUnits(delta, metadata.decimals)} {metadata.symbol}
         </div>
         <div className="text-xs text-muted-foreground">

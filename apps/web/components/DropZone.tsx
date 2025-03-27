@@ -1,8 +1,8 @@
-import { useDropzone } from "react-dropzone";
-import { Button } from "./ui/button";
-import { FileIcon, UploadIcon } from "@radix-ui/react-icons";
-import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "motion/react";
+import { useDropzone } from 'react-dropzone';
+import { Button } from './ui/button';
+import { FileIcon, UploadIcon } from '@radix-ui/react-icons';
+import { cn } from '@/lib/utils';
+import { AnimatePresence, motion } from 'motion/react';
 
 interface DropZoneProps {
   onFileUpload: (file: File) => void;
@@ -17,7 +17,7 @@ export default function DropZone({
   title,
   description,
   className,
-  disabled,
+  disabled
 }: DropZoneProps) {
   const {
     acceptedFiles,
@@ -25,14 +25,14 @@ export default function DropZone({
     isFocused,
     isDragActive,
     getInputProps,
-    isDragReject,
+    isDragReject
   } = useDropzone({
     multiple: false,
-    accept: { "application/json": [".json"] },
+    accept: { 'application/json': ['.json'] },
     onDropAccepted: (acceptedFiles) => {
       onFileUpload(acceptedFiles[0]!);
     },
-    disabled,
+    disabled
   });
 
   const hasFile = acceptedFiles.length > 0 && acceptedFiles[0];
@@ -41,8 +41,8 @@ export default function DropZone({
     <div
       {...getRootProps()}
       className={cn(
-        "flex flex-col items-center justify-center border border-dashed rounded-md p-4 py-8 gap-4 bg-secondary/20 transition-all",
-        (isFocused || isDragActive) && "border-primary",
+        'flex flex-col items-center justify-center border border-dashed rounded-md p-4 py-8 gap-4 bg-secondary/20 transition-all',
+        (isFocused || isDragActive) && 'border-primary',
         className
       )}
     >
@@ -57,9 +57,9 @@ export default function DropZone({
         {hasFile ? (
           <motion.div
             key={`has-file-${acceptedFiles[0]!.name}`}
-            initial={{ opacity: 0, y: 5, filter: "blur(4px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -5, filter: "blur(4px)" }}
+            initial={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -5, filter: 'blur(4px)' }}
             transition={{ duration: 0.2 }}
           >
             <Button variant="outline" size="lg" disabled={disabled}>
@@ -70,14 +70,14 @@ export default function DropZone({
         ) : (
           <motion.div
             key="no-file"
-            initial={{ opacity: 0, y: 5, filter: "blur(4px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -5, filter: "blur(4px)" }}
+            initial={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -5, filter: 'blur(4px)' }}
             transition={{ duration: 0.2 }}
           >
             <Button size="lg" disabled={disabled}>
               <UploadIcon />
-              {hasFile ? "Replace JSON" : "Upload JSON"}
+              {hasFile ? 'Replace JSON' : 'Upload JSON'}
             </Button>
           </motion.div>
         )}

@@ -1,49 +1,49 @@
-"use client";
+'use client';
 
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "./ui/card";
-import { isAddress } from "@/lib/address";
-import { Button } from "./ui/button";
-import Link from "next/link";
-import useMultisigPendingTransactions from "@/hooks/useMultisigPendingTransactions";
-import useMultisigSequenceNumber from "@/hooks/useMultisigSequenceNumber";
-import { useResourceType } from "@aptos-labs/react";
-import { useActiveVault } from "@/context/ActiveVaultProvider";
-import { PendingTransactionRow } from "./PendingTransactionRow";
-import { hasWindow } from "@/lib/utils";
-import { AnimatePresence, motion } from "motion/react";
+  CardTitle
+} from './ui/card';
+import { isAddress } from '@/lib/address';
+import { Button } from './ui/button';
+import Link from 'next/link';
+import useMultisigPendingTransactions from '@/hooks/useMultisigPendingTransactions';
+import useMultisigSequenceNumber from '@/hooks/useMultisigSequenceNumber';
+import { useResourceType } from '@aptos-labs/react';
+import { useActiveVault } from '@/context/ActiveVaultProvider';
+import { PendingTransactionRow } from './PendingTransactionRow';
+import { hasWindow } from '@/lib/utils';
+import { AnimatePresence, motion } from 'motion/react';
 
 export default function VaultDetailsPendingTransactions() {
   const { vaultAddress, network, id } = useActiveVault();
 
   const { isError } = useResourceType({
     accountAddress: vaultAddress,
-    resourceType: "0x1::multisig_account::MultisigAccount",
+    resourceType: '0x1::multisig_account::MultisigAccount',
     network: { network },
-    retry: 0,
+    retry: 0
   });
 
   const { data: pendingTransactions, isLoading: isPendingTransactionsLoading } =
     useMultisigPendingTransactions({
       address: vaultAddress,
       network: { network },
-      refetchInterval: 10 * 1000,
+      refetchInterval: 10 * 1000
     });
 
   const { data: sequenceNumber, isLoading: isSequenceNumberLoading } =
     useMultisigSequenceNumber({
       address: vaultAddress,
-      network: { network },
+      network: { network }
     });
 
   const isLoading =
     isPendingTransactionsLoading || isSequenceNumberLoading || !hasWindow();
-    
+
   const isEmpty =
     !pendingTransactions?.[0] ||
     sequenceNumber === undefined ||
@@ -109,7 +109,7 @@ export default function VaultDetailsPendingTransactions() {
                 <CardTitle>Pending Transactions</CardTitle>
                 <CardDescription>
                   {pendingTransactions?.length} transaction
-                  {pendingTransactions?.length !== 1 ? "s" : ""} pending
+                  {pendingTransactions?.length !== 1 ? 's' : ''} pending
                 </CardDescription>
               </div>
               <Button asChild>
@@ -127,7 +127,10 @@ export default function VaultDetailsPendingTransactions() {
                       key={proposalSequenceNumber}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2, delay: index * 0.1 }}
+                      transition={{
+                        duration: 0.2,
+                        delay: index * 0.1
+                      }}
                       data-testid={`pending-transaction-${proposalSequenceNumber}`}
                     >
                       <Link

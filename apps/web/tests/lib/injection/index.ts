@@ -1,6 +1,6 @@
-import { MockPetraTransport } from "./MockPetraTransport";
-import { MockPetraWallet } from "./MockPetraWallet";
-import { registerWallet } from "@aptos-labs/wallet-standard";
+import { MockPetraTransport } from './MockPetraTransport';
+import { MockPetraWallet } from './MockPetraWallet';
+import { registerWallet } from '@aptos-labs/wallet-standard';
 
 declare global {
   interface Window {

@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { useOnboarding } from "@/context/OnboardingProvider";
-import OnboardingAddOrImport from "@/components/OnboardingAddOrImport";
-import VerticalCutReveal from "@/components/ui/vertical-cut-reveal";
-import { Button } from "@/components/ui/button";
-import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import OnboardingImportSetName from "@/components/OnboardingImportSetName";
-import OnboardingSetConfig from "@/components/OnboardingSetConfig";
-import OnboardingReview from "@/components/OnboardingReview";
+import { useOnboarding } from '@/context/OnboardingProvider';
+import OnboardingAddOrImport from '@/components/OnboardingAddOrImport';
+import VerticalCutReveal from '@/components/ui/vertical-cut-reveal';
+import { Button } from '@/components/ui/button';
+import { ArrowLeftIcon } from '@radix-ui/react-icons';
+import OnboardingImportSetName from '@/components/OnboardingImportSetName';
+import OnboardingSetConfig from '@/components/OnboardingSetConfig';
+import OnboardingReview from '@/components/OnboardingReview';
 export default function OnboardingPage() {
   const { page } = useOnboarding();
 
   const goBackRoutes = {
-    "set-name": "add-or-import",
-    "set-config": "add-or-import",
-    review: "set-config",
-    "not-found": "add-or-import",
+    'set-name': 'add-or-import',
+    'set-config': 'add-or-import',
+    review: 'set-config',
+    'not-found': 'add-or-import'
   } as const;
 
   return (
@@ -27,9 +27,9 @@ export default function OnboardingPage() {
             staggerDuration={0.02}
             staggerFrom="first"
             transition={{
-              type: "spring",
+              type: 'spring',
               stiffness: 200,
-              damping: 21,
+              damping: 21
             }}
           >
             Welcome to Petra Vault
@@ -41,9 +41,9 @@ export default function OnboardingPage() {
             staggerDuration={0.02}
             staggerFrom="first"
             transition={{
-              type: "spring",
+              type: 'spring',
               stiffness: 200,
-              damping: 21,
+              damping: 21
             }}
           >
             Create or import a vault to get started
@@ -52,13 +52,13 @@ export default function OnboardingPage() {
         <br />
 
         <div className="w-full">
-          {page.current === "add-or-import" ? (
+          {page.current === 'add-or-import' ? (
             <OnboardingAddOrImport key="add-or-import" />
-          ) : page.current === "set-name" ? (
+          ) : page.current === 'set-name' ? (
             <OnboardingImportSetName key="set-name" />
-          ) : page.current === "set-config" ? (
+          ) : page.current === 'set-config' ? (
             <OnboardingSetConfig key="set-config" />
-          ) : page.current === "review" ? (
+          ) : page.current === 'review' ? (
             <OnboardingReview key="review" />
           ) : (
             <div>

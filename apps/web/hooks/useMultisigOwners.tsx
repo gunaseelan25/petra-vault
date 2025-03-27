@@ -1,13 +1,13 @@
-import { ModuleViewReturnType } from "@/lib/types/modules";
-import { useViewModule, UseViewModuleParameters } from "@aptos-labs/react";
-import { AccountAddress } from "@aptos-labs/ts-sdk";
+import { ModuleViewReturnType } from '@/lib/types/modules';
+import { useViewModule, UseViewModuleParameters } from '@aptos-labs/react';
+import { AccountAddress } from '@aptos-labs/ts-sdk';
 
 export interface UseMultisigOwnersOptions
   extends Omit<
     UseViewModuleParameters<
-      ModuleViewReturnType<"0x1::multisig_account::owners">
+      ModuleViewReturnType<'0x1::multisig_account::owners'>
     >,
-    "payload"
+    'payload'
   > {
   address: string;
 }
@@ -17,16 +17,16 @@ export default function useMultisigPendingTransactions({
   ...options
 }: UseMultisigOwnersOptions) {
   const { data, ...query } = useViewModule<
-    ModuleViewReturnType<"0x1::multisig_account::owners">
+    ModuleViewReturnType<'0x1::multisig_account::owners'>
   >({
     payload: {
-      function: "0x1::multisig_account::owners",
-      functionArguments: [address],
+      function: '0x1::multisig_account::owners',
+      functionArguments: [address]
     },
-    ...options,
+    ...options
   });
   return {
     data: data?.at(0)?.map((e) => AccountAddress.from(e).toString()),
-    ...query,
+    ...query
   };
 }

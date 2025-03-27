@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { useVaults } from "@/context/useVaults";
-import Link from "next/link";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import VerticalCutReveal from "@/components/ui/vertical-cut-reveal";
-import VaultRow from "@/components/VaultRow";
-import { LoadingSpinner } from "@/components/LoaderSpinner";
-import { motion } from "motion/react";
+import { Button } from '@/components/ui/button';
+import { useVaults } from '@/context/useVaults';
+import Link from 'next/link';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import VerticalCutReveal from '@/components/ui/vertical-cut-reveal';
+import VaultRow from '@/components/VaultRow';
+import { LoadingSpinner } from '@/components/LoaderSpinner';
+import { motion } from 'motion/react';
 
 export default function Home() {
   const { vaults, hasHydrated } = useVaults();
@@ -16,7 +16,7 @@ export default function Home() {
 
   useEffect(() => {
     if (hasHydrated && vaults && vaults.length === 0) {
-      router.push("/onboarding");
+      router.push('/onboarding');
     }
   }, [vaults, router, hasHydrated]);
 
@@ -47,7 +47,11 @@ export default function Home() {
             splitBy="characters"
             staggerDuration={0.02}
             staggerFrom="first"
-            transition={{ type: "spring", stiffness: 200, damping: 21 }}
+            transition={{
+              type: 'spring',
+              stiffness: 200,
+              damping: 21
+            }}
           >
             My Petra Vaults
           </VerticalCutReveal>
@@ -58,9 +62,9 @@ export default function Home() {
             staggerDuration={0.02}
             staggerFrom="first"
             transition={{
-              type: "spring",
+              type: 'spring',
               stiffness: 200,
-              damping: 21,
+              damping: 21
             }}
           >
             Select one of your vaults to continue
@@ -81,7 +85,10 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: vaults.length * 0.1 }}
+            transition={{
+              duration: 0.3,
+              delay: vaults.length * 0.1
+            }}
           >
             <Button
               asChild

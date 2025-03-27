@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  CardTitle
+} from '@/components/ui/card';
 
-import { useVaults } from "@/context/useVaults";
-import { DownloadIcon } from "@radix-ui/react-icons";
-import CodeBlock from "@/components/CodeBlock";
-import { jsonStringify } from "@/lib/storage";
-import CopyButton from "@/components/CopyButton";
-import useAnalytics from "@/hooks/useAnalytics";
+import { useVaults } from '@/context/useVaults';
+import { DownloadIcon } from '@radix-ui/react-icons';
+import CodeBlock from '@/components/CodeBlock';
+import { jsonStringify } from '@/lib/storage';
+import CopyButton from '@/components/CopyButton';
+import useAnalytics from '@/hooks/useAnalytics';
 export default function ExportSettingsPage() {
   const trackEvent = useAnalytics();
   const { vaults } = useVaults();
@@ -50,7 +50,7 @@ export default function ExportSettingsPage() {
                 asChild
                 data-testid="export-vaults-button"
                 onClick={() => {
-                  trackEvent("download_backup_file", {});
+                  trackEvent('download_backup_file', {});
                 }}
               >
                 <a

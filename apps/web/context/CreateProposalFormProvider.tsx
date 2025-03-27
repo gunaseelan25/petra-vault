@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import constate from "constate";
-import { EntryFunctionABI } from "@aptos-labs/ts-sdk";
+import { useState } from 'react';
+import constate from 'constate';
+import { EntryFunctionABI } from '@aptos-labs/ts-sdk';
 
 export const [CreateProposalFormProvider, useCreateProposalForm] = constate(
   () => {
@@ -21,10 +21,10 @@ export const [CreateProposalFormProvider, useCreateProposalForm] = constate(
       entryFunction: { set: setEntryFunction, value: entryFunction },
       functionArguments: {
         set: setFunctionArguments,
-        value: functionArguments,
+        value: functionArguments
       },
       typeArguments: { set: setTypeArguments, value: typeArguments },
-      isFormValid: { set: setIsFormValid, value: isFormValid },
+      isFormValid: { set: setIsFormValid, value: isFormValid }
     };
   }
 );

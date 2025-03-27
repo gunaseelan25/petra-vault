@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { ExecutionEvent } from "@/hooks/useMultisigExecutionEvents";
-import { getEntryFunctionDisplayName } from "@/lib/displayNames";
+import { ExecutionEvent } from '@/hooks/useMultisigExecutionEvents';
+import { getEntryFunctionDisplayName } from '@/lib/displayNames';
 import {
   EntryFunctionPayloadResponse,
   MultisigPayloadResponse,
   Network,
-  UserTransactionResponse,
-} from "@aptos-labs/ts-sdk";
+  UserTransactionResponse
+} from '@aptos-labs/ts-sdk';
 import {
   CheckCircledIcon,
   CheckIcon,
@@ -15,15 +15,15 @@ import {
   CrossCircledIcon,
   ExclamationTriangleIcon,
   ExternalLinkIcon,
-  GlobeIcon,
-} from "@radix-ui/react-icons";
-import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
-import { useMemo } from "react";
-import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
-import { getExplorerUrl } from "@aptos-labs/js-pro";
-import { Button } from "./ui/button";
-import { AptosAvatar } from "aptos-avatars-react";
+  GlobeIcon
+} from '@radix-ui/react-icons';
+import { motion } from 'motion/react';
+import { cn } from '@/lib/utils';
+import { useMemo } from 'react';
+import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
+import { getExplorerUrl } from '@aptos-labs/js-pro';
+import { Button } from './ui/button';
+import { AptosAvatar } from 'aptos-avatars-react';
 
 interface TransactionRowProps {
   transaction: UserTransactionResponse;
@@ -34,40 +34,40 @@ interface TransactionRowProps {
 export default function TransactionRow({
   transaction,
   network,
-  executionEvent,
+  executionEvent
 }: TransactionRowProps) {
   let transactionPayload: EntryFunctionPayloadResponse | undefined;
 
-  if (transaction.payload.type === "entry_function_payload") {
+  if (transaction.payload.type === 'entry_function_payload') {
     transactionPayload = transaction.payload as EntryFunctionPayloadResponse;
   }
 
-  if (transaction.payload.type === "multisig_payload") {
+  if (transaction.payload.type === 'multisig_payload') {
     transactionPayload = (transaction.payload as MultisigPayloadResponse)
       .transaction_payload;
   }
 
   const statusTextColor = useMemo(() => {
-    if (executionEvent?.type === "success") return "text-green-700";
-    if (executionEvent?.type === "failed") return "text-yellow-700";
-    if (executionEvent?.type === "rejected")
-      return "text-destructive-foreground";
-    return "text-muted-foreground";
+    if (executionEvent?.type === 'success') return 'text-green-700';
+    if (executionEvent?.type === 'failed') return 'text-yellow-700';
+    if (executionEvent?.type === 'rejected')
+      return 'text-destructive-foreground';
+    return 'text-muted-foreground';
   }, [executionEvent]);
 
   const statusBackgroundColor = useMemo(() => {
-    if (executionEvent?.type === "success") return "bg-green-500/20";
-    if (executionEvent?.type === "failed") return "bg-yellow-500/20";
-    if (executionEvent?.type === "rejected") return "bg-destructive/20";
-    return "bg-accent";
+    if (executionEvent?.type === 'success') return 'bg-green-500/20';
+    if (executionEvent?.type === 'failed') return 'bg-yellow-500/20';
+    if (executionEvent?.type === 'rejected') return 'bg-destructive/20';
+    return 'bg-accent';
   }, [executionEvent]);
 
   const statusIcon = useMemo(() => {
-    if (executionEvent?.type === "success")
+    if (executionEvent?.type === 'success')
       return <CheckIcon className="size-4" />;
-    if (executionEvent?.type === "failed")
+    if (executionEvent?.type === 'failed')
       return <ExclamationTriangleIcon className="size-4" />;
-    if (executionEvent?.type === "rejected")
+    if (executionEvent?.type === 'rejected')
       return <Cross1Icon className="size-4" />;
     return <GlobeIcon className="size-4" />;
   }, [executionEvent]);
@@ -78,7 +78,7 @@ export default function TransactionRow({
     <motion.div className="flex items-center w-full p-2 px-4 rounded-md">
       <div
         className={cn(
-          "flex p-2 items-center justify-between rounded-full",
+          'flex p-2 items-center justify-between rounded-full',
           statusBackgroundColor,
           statusTextColor
         )}
@@ -87,7 +87,7 @@ export default function TransactionRow({
       </div>
 
       <div className="px-4 py-1">
-        <p className={cn("text-sm font-display font-semibold")}>
+        <p className={cn('text-sm font-display font-semibold')}>
           {getEntryFunctionDisplayName(transactionPayload.function)}
         </p>
         <p className="text-xs text-muted-foreground">
@@ -114,7 +114,7 @@ export default function TransactionRow({
             <a
               href={getExplorerUrl({
                 network: network,
-                path: `txn/${transaction.version}`,
+                path: `txn/${transaction.version}`
               })}
               target="_blank"
               rel="noopener noreferrer"

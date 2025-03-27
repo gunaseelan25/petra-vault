@@ -1,6 +1,6 @@
-import { ModuleViewReturnType } from "@/lib/types/modules";
-import { useViewModule, UseViewModuleParameters } from "@aptos-labs/react";
-import { AccountAddress } from "@aptos-labs/ts-sdk";
+import { ModuleViewReturnType } from '@/lib/types/modules';
+import { useViewModule, UseViewModuleParameters } from '@aptos-labs/react';
+import { AccountAddress } from '@aptos-labs/ts-sdk';
 
 export interface PendingMultisigTransaction {
   payload?: string;
@@ -14,9 +14,9 @@ export interface PendingMultisigTransaction {
 export interface UseMultisigPendingTransactionsOptions
   extends Omit<
     UseViewModuleParameters<
-      ModuleViewReturnType<"0x1::multisig_account::get_pending_transactions">
+      ModuleViewReturnType<'0x1::multisig_account::get_pending_transactions'>
     >,
-    "payload"
+    'payload'
   > {
   address: string;
 }
@@ -26,13 +26,13 @@ export default function useMultisigPendingTransactions({
   ...options
 }: UseMultisigPendingTransactionsOptions) {
   const { data, ...query } = useViewModule<
-    ModuleViewReturnType<"0x1::multisig_account::get_pending_transactions">
+    ModuleViewReturnType<'0x1::multisig_account::get_pending_transactions'>
   >({
     payload: {
-      function: "0x1::multisig_account::get_pending_transactions",
-      functionArguments: [address],
+      function: '0x1::multisig_account::get_pending_transactions',
+      functionArguments: [address]
     },
-    ...options,
+    ...options
   });
 
   return {
@@ -57,9 +57,9 @@ export default function useMultisigPendingTransactions({
               rejections: AccountAddress[];
             }
           ),
-          creation: new Date(Number(e.creation_time_secs) * 1000),
+          creation: new Date(Number(e.creation_time_secs) * 1000)
         }) satisfies PendingMultisigTransaction
     ),
-    ...query,
+    ...query
   };
 }

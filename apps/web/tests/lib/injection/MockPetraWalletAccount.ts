@@ -2,13 +2,13 @@ import {
   AccountAddress,
   Ed25519PublicKey,
   PublicKey,
-  SigningScheme,
-} from "@aptos-labs/ts-sdk";
+  SigningScheme
+} from '@aptos-labs/ts-sdk';
 import {
   AccountInfo,
   APTOS_CHAINS,
-  AptosWalletAccount,
-} from "@aptos-labs/wallet-standard";
+  AptosWalletAccount
+} from '@aptos-labs/wallet-standard';
 
 export default class MockPetraWalletAccount implements AptosWalletAccount {
   readonly chains = APTOS_CHAINS;
@@ -25,7 +25,7 @@ export default class MockPetraWalletAccount implements AptosWalletAccount {
     if (this.#publicKey instanceof Ed25519PublicKey) {
       return SigningScheme.Ed25519;
     }
-    throw new Error("Unsupported public key type");
+    throw new Error('Unsupported public key type');
   }
 
   readonly label?: string;

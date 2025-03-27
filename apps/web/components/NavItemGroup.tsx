@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
-import { motion } from "motion/react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
+  SidebarMenuItem
+} from '@/components/ui/sidebar';
+import { cn } from '@/lib/utils';
+import { motion } from 'motion/react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import React from 'react';
 
 interface NavItemGroupProps {
   title?: string;
   className?: string;
-  size?: "sm" | "lg";
+  size?: 'sm' | 'lg';
   items: {
     name: string;
     url?: string;
@@ -31,13 +31,13 @@ export function NavItemGroup({
   title,
   items,
   className,
-  size,
+  size
 }: NavItemGroupProps) {
   const pathname = usePathname();
 
   return (
     <SidebarGroup
-      className={cn("group-data-[collapsible=icon]:hidden", className)}
+      className={cn('group-data-[collapsible=icon]:hidden', className)}
     >
       {title && <SidebarGroupLabel className="z-10">{title}</SidebarGroupLabel>}
       <SidebarMenu>
@@ -53,9 +53,9 @@ export function NavItemGroup({
                   className="absolute left-0 right-0 top-0 bottom-0 inset-0 bg-accent/80 z-0 rounded-md"
                   transition={{
                     duration: 0.2,
-                    type: "spring",
+                    type: 'spring',
                     damping: 31,
-                    stiffness: 200,
+                    stiffness: 200
                   }}
                 />
               )}
@@ -64,12 +64,12 @@ export function NavItemGroup({
                 disabled={!item.url || item.disabled}
                 size={size}
                 className={
-                  isActive ? "hover:!bg-transparent" : "hover:!bg-accent/40"
+                  isActive ? 'hover:!bg-transparent' : 'hover:!bg-accent/40'
                 }
                 data-testid={`nav-item-${item.name.toLowerCase()}`}
               >
                 <Link
-                  href={item.url ?? "/"}
+                  href={item.url ?? '/'}
                   className="relative flex z-10"
                   target={item.target}
                 >

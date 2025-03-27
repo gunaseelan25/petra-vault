@@ -1,7 +1,7 @@
-import { useActiveVault } from "@/context/ActiveVaultProvider";
-import { useVaults } from "@/context/useVaults";
-import { AccountAddress } from "@aptos-labs/ts-sdk";
-import { useEffect } from "react";
+import { useActiveVault } from '@/context/ActiveVaultProvider';
+import { useVaults } from '@/context/useVaults';
+import { AccountAddress } from '@aptos-labs/ts-sdk';
+import { useEffect } from 'react';
 
 export default function BackgroundSyncVault() {
   const { vault, owners, signaturesRequired } = useActiveVault();
@@ -24,9 +24,9 @@ export default function BackgroundSyncVault() {
             name:
               vault.signers.find((signer) =>
                 signer.address.equals(AccountAddress.from(owner))
-              )?.name || `Owner ${index + 1}`,
+              )?.name || `Owner ${index + 1}`
           })),
-          signaturesRequired: signaturesRequired.data,
+          signaturesRequired: signaturesRequired.data
         });
       }
     }

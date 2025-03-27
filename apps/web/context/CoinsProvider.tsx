@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useAccountCoins } from "@aptos-labs/react";
-import constate from "constate";
-import { useActiveVault } from "./ActiveVaultProvider";
-import { CoinMetadata, usePetraCoinsList } from "@/hooks/usePetraCoinsList";
-import { useMemo } from "react";
-import { usePetraCoinsPrices } from "@/hooks/usePetraPrices";
-import { formatUnits, FungibleAssetBalance } from "@aptos-labs/js-pro";
-import { hasWindow } from "@/lib/utils";
+import { useAccountCoins } from '@aptos-labs/react';
+import constate from 'constate';
+import { useActiveVault } from './ActiveVaultProvider';
+import { CoinMetadata, usePetraCoinsList } from '@/hooks/usePetraCoinsList';
+import { useMemo } from 'react';
+import { usePetraCoinsPrices } from '@/hooks/usePetraPrices';
+import { formatUnits, FungibleAssetBalance } from '@aptos-labs/js-pro';
+import { hasWindow } from '@/lib/utils';
 
 export interface ProcessedCoin {
   balance: FungibleAssetBalance;
@@ -24,7 +24,7 @@ export const [CoinsProvider, useCoins] = constate(() => {
       network: { network },
       where: { amount: { _gt: 0 } },
       refetchInterval: 15000,
-      enabled: hasWindow(),
+      enabled: hasWindow()
     });
 
   const { data: coinMetadataList, isLoading: isLoadingCoinMetadataList } =
@@ -40,8 +40,8 @@ export const [CoinsProvider, useCoins] = constate(() => {
 
     const filteredBalances = balances.filter((e) => {
       if (
-        e.assetType !== "0x1::aptos_coin::AptosCoin" &&
-        (e.metadata.name === "Aptos Coin" || e.metadata.symbol === "APT")
+        e.assetType !== '0x1::aptos_coin::AptosCoin' &&
+        (e.metadata.name === 'Aptos Coin' || e.metadata.symbol === 'APT')
       ) {
         // Filter out any APT scam coins
         return false;

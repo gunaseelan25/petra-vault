@@ -2,12 +2,12 @@ import {
   AccountAddress,
   AccountAddressInput,
   Ed25519Account,
-  Network,
-} from "@aptos-labs/ts-sdk";
-import { Page } from "@playwright/test";
-import { AptosFixture } from "./AptosFixture";
-import { NavigationFixture } from "./NavigationFixture";
-import path from "path";
+  Network
+} from '@aptos-labs/ts-sdk';
+import { Page } from '@playwright/test';
+import { AptosFixture } from './AptosFixture';
+import { NavigationFixture } from './NavigationFixture';
+import path from 'path';
 
 export class VaultFixture {
   constructor(
@@ -17,9 +17,9 @@ export class VaultFixture {
   ) {}
 
   async getVaultAddress() {
-    await this.navigation.navigateTo("home");
+    await this.navigation.navigateTo('home');
 
-    await this.page.getByTestId("vault-address").click();
+    await this.page.getByTestId('vault-address').click();
 
     return this.page.evaluate(() => navigator.clipboard.readText());
   }
@@ -28,7 +28,7 @@ export class VaultFixture {
     owners: Ed25519Account[],
     signaturesRequired: number
   ) {
-    await this.navigation.navigateTo("settings");
+    await this.navigation.navigateTo('settings');
 
     for (const account of owners) {
       await this.page
@@ -44,7 +44,7 @@ export class VaultFixture {
   async verifyVaultsExists(
     vaults: { address: AccountAddressInput; network: Network }[]
   ) {
-    await this.page.getByTestId("nav-vaults-dropdown-menu-trigger").click();
+    await this.page.getByTestId('nav-vaults-dropdown-menu-trigger').click();
 
     for (const vault of vaults) {
       await this.page
@@ -54,19 +54,19 @@ export class VaultFixture {
   }
 
   async deleteVault() {
-    await this.navigation.navigateTo("settings");
+    await this.navigation.navigateTo('settings');
 
-    await this.page.getByTestId("delete-vault-button").click();
+    await this.page.getByTestId('delete-vault-button').click();
 
-    await this.page.getByTestId("confirm-delete-vault-button").click();
+    await this.page.getByTestId('confirm-delete-vault-button').click();
   }
 
   async downloadVaultsJSON(): Promise<string> {
-    await this.navigation.navigateToSettingsTab("export");
+    await this.navigation.navigateToSettingsTab('export');
 
-    const downloadPromise = this.page.waitForEvent("download");
+    const downloadPromise = this.page.waitForEvent('download');
 
-    await this.page.getByTestId("export-vaults-button").click();
+    await this.page.getByTestId('export-vaults-button').click();
 
     const download = await downloadPromise;
 

@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import TransactionRow from "@/components/TransactionRow";
-import { Skeleton } from "@/components/ui/skeleton";
-import VaultDetailsPendingTransactions from "@/components/VaultDetailsPendingTransactions";
-import { useActiveVault } from "@/context/ActiveVaultProvider";
-import useMultisigExecutionEvents from "@/hooks/useMultisigExecutionEvents";
-import { hasWindow } from "@/lib/utils";
-import { motion, AnimatePresence } from "motion/react";
-import { useMemo } from "react";
+import TransactionRow from '@/components/TransactionRow';
+import { Skeleton } from '@/components/ui/skeleton';
+import VaultDetailsPendingTransactions from '@/components/VaultDetailsPendingTransactions';
+import { useActiveVault } from '@/context/ActiveVaultProvider';
+import useMultisigExecutionEvents from '@/hooks/useMultisigExecutionEvents';
+import { hasWindow } from '@/lib/utils';
+import { motion, AnimatePresence } from 'motion/react';
+import { useMemo } from 'react';
 
 export default function VaultTransactionsPage() {
   const { vaultAddress, network, isOwner } = useActiveVault();
   const { data: executionEvents, isLoading } = useMultisigExecutionEvents({
     address: vaultAddress,
     network: { network },
-    refetchInterval: 10000,
+    refetchInterval: 10000
   });
 
   const groupedTransactions = useMemo(() => {
@@ -40,7 +40,7 @@ export default function VaultTransactionsPage() {
       const date = new Date(
         Math.floor(Number(event.transaction.timestamp) / 1000)
       );
-      const monthYear = `${date.toLocaleString("default", { month: "long" })} ${date.getFullYear()}`;
+      const monthYear = `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
 
       if (!groupedByMonth[monthYear]) {
         groupedByMonth[monthYear] = [];
@@ -122,12 +122,18 @@ export default function VaultTransactionsPage() {
                       return (
                         <motion.div
                           key={event.version}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
+                          initial={{
+                            opacity: 0,
+                            y: 20
+                          }}
+                          animate={{
+                            opacity: 1,
+                            y: 0
+                          }}
                           transition={{
                             duration: 0.3,
                             delay: Math.min(index * 0.05, 0.6),
-                            ease: "easeOut",
+                            ease: 'easeOut'
                           }}
                         >
                           <TransactionRow

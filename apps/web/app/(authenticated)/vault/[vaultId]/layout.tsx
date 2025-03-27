@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { CoinsProvider } from "@/context/CoinsProvider";
-import { ActiveVaultProvider } from "@/context/ActiveVaultProvider";
-import { parseVaultId } from "@/lib/vaults";
-import { useParams } from "next/navigation";
-import BackgroundSyncVault from "@/components/background/BackgroundSyncVault";
-import Banner from "@/components/Banner";
+import { CoinsProvider } from '@/context/CoinsProvider';
+import { ActiveVaultProvider } from '@/context/ActiveVaultProvider';
+import { parseVaultId } from '@/lib/vaults';
+import { useParams } from 'next/navigation';
+import BackgroundSyncVault from '@/components/background/BackgroundSyncVault';
+import Banner from '@/components/Banner';
 
 export default function VaultLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {

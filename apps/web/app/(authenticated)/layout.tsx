@@ -1,8 +1,8 @@
-import { PropsWithChildren } from "react";
-import AuthenticationGuard from "@/components/AuthenticationGuard";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
-import { SiteHeader } from "@/components/SiteHeader";
+import { PropsWithChildren } from 'react';
+import AuthenticationGuard from '@/components/AuthenticationGuard';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
+import { SiteHeader } from '@/components/SiteHeader';
 
 export default function AuthenticatedLayout({ children }: PropsWithChildren) {
   return (

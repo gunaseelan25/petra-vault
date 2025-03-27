@@ -1,12 +1,12 @@
-import { expect } from "@playwright/test";
-import { test } from "./fixtures";
+import { expect } from '@playwright/test';
+import { test } from './fixtures';
 import {
   AccountAddressInput,
   Ed25519Account,
-  Network,
-} from "@aptos-labs/ts-sdk";
+  Network
+} from '@aptos-labs/ts-sdk';
 
-test("create a new vault", async ({ onboarding }) => {
+test('create a new vault', async ({ onboarding }) => {
   const alice = Ed25519Account.generate();
 
   await onboarding.connectWallet(alice, Network.DEVNET);
@@ -14,7 +14,7 @@ test("create a new vault", async ({ onboarding }) => {
   await onboarding.createNewVault([alice]);
 });
 
-test("create two vaults", async ({ onboarding, navigation, wallet, vault }) => {
+test('create two vaults', async ({ onboarding, navigation, wallet, vault }) => {
   const alice = Ed25519Account.generate();
   const vaultAddresses: AccountAddressInput[] = [];
 
@@ -37,7 +37,7 @@ test("create two vaults", async ({ onboarding, navigation, wallet, vault }) => {
   );
 });
 
-test("create a new vault with a second owner", async ({ onboarding }) => {
+test('create a new vault with a second owner', async ({ onboarding }) => {
   const alice = Ed25519Account.generate();
   const bob = Ed25519Account.generate();
 
@@ -46,8 +46,8 @@ test("create a new vault with a second owner", async ({ onboarding }) => {
   await onboarding.createNewVault([alice, bob], 1);
 });
 
-test("create a new vault with a second owner with two signatures required", async ({
-  onboarding,
+test('create a new vault with a second owner with two signatures required', async ({
+  onboarding
 }) => {
   const alice = Ed25519Account.generate();
   const bob = Ed25519Account.generate();
@@ -57,10 +57,10 @@ test("create a new vault with a second owner with two signatures required", asyn
   await onboarding.createNewVault([alice, bob], 2);
 });
 
-test("download and import vaults from JSON", async ({
+test('download and import vaults from JSON', async ({
   onboarding,
   vault,
-  page,
+  page
 }) => {
   const alice = Ed25519Account.generate();
 

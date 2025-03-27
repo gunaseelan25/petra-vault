@@ -1,12 +1,12 @@
-import { ModuleViewReturnType } from "@/lib/types/modules";
-import { useViewModule, UseViewModuleParameters } from "@aptos-labs/react";
+import { ModuleViewReturnType } from '@/lib/types/modules';
+import { useViewModule, UseViewModuleParameters } from '@aptos-labs/react';
 
 export interface UseMultisigSignaturesRequiredOptions
   extends Omit<
     UseViewModuleParameters<
-      ModuleViewReturnType<"0x1::multisig_account::num_signatures_required">
+      ModuleViewReturnType<'0x1::multisig_account::num_signatures_required'>
     >,
-    "payload"
+    'payload'
   > {
   address: string;
 }
@@ -16,16 +16,16 @@ export default function useMultisigSignaturesRequired({
   ...options
 }: UseMultisigSignaturesRequiredOptions) {
   const { data, ...query } = useViewModule<
-    ModuleViewReturnType<"0x1::multisig_account::num_signatures_required">
+    ModuleViewReturnType<'0x1::multisig_account::num_signatures_required'>
   >({
     payload: {
-      function: "0x1::multisig_account::num_signatures_required",
-      functionArguments: [address],
+      function: '0x1::multisig_account::num_signatures_required',
+      functionArguments: [address]
     },
-    ...options,
+    ...options
   });
   return {
     data: data?.at(0) ? Number(data.at(0)) : undefined,
-    ...query,
+    ...query
   };
 }

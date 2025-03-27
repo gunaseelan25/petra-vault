@@ -1,43 +1,43 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
-import { useForm, useWatch, UseFormReturn } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { useForm, useWatch, UseFormReturn } from 'react-hook-form';
+import { z } from 'zod';
 import {
   FormField,
   FormItem,
   FormLabel,
   FormControl,
   Form,
-  FormDescription,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import Callout from "../Callout";
-import { useDebounce } from "use-debounce";
-import useEntryFunctionAbi from "@/hooks/useEntryFunctionAbi";
-import { EntryFunctionABI } from "@aptos-labs/ts-sdk";
+  FormDescription
+} from '../ui/form';
+import { Input } from '../ui/input';
+import Callout from '../Callout';
+import { useDebounce } from 'use-debounce';
+import useEntryFunctionAbi from '@/hooks/useEntryFunctionAbi';
+import { EntryFunctionABI } from '@aptos-labs/ts-sdk';
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-  CardContent,
-} from "../ui/card";
-import React from "react";
-import ExpandingContainer from "../ExpandingContainer";
-import { AnimatePresence, motion } from "motion/react";
-import { Badge } from "../ui/badge";
+  CardContent
+} from '../ui/card';
+import React from 'react';
+import ExpandingContainer from '../ExpandingContainer';
+import { AnimatePresence, motion } from 'motion/react';
+import { Badge } from '../ui/badge';
 
 const entryFunctionPresets = [
-  { label: "Transfer APT", value: "0x1::aptos_account::transfer" },
-  { label: "Transfer Coins", value: "0x1::aptos_account::transfer_coins" },
+  { label: 'Transfer APT', value: '0x1::aptos_account::transfer' },
+  { label: 'Transfer Coins', value: '0x1::aptos_account::transfer_coins' },
   {
-    label: "Transfer Fungible Asset",
-    value: "0x1::primary_fungible_store::transfer",
+    label: 'Transfer Fungible Asset',
+    value: '0x1::primary_fungible_store::transfer'
   },
   {
-    label: "Batch Transfer Coins",
-    value: "0x1::aptos_account::batch_transfer_coins",
-  },
+    label: 'Batch Transfer Coins',
+    value: '0x1::aptos_account::batch_transfer_coins'
+  }
 ];
 
 const entryFunctionFormSchema = z.object({
@@ -45,8 +45,8 @@ const entryFunctionFormSchema = z.object({
     .string()
     .regex(
       /^0x[a-zA-Z0-9]+::[a-zA-Z0-9_]+::[a-zA-Z0-9_]+$/,
-      "Entry function must follow the format: 0x{address}::{module_name}::{function_name}"
-    ),
+      'Entry function must follow the format: 0x{address}::{module_name}::{function_name}'
+    )
 });
 
 type FormValues = z.infer<typeof entryFunctionFormSchema>;
@@ -64,23 +64,23 @@ export default function CreateProposalEntryFunctionForm({
   onAbiChange,
   onEntryFunctionChange,
   defaultValues,
-  disabled,
+  disabled
 }: CreateProposalEntryFunctionFormProps) {
   const form = useForm({
     resolver: zodResolver(entryFunctionFormSchema),
-    defaultValues: { entryFunction: defaultValues?.entryFunction ?? "" },
-    disabled,
+    defaultValues: { entryFunction: defaultValues?.entryFunction ?? '' },
+    disabled
   });
 
   const [entryFunction, setEntryFunction] = useState<string>(
-    defaultValues?.entryFunction ?? ""
+    defaultValues?.entryFunction ?? ''
   );
   const [debouncedEntryFunction] = useDebounce(entryFunction, 400);
 
   const abi = useEntryFunctionAbi({
-    entryFunction: debouncedEntryFunction ?? "",
-    enabled: debouncedEntryFunction?.split("::").length === 3,
-    retry: 1,
+    entryFunction: debouncedEntryFunction ?? '',
+    enabled: debouncedEntryFunction?.split('::').length === 3,
+    retry: 1
   });
 
   useEffect(() => {
@@ -121,13 +121,13 @@ export default function CreateProposalEntryFunctionForm({
                         />
                       </FormControl>
                       <FormDescription>
-                        Must be in the format:{" "}
+                        Must be in the format:{' '}
                         <span className="font-mono text-xs">{`0x{address}::{module_name}::{function_name}`}</span>
                       </FormDescription>
                       {!field.value && !disabled && (
                         <div className="text-sm text-muted-foreground mt-0.5 flex items-center gap-2 w-full overflow-x-scroll">
                           <span className="font-display text-sm font-medium mr-1">
-                            Presets{" "}
+                            Presets{' '}
                           </span>
                           {entryFunctionPresets.map((preset) => (
                             <Badge
@@ -150,11 +150,11 @@ export default function CreateProposalEntryFunctionForm({
                 form={form}
                 status={
                   abi.isLoading
-                    ? "loading"
+                    ? 'loading'
                     : abi.isError
-                      ? "error"
+                      ? 'error'
                       : abi.isSuccess
-                        ? "success"
+                        ? 'success'
                         : undefined
                 }
               />
@@ -168,23 +168,23 @@ export default function CreateProposalEntryFunctionForm({
 
 export function CreateProposalEntryFunctionCallout({
   form,
-  status,
+  status
 }: {
   form: UseFormReturn<FormValues>;
-  status?: "loading" | "error" | "success";
+  status?: 'loading' | 'error' | 'success';
 }) {
-  useWatch({ control: form.control, name: "entryFunction" });
+  useWatch({ control: form.control, name: 'entryFunction' });
 
   if (!form.formState.isValid) return null;
 
   return (
     <AnimatePresence mode="wait">
-      {status === "loading" && (
+      {status === 'loading' && (
         <motion.div
           key="entry-function-call-out-loading"
-          initial={{ opacity: 0, x: -10, filter: "blur(8px)" }}
-          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, x: 10, filter: "blur(8px)" }}
+          initial={{ opacity: 0, x: -10, filter: 'blur(8px)' }}
+          animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, x: 10, filter: 'blur(8px)' }}
           transition={{ duration: 0.3 }}
         >
           <Callout
@@ -195,12 +195,12 @@ export function CreateProposalEntryFunctionCallout({
           />
         </motion.div>
       )}
-      {status === "error" && (
+      {status === 'error' && (
         <motion.div
           key="entry-function-call-out-error"
-          initial={{ opacity: 0, x: -10, filter: "blur(8px)" }}
-          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, x: 10, filter: "blur(8px)" }}
+          initial={{ opacity: 0, x: -10, filter: 'blur(8px)' }}
+          animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, x: 10, filter: 'blur(8px)' }}
           transition={{ duration: 0.3 }}
         >
           <Callout
@@ -211,12 +211,12 @@ export function CreateProposalEntryFunctionCallout({
           />
         </motion.div>
       )}
-      {status === "success" && (
+      {status === 'success' && (
         <motion.div
           key="entry-function-call-out-success"
-          initial={{ opacity: 0, x: -10, filter: "blur(8px)" }}
-          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, x: 10, filter: "blur(8px)" }}
+          initial={{ opacity: 0, x: -10, filter: 'blur(8px)' }}
+          animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, x: 10, filter: 'blur(8px)' }}
           transition={{ duration: 0.3 }}
         >
           <Callout

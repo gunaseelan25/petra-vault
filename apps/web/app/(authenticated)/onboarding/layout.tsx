@@ -1,7 +1,7 @@
-import { OnboardingProvider } from "@/context/OnboardingProvider";
+import { OnboardingProvider } from '@/context/OnboardingProvider';
 
 export default function OnboardingLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {

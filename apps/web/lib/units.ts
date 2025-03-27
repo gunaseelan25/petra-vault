@@ -1,5 +1,5 @@
-import { formatUnits } from "@aptos-labs/js-pro";
-import { z } from "zod";
+import { formatUnits } from '@aptos-labs/js-pro';
+import { z } from 'zod';
 
 export const isNumber = (value?: string) => {
   if (value === undefined) return false;

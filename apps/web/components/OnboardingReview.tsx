@@ -1,15 +1,15 @@
-import { useOnboarding } from "@/context/OnboardingProvider";
+import { useOnboarding } from '@/context/OnboardingProvider';
 import {
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from "./ui/card";
-import { Button } from "./ui/button";
-import { AptosAvatar } from "aptos-avatars-react";
-import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
+  CardTitle
+} from './ui/card';
+import { Button } from './ui/button';
+import { AptosAvatar } from 'aptos-avatars-react';
+import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
 
 export default function OnboardingReview() {
   const {
@@ -18,7 +18,7 @@ export default function OnboardingReview() {
     vaultSignaturesRequired,
     createVault,
     isSigningAndSubmittingCreation,
-    isWaitingForCreationTransaction,
+    isWaitingForCreationTransaction
   } = useOnboarding();
 
   return (
@@ -53,9 +53,9 @@ export default function OnboardingReview() {
             <p className="font-semibold font-display">Signatures Required</p>
             <p>
               {vaultSignaturesRequired.current} signature
-              {vaultSignaturesRequired.current === 1 ? "" : "s"} out of{" "}
+              {vaultSignaturesRequired.current === 1 ? '' : 's'} out of{' '}
               {vaultSigners.current.length} owner
-              {vaultSigners.current.length === 1 ? "" : "s"}
+              {vaultSigners.current.length === 1 ? '' : 's'}
             </p>
           </div>
         </div>

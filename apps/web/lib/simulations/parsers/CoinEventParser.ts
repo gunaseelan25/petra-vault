@@ -1,7 +1,7 @@
-import type { Event } from "@aptos-labs/ts-sdk";
-import { normalizeAddress, serializeEventGuid } from "../shared";
-import { EventParser } from "@/lib/types/parsers";
-import { SimulationContext } from "./SimulationParser";
+import type { Event } from '@aptos-labs/ts-sdk';
+import { normalizeAddress, serializeEventGuid } from '../shared';
+import { EventParser } from '@/lib/types/parsers';
+import { SimulationContext } from './SimulationParser';
 
 export class CoinEventParser implements EventParser {
   private applyChange(
@@ -11,7 +11,7 @@ export class CoinEventParser implements EventParser {
     opts: { creationNum: string } | { coinType: string }
   ) {
     let coinType: string;
-    if ("creationNum" in opts) {
+    if ('creationNum' in opts) {
       const eventGuid = serializeEventGuid(accountAddress, opts.creationNum);
       if (!context.coinEventGuidToCoinType[eventGuid]) return;
       coinType = context.coinEventGuidToCoinType[eventGuid];
@@ -32,31 +32,31 @@ export class CoinEventParser implements EventParser {
 
   parseEvent(context: SimulationContext, event: Event) {
     switch (event.type) {
-      case "0x1::coin::DepositEvent": {
+      case '0x1::coin::DepositEvent': {
         const accountAddress = normalizeAddress(event.guid.account_address);
         this.applyChange(context, accountAddress, BigInt(event.data.amount), {
-          creationNum: event.guid.creation_number,
+          creationNum: event.guid.creation_number
         });
         return true;
       }
-      case "0x1::coin::WithdrawEvent": {
+      case '0x1::coin::WithdrawEvent': {
         const accountAddress = normalizeAddress(event.guid.account_address);
         this.applyChange(context, accountAddress, -BigInt(event.data.amount), {
-          creationNum: event.guid.creation_number,
+          creationNum: event.guid.creation_number
         });
         return true;
       }
-      case "0x1::coin::CoinDeposit": {
+      case '0x1::coin::CoinDeposit': {
         const accountAddress = normalizeAddress(event.data.account);
         this.applyChange(context, accountAddress, BigInt(event.data.amount), {
-          coinType: event.data.coin_type,
+          coinType: event.data.coin_type
         });
         return true;
       }
-      case "0x1::coin::CoinWithdraw": {
+      case '0x1::coin::CoinWithdraw': {
         const accountAddress = normalizeAddress(event.data.account);
         this.applyChange(context, accountAddress, -BigInt(event.data.amount), {
-          coinType: event.data.coin_type,
+          coinType: event.data.coin_type
         });
         return true;
       }

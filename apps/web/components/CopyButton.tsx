@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { CheckIcon, CopyIcon } from '@radix-ui/react-icons';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 
 export default function CopyButton({ text }: { text: string }) {
   const [isCopied, setIsCopied] = useState(false);
@@ -23,7 +23,7 @@ export default function CopyButton({ text }: { text: string }) {
       variant="outline"
       onClick={() => {
         navigator.clipboard.writeText(text);
-        toast.success("Copied to clipboard!");
+        toast.success('Copied to clipboard!');
         setIsCopied(true);
       }}
       disabled={isCopied}

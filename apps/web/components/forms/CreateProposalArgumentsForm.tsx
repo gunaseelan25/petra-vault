@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo } from "react";
-import { z, ZodObject, ZodString, ZodTypeAny } from "zod";
-import { getTypeTagDefaultZodValue, transformTypeTagToZod } from "@/lib/zod";
-import { EntryFunctionABI } from "@aptos-labs/ts-sdk";
-import { FormField, FormLabel, FormMessage } from "../ui/form";
-import { FormControl } from "../ui/form";
-import { Input } from "../ui/input";
-import { Form, FormItem } from "../ui/form";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import FormArrayInput from "../FormArrayInput";
+import { useEffect, useMemo } from 'react';
+import { z, ZodObject, ZodString, ZodTypeAny } from 'zod';
+import { getTypeTagDefaultZodValue, transformTypeTagToZod } from '@/lib/zod';
+import { EntryFunctionABI } from '@aptos-labs/ts-sdk';
+import { FormField, FormLabel, FormMessage } from '../ui/form';
+import { FormControl } from '../ui/form';
+import { Input } from '../ui/input';
+import { Form, FormItem } from '../ui/form';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import FormArrayInput from '../FormArrayInput';
 import {
   Card,
   CardTitle,
   CardDescription,
   CardHeader,
-  CardContent,
-} from "../ui/card";
-import React from "react";
+  CardContent
+} from '../ui/card';
+import React from 'react';
 
 interface CreateProposalArgumentsFormProps {
   abi: EntryFunctionABI;
@@ -44,7 +44,7 @@ export default function CreateProposalArgumentsForm({
   onTypeArgumentsChange,
   onIsFormValidChange,
   defaultValues,
-  disabled,
+  disabled
 }: CreateProposalArgumentsFormProps) {
   const formSchema = useMemo(
     () =>
@@ -53,10 +53,12 @@ export default function CreateProposalArgumentsForm({
           (abi.parameters.length ?? 0) > 0
             ? z.tuple(
                 abi.parameters.map((typeTag) =>
-                  z.object({ value: transformTypeTagToZod(typeTag) })
+                  z.object({
+                    value: transformTypeTagToZod(typeTag)
+                  })
                 ) as unknown as [
                   ZodObject<{ value: ZodTypeAny }>,
-                  ...ZodObject<{ value: ZodTypeAny }>[],
+                  ...ZodObject<{ value: ZodTypeAny }>[]
                 ]
               )
             : z.tuple([]),
@@ -67,10 +69,10 @@ export default function CreateProposalArgumentsForm({
                   z.object({ value: z.string().min(1) })
                 ) as unknown as [
                   ZodObject<{ value: ZodString }>,
-                  ...ZodObject<{ value: ZodString }>[],
+                  ...ZodObject<{ value: ZodString }>[]
                 ]
               )
-            : z.tuple([]),
+            : z.tuple([])
       }),
     [abi]
   );
@@ -81,26 +83,26 @@ export default function CreateProposalArgumentsForm({
       functionArguments:
         defaultValues?.functionArguments ??
         abi.parameters.map((e) => ({
-          value: getTypeTagDefaultZodValue(e),
+          value: getTypeTagDefaultZodValue(e)
         })) ??
         [],
       typeArguments:
         defaultValues?.typeArguments ??
-        abi.typeParameters.map(() => ({ value: "" })) ??
-        [],
+        abi.typeParameters.map(() => ({ value: '' })) ??
+        []
     },
-    mode: "onChange",
-    disabled,
+    mode: 'onChange',
+    disabled
   });
 
   const { fields: argFields, update: updateArg } = useFieldArray({
     control: form.control,
-    name: "functionArguments",
+    name: 'functionArguments'
   });
 
   const { fields: typeFields, update: updateType } = useFieldArray({
     control: form.control,
-    name: "typeArguments",
+    name: 'typeArguments'
   });
 
   useEffect(() => {
@@ -140,9 +142,11 @@ export default function CreateProposalArgumentsForm({
                               value={typeField.value}
                               onChange={(e) => {
                                 field.onChange(e);
-                                updateType(i, { value: e.target.value });
+                                updateType(i, {
+                                  value: e.target.value
+                                });
                                 onTypeArgumentsChange?.(
-                                  form.getValues("typeArguments")
+                                  form.getValues('typeArguments')
                                 );
                               }}
                               data-testid={`type-argument-input-${i}`}
@@ -180,10 +184,16 @@ export default function CreateProposalArgumentsForm({
                               <FormArrayInput
                                 value={argField.value}
                                 onChange={(value) => {
-                                  field.onChange({ target: { value: value } });
-                                  updateArg(i, { value });
+                                  field.onChange({
+                                    target: {
+                                      value: value
+                                    }
+                                  });
+                                  updateArg(i, {
+                                    value
+                                  });
                                   onFunctionArgumentsChange?.(
-                                    form.getValues("functionArguments")
+                                    form.getValues('functionArguments')
                                   );
                                 }}
                                 data-testid={`function-argument-array-input-${i}`}
@@ -194,9 +204,11 @@ export default function CreateProposalArgumentsForm({
                                 {...field}
                                 onChange={(e) => {
                                   field.onChange(e);
-                                  updateArg(i, { value: e.target.value });
+                                  updateArg(i, {
+                                    value: e.target.value
+                                  });
                                   onFunctionArgumentsChange?.(
-                                    form.getValues("functionArguments")
+                                    form.getValues('functionArguments')
                                   );
                                 }}
                                 data-testid={`function-argument-input-${i}`}

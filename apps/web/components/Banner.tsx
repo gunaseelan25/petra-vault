@@ -1,9 +1,9 @@
-import { useActiveVault } from "@/context/ActiveVaultProvider";
-import { useNetwork } from "@aptos-labs/react";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { AnimatePresence, motion } from "motion/react";
-import ExpandingContainer from "./ExpandingContainer";
-import { useEffect, useState } from "react";
+import { useActiveVault } from '@/context/ActiveVaultProvider';
+import { useNetwork } from '@aptos-labs/react';
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
+import { AnimatePresence, motion } from 'motion/react';
+import ExpandingContainer from './ExpandingContainer';
+import { useEffect, useState } from 'react';
 
 export default function Banner() {
   const { network: activeNetwork } = useNetwork();
@@ -16,7 +16,7 @@ export default function Banner() {
   }, []);
 
   const renderBanner = () => {
-    if (typeof window === "undefined" || !isDelayed) return null;
+    if (typeof window === 'undefined' || !isDelayed) return null;
 
     if (activeNetwork !== vaultNetwork)
       return (
@@ -35,7 +35,7 @@ export default function Banner() {
               </div>
               <p className="text-sm font-medium">
                 You are connected to the wrong network, the application may not
-                work as expected. Please switch to{" "}
+                work as expected. Please switch to{' '}
                 <span className="font-bold capitalize tracking-wider">
                   {vaultNetwork}.
                 </span>

@@ -1,5 +1,5 @@
-import { motion, Transition } from "motion/react";
-import useMeasure from "react-use-measure";
+import { motion, Transition } from 'motion/react';
+import useMeasure from 'react-use-measure';
 
 interface ExpandingContainerProps {
   children: React.ReactNode;
@@ -14,17 +14,17 @@ export default function ExpandingContainer({
   className,
   initialHeight,
   transition = { duration: 0.4, ease: [0.19, 1, 0.22, 1] },
-  debounce,
+  debounce
 }: ExpandingContainerProps) {
   const [contentRef, { height }] = useMeasure({
     offsetSize: true,
-    debounce,
+    debounce
   });
 
   return (
     <motion.div
-      className={"overflow-hidden"}
-      initial={{ height: initialHeight ?? "auto" }}
+      className={'overflow-hidden'}
+      initial={{ height: initialHeight ?? 'auto' }}
       animate={{ height }}
       transition={transition}
     >

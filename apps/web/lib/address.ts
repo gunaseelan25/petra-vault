@@ -1,13 +1,13 @@
-import { AccountAddress } from "@aptos-labs/ts-sdk";
+import { AccountAddress } from '@aptos-labs/ts-sdk';
 
 export function isAddressOrEns(address: string) {
   return (
-    address.endsWith(".apt") || AccountAddress.isValid({ input: address }).valid
+    address.endsWith('.apt') || AccountAddress.isValid({ input: address }).valid
   );
 }
 
 export function isEns(address: string) {
-  return address.endsWith(".apt");
+  return address.endsWith('.apt');
 }
 
 export function isAddress(
@@ -21,8 +21,8 @@ export function isAddress(
 
 export function isApt(address: string) {
   return (
-    address === "0x1::aptos_coin::AptosCoin" ||
+    address === '0x1::aptos_coin::AptosCoin' ||
     (isAddress(address) &&
-      AccountAddress.from(address).equals(AccountAddress.from("0xa")))
+      AccountAddress.from(address).equals(AccountAddress.from('0xa')))
   );
 }

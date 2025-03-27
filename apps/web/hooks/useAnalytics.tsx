@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 
-import { useParams } from "next/navigation";
+import { useParams } from 'next/navigation';
 
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { parseVaultId } from "@/lib/vaults";
-import { useCallback } from "react";
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
+import { parseVaultId } from '@/lib/vaults';
+import { useCallback } from 'react';
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from '@next/third-parties/google';
 
 type AnalyticsEvent = {
   proposals: {
@@ -14,7 +14,7 @@ type AnalyticsEvent = {
     create_add_owner_proposal: { hash: string };
     create_remove_owner_proposal: { hash: string };
     create_publish_contract_proposal: { hash: string };
-    vote_proposal: { hash: string; action?: "approve" | "reject" };
+    vote_proposal: { hash: string; action?: 'approve' | 'reject' };
     execute_proposal: { hash: string };
     remove_proposal: { hash: string };
   };
@@ -64,8 +64,8 @@ function trackEvent<T extends EventName>(
   eventName: T,
   eventParams: EventParams<T>
 ) {
-  if (typeof window !== "undefined" && window.gtag) {
-    sendGAEvent("event", eventName, eventParams);
+  if (typeof window !== 'undefined' && window.gtag) {
+    sendGAEvent('event', eventName, eventParams);
   }
 }
 
@@ -75,7 +75,7 @@ export default function useAnalytics() {
   const { vaultId } = useParams();
 
   const parsedVaultId =
-    typeof vaultId === "string"
+    typeof vaultId === 'string'
       ? parseVaultId(decodeURIComponent(vaultId))
       : null;
 
@@ -86,7 +86,7 @@ export default function useAnalytics() {
         vault_address: parsedVaultId?.address.toStringWithoutPrefix(),
         vault_network: parsedVaultId?.network,
         account_network: network?.name,
-        account_address: account?.address.toStringWithoutPrefix(),
+        account_address: account?.address.toStringWithoutPrefix()
       }),
     [account, parsedVaultId, network]
   );

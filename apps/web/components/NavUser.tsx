@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,25 +8,25 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar";
-import { truncateAddress, useWallet } from "@aptos-labs/wallet-adapter-react";
-import { AptosAvatar } from "aptos-avatars-react";
-import { Skeleton } from "./ui/skeleton";
+  useSidebar
+} from '@/components/ui/sidebar';
+import { truncateAddress, useWallet } from '@aptos-labs/wallet-adapter-react';
+import { AptosAvatar } from 'aptos-avatars-react';
+import { Skeleton } from './ui/skeleton';
 import {
   CaretSortIcon,
   CopyIcon,
   GlobeIcon,
-  LinkBreak2Icon,
-} from "@radix-ui/react-icons";
-import { getExplorerUrl } from "@aptos-labs/js-pro";
-import { AnimatePresence, motion } from "motion/react";
+  LinkBreak2Icon
+} from '@radix-ui/react-icons';
+import { getExplorerUrl } from '@aptos-labs/js-pro';
+import { AnimatePresence, motion } from 'motion/react';
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -63,7 +63,7 @@ export function NavUser() {
                   >
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AptosAvatar
-                        value={account?.address.toString() ?? ""}
+                        value={account?.address.toString() ?? ''}
                         size={32}
                       />
                     </Avatar>
@@ -80,7 +80,7 @@ export function NavUser() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                  side={isMobile ? "bottom" : "top"}
+                  side={isMobile ? 'bottom' : 'top'}
                   align="end"
                   sideOffset={4}
                 >
@@ -88,7 +88,7 @@ export function NavUser() {
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                       <Avatar className="h-8 w-8 rounded-lg">
                         <AptosAvatar
-                          value={account?.address.toString() ?? ""}
+                          value={account?.address.toString() ?? ''}
                           size={32}
                         />
                       </Avatar>
@@ -118,9 +118,9 @@ export function NavUser() {
                         window.open(
                           getExplorerUrl({
                             network: network.name,
-                            path: `account/${account.address.toString()}`,
+                            path: `account/${account.address.toString()}`
                           }),
-                          "_blank"
+                          '_blank'
                         );
                       }}
                     >

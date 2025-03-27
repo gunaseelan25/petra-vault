@@ -1,14 +1,14 @@
-import { PendingMultisigTransaction } from "@/hooks/useMultisigPendingTransactions";
+import { PendingMultisigTransaction } from '@/hooks/useMultisigPendingTransactions';
 import {
   createMultisigVoteTransactionPayloadData,
   deserializeMultisigTransactionPayload,
-  formatPayloadWithAbi,
-} from "@/lib/payloads";
-import { useEffect } from "react";
-import { Badge } from "./ui/badge";
-import useMultisigSignaturesRequired from "@/hooks/useMultisigSignaturesRequired";
-import { Separator } from "./ui/separator";
-import CodeBlock from "./CodeBlock";
+  formatPayloadWithAbi
+} from '@/lib/payloads';
+import { useEffect } from 'react';
+import { Badge } from './ui/badge';
+import useMultisigSignaturesRequired from '@/hooks/useMultisigSignaturesRequired';
+import { Separator } from './ui/separator';
+import CodeBlock from './CodeBlock';
 import {
   AccountAddress,
   buildTransaction,
@@ -16,36 +16,36 @@ import {
   Hex,
   MultiSig,
   MultiSigTransactionPayload,
-  TransactionPayloadMultiSig,
-} from "@aptos-labs/ts-sdk";
-import useMultisigOwners from "@/hooks/useMultisigOwners";
-import { AptosAvatar } from "aptos-avatars-react";
-import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
-import { Button } from "./ui/button";
+  TransactionPayloadMultiSig
+} from '@aptos-labs/ts-sdk';
+import useMultisigOwners from '@/hooks/useMultisigOwners';
+import { AptosAvatar } from 'aptos-avatars-react';
+import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
+import { Button } from './ui/button';
 import {
   useClients,
   useSignAndSubmitTransaction,
-  useWaitForTransaction,
-} from "@aptos-labs/react";
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import useMultisigCanExecute from "@/hooks/useMultisigCanExecute";
+  useWaitForTransaction
+} from '@aptos-labs/react';
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
+import useMultisigCanExecute from '@/hooks/useMultisigCanExecute';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
-import { LoadingSpinner } from "./LoaderSpinner";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import Callout from "./Callout";
+  TooltipTrigger
+} from './ui/tooltip';
+import { LoadingSpinner } from './LoaderSpinner';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import Callout from './Callout';
 import {
   CheckCircledIcon,
   CrossCircledIcon,
-  QuestionMarkCircledIcon,
-} from "@radix-ui/react-icons";
-import useEntryFunctionAbi from "@/hooks/useEntryFunctionAbi";
-import { jsonStringify } from "@/lib/storage";
+  QuestionMarkCircledIcon
+} from '@radix-ui/react-icons';
+import useEntryFunctionAbi from '@/hooks/useEntryFunctionAbi';
+import { jsonStringify } from '@/lib/storage';
 
 interface PendingTransactionDetailsProps {
   transaction: PendingMultisigTransaction;
@@ -54,23 +54,23 @@ interface PendingTransactionDetailsProps {
 
 export const PendingTransactionDetails = ({
   transaction,
-  sequenceNumber,
+  sequenceNumber
 }: PendingTransactionDetailsProps) => {
   const queryClient = useQueryClient();
   const { aptos } = useClients();
   const { account } = useWallet();
 
   const { data: owners } = useMultisigOwners({
-    address: transaction.multisigAddress.toString(),
+    address: transaction.multisigAddress.toString()
   });
 
   const { data: canExecute } = useMultisigCanExecute({
     address: transaction.multisigAddress.toString(),
-    sequenceNumber,
+    sequenceNumber
   });
 
   const { data: signaturesRequired } = useMultisigSignaturesRequired({
-    address: transaction.multisigAddress.toString(),
+    address: transaction.multisigAddress.toString()
   });
 
   const payload = transaction.payload
@@ -78,13 +78,13 @@ export const PendingTransactionDetails = ({
     : undefined;
 
   const { data: entryFunctionAbi } = useEntryFunctionAbi({
-    entryFunction: payload?.function,
+    entryFunction: payload?.function
   });
 
   const {
     hash: voteHash,
     signAndSubmitTransaction: signAndSubmitVote,
-    isPending: isSignAndSubmitVotePending,
+    isPending: isSignAndSubmitVotePending
   } = useSignAndSubmitTransaction();
 
   const { isSuccess: isVoteSuccess, isLoading: isVoteTransactionLoading } =
@@ -93,7 +93,7 @@ export const PendingTransactionDetails = ({
   useEffect(() => {
     if (isVoteSuccess) {
       queryClient.invalidateQueries();
-      toast.success("Transaction voted!");
+      toast.success('Transaction voted!');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVoteSuccess]);
@@ -101,18 +101,18 @@ export const PendingTransactionDetails = ({
   const {
     hash: executeHash,
     signAndSubmitTransaction: signAndSubmitExecute,
-    isPending: isSignAndSubmitExecutePending,
+    isPending: isSignAndSubmitExecutePending
   } = useSignAndSubmitTransaction();
 
   const {
     isSuccess: isExecuteSuccess,
-    isLoading: isExecuteTransactionLoading,
+    isLoading: isExecuteTransactionLoading
   } = useWaitForTransaction({ hash: executeHash });
 
   useEffect(() => {
     if (isExecuteSuccess) {
       queryClient.invalidateQueries();
-      toast.success("Transaction executed!");
+      toast.success('Transaction executed!');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isExecuteSuccess]);
@@ -133,8 +133,8 @@ export const PendingTransactionDetails = ({
       data: createMultisigVoteTransactionPayloadData({
         vaultAddress: transaction.multisigAddress.toString(),
         sequenceNumber,
-        approve,
-      }),
+        approve
+      })
     });
 
   const handleExecute = async (transactionPayload: string) => {
@@ -149,7 +149,7 @@ export const PendingTransactionDetails = ({
       sender: account.address,
       payload: new TransactionPayloadMultiSig(
         new MultiSig(transaction.multisigAddress, multisigPayload)
-      ),
+      )
     });
 
     signAndSubmitExecute({ transaction: txn });
@@ -160,9 +160,9 @@ export const PendingTransactionDetails = ({
 
     signAndSubmitExecute({
       data: {
-        function: "0x1::multisig_account::execute_rejected_transaction",
-        functionArguments: [transaction.multisigAddress],
-      },
+        function: '0x1::multisig_account::execute_rejected_transaction',
+        functionArguments: [transaction.multisigAddress]
+      }
     });
   };
 
@@ -193,7 +193,7 @@ export const PendingTransactionDetails = ({
               <p className="font-display font-medium">Confirmations</p>
               <p className="text-xs text-muted-foreground mb-4">
                 The transaction requires {signaturesRequired} approval
-                {signaturesRequired === 1 ? "" : "s"} from the owners to
+                {signaturesRequired === 1 ? '' : 's'} from the owners to
                 execute.
               </p>
 
@@ -218,10 +218,10 @@ export const PendingTransactionDetails = ({
                       <Badge
                         variant={
                           isApproved
-                            ? "success"
+                            ? 'success'
                             : isRejected
-                              ? "destructive"
-                              : "secondary"
+                              ? 'destructive'
+                              : 'secondary'
                         }
                       >
                         {isApproved ? (
@@ -325,10 +325,10 @@ export const PendingTransactionDetails = ({
                       <TooltipContent>
                         <p>
                           {!hasEnoughApprovals
-                            ? "Reject the transaction and remove it from the sequence"
+                            ? 'Reject the transaction and remove it from the sequence'
                             : !canExecute
-                              ? "Execute transactions in ahead in the sequence before this one"
-                              : "Execute the transaction and send it to the network"}
+                              ? 'Execute transactions in ahead in the sequence before this one'
+                              : 'Execute the transaction and send it to the network'}
                         </p>
                       </TooltipContent>
                     </Tooltip>

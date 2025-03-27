@@ -1,53 +1,53 @@
-"use client";
+'use client';
 
-import { useActiveVault } from "@/context/ActiveVaultProvider";
-import { Button } from "@/components/ui/button";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useActiveVault } from '@/context/ActiveVaultProvider';
+import { Button } from '@/components/ui/button';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useSignAndSubmitTransaction,
   useSimulateTransaction,
-  useWaitForTransaction,
-} from "@aptos-labs/react";
-import { toast } from "sonner";
-import { useCreateProposalForm } from "@/context/CreateProposalFormProvider";
-import PageVaultHeader from "@/components/PageVaultHeader";
-import { useRouter } from "next/navigation";
-import { MemoizedCreateProposalEntryFunctionForm } from "@/components/forms/CreateProposalEntryFunctionForm";
-import { MemoizedCreateProposalArgumentsForm } from "@/components/forms/CreateProposalArgumentsForm";
-import React from "react";
+  useWaitForTransaction
+} from '@aptos-labs/react';
+import { toast } from 'sonner';
+import { useCreateProposalForm } from '@/context/CreateProposalFormProvider';
+import PageVaultHeader from '@/components/PageVaultHeader';
+import { useRouter } from 'next/navigation';
+import { MemoizedCreateProposalEntryFunctionForm } from '@/components/forms/CreateProposalEntryFunctionForm';
+import { MemoizedCreateProposalArgumentsForm } from '@/components/forms/CreateProposalArgumentsForm';
+import React from 'react';
 import {
   AccountAddress,
-  InputGenerateTransactionPayloadData,
-} from "@aptos-labs/ts-sdk";
-import { createMultisigTransactionPayloadData } from "@/lib/payloads";
-import SimulationParser from "@/lib/simulations/parsers/SimulationParser";
+  InputGenerateTransactionPayloadData
+} from '@aptos-labs/ts-sdk';
+import { createMultisigTransactionPayloadData } from '@/lib/payloads';
+import SimulationParser from '@/lib/simulations/parsers/SimulationParser';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import CodeBlock from "@/components/CodeBlock";
-import ExpandingContainer from "@/components/ExpandingContainer";
-import { LoadingSpinner } from "@/components/LoaderSpinner";
-import { AnimatePresence, motion } from "motion/react";
-import SimulationCoinRow from "@/components/SimulationCoinRow";
-import { cn } from "@/lib/utils";
-import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { Separator } from "@/components/ui/separator";
-import Callout from "@/components/Callout";
-import { getSimulationQueryErrors } from "@/lib/simulations/shared";
-import { jsonStringify } from "@/lib/storage";
-import useAnalytics from "@/hooks/useAnalytics";
+  CardTitle
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import CodeBlock from '@/components/CodeBlock';
+import ExpandingContainer from '@/components/ExpandingContainer';
+import { LoadingSpinner } from '@/components/LoaderSpinner';
+import { AnimatePresence, motion } from 'motion/react';
+import SimulationCoinRow from '@/components/SimulationCoinRow';
+import { cn } from '@/lib/utils';
+import { ArrowLeftIcon } from '@radix-ui/react-icons';
+import { Separator } from '@/components/ui/separator';
+import Callout from '@/components/Callout';
+import { getSimulationQueryErrors } from '@/lib/simulations/shared';
+import { jsonStringify } from '@/lib/storage';
+import useAnalytics from '@/hooks/useAnalytics';
 
 export default function CreateProposalPage() {
   const trackEvent = useAnalytics();
 
   const router = useRouter();
 
-  const [page, setPage] = useState<"set-details" | "confirm">("set-details");
+  const [page, setPage] = useState<'set-details' | 'confirm'>('set-details');
 
   const { vaultAddress, id, network, isOwner } = useActiveVault();
 
@@ -57,20 +57,20 @@ export default function CreateProposalPage() {
   const {
     hash,
     signAndSubmitTransaction,
-    isPending: isSigningAndSubmitting,
+    isPending: isSigningAndSubmitting
   } = useSignAndSubmitTransaction({
     onSuccess: (data) => {
-      trackEvent("create_proposal", {
+      trackEvent('create_proposal', {
         entry_function_id: entryFunction.value,
-        hash: data.hash,
+        hash: data.hash
       });
-    },
+    }
   });
 
   const {
     isSuccess,
     isError,
-    isLoading: isWaitingForTransaction,
+    isLoading: isWaitingForTransaction
   } = useWaitForTransaction({ hash });
 
   const { transactionPayload, innerPayload } = useMemo(() => {
@@ -82,15 +82,15 @@ export default function CreateProposalPage() {
       const innerPayload = {
         function: entryFunction.value as `${string}::${string}::${string}`,
         typeArguments: typeArguments.value,
-        functionArguments: functionArguments.value,
+        functionArguments: functionArguments.value
       } satisfies InputGenerateTransactionPayloadData;
 
       return {
         innerPayload,
         transactionPayload: createMultisigTransactionPayloadData({
           vaultAddress,
-          payload: { ...innerPayload, abi: abi.value },
-        }),
+          payload: { ...innerPayload, abi: abi.value }
+        })
       };
     } catch (error) {
       console.warn(error);
@@ -102,7 +102,7 @@ export default function CreateProposalPage() {
     functionArguments.value,
     isFormValid.value,
     typeArguments.value,
-    vaultAddress,
+    vaultAddress
   ]);
 
   const simulation = useSimulateTransaction({
@@ -112,9 +112,9 @@ export default function CreateProposalPage() {
     options: {
       estimateMaxGasAmount: true,
       estimateGasUnitPrice: true,
-      estimatePrioritizedGasUnitPrice: true,
+      estimatePrioritizedGasUnitPrice: true
     },
-    enabled: isFormValid.value,
+    enabled: isFormValid.value
   });
 
   const createProposal = useCallback(() => {
@@ -128,10 +128,10 @@ export default function CreateProposalPage() {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Proposal created");
+      toast.success('Proposal created');
       router.push(`/vault/${id}/transactions`);
     } else if (isError) {
-      toast.error("Proposal creation failed");
+      toast.error('Proposal creation failed');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, isError]);
@@ -157,7 +157,7 @@ export default function CreateProposalPage() {
       <br />
 
       <div className="grid grid-cols-2 gap-4 h-full">
-        {page === "set-details" && (
+        {page === 'set-details' && (
           <div>
             <ExpandingContainer>
               <AnimatePresence mode="popLayout">
@@ -169,15 +169,29 @@ export default function CreateProposalPage() {
                     functionArguments.set([]);
                     typeArguments.set([]);
                   }}
-                  defaultValues={{ entryFunction: entryFunction.value }}
+                  defaultValues={{
+                    entryFunction: entryFunction.value
+                  }}
                   disabled={!isOwner}
                 />
 
                 {abi.value && (
                   <motion.div
-                    initial={{ opacity: 0, x: -10, filter: "blur(8px)" }}
-                    animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, x: 10, filter: "blur(8px)" }}
+                    initial={{
+                      opacity: 0,
+                      x: -10,
+                      filter: 'blur(8px)'
+                    }}
+                    animate={{
+                      opacity: 1,
+                      x: 0,
+                      filter: 'blur(0px)'
+                    }}
+                    exit={{
+                      opacity: 0,
+                      x: 10,
+                      filter: 'blur(8px)'
+                    }}
                     transition={{ duration: 0.3 }}
                   >
                     <br />
@@ -195,21 +209,25 @@ export default function CreateProposalPage() {
                         functionArguments:
                           functionArguments.value.length > 0
                             ? (functionArguments.value.map((arg) => ({
-                                value: arg,
+                                value: arg
                               })) as [
                                 { value: string },
-                                ...{ value: string }[],
+                                ...{
+                                  value: string;
+                                }[]
                               ])
                             : undefined,
                         typeArguments:
                           typeArguments.value.length > 0
                             ? (typeArguments.value.map((arg) => ({
-                                value: arg,
+                                value: arg
                               })) as [
                                 { value: string },
-                                ...{ value: string }[],
+                                ...{
+                                  value: string;
+                                }[]
                               ])
-                            : undefined,
+                            : undefined
                       }}
                     />
                   </motion.div>
@@ -219,16 +237,16 @@ export default function CreateProposalPage() {
             <br />
             <Button
               disabled={!simulation.data?.success || !isFormValid.value}
-              onClick={() => setPage("confirm")}
+              onClick={() => setPage('confirm')}
               data-testid="create-proposal-confirm-draft-button"
             >
-              {!isSimulationError ? "Confirm Draft" : "Simulation Errors Found"}
+              {!isSimulationError ? 'Confirm Draft' : 'Simulation Errors Found'}
             </Button>
           </div>
         )}
 
         <Card
-          className={cn("w-full h-fit", page === "confirm" && "col-span-2")}
+          className={cn('w-full h-fit', page === 'confirm' && 'col-span-2')}
         >
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -248,9 +266,15 @@ export default function CreateProposalPage() {
               {!isFormValid.value ? (
                 <motion.div
                   key="simulation-loading"
-                  initial={{ opacity: 0, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, filter: "blur(10px)" }}
+                  initial={{
+                    opacity: 0,
+                    filter: 'blur(10px)'
+                  }}
+                  animate={{
+                    opacity: 1,
+                    filter: 'blur(0px)'
+                  }}
+                  exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
                   <CardContent>
@@ -263,9 +287,15 @@ export default function CreateProposalPage() {
               ) : simulation.isLoading ? (
                 <motion.div
                   key="simulation-loading"
-                  initial={{ opacity: 0, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, filter: "blur(10px)" }}
+                  initial={{
+                    opacity: 0,
+                    filter: 'blur(10px)'
+                  }}
+                  animate={{
+                    opacity: 1,
+                    filter: 'blur(0px)'
+                  }}
+                  exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
                   <CardContent>
@@ -277,9 +307,15 @@ export default function CreateProposalPage() {
               ) : isSimulationError ? (
                 <motion.div
                   key="simulation-error"
-                  initial={{ opacity: 0, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, filter: "blur(10px)" }}
+                  initial={{
+                    opacity: 0,
+                    filter: 'blur(10px)'
+                  }}
+                  animate={{
+                    opacity: 1,
+                    filter: 'blur(0px)'
+                  }}
+                  exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
                   <CardContent>
@@ -287,8 +323,8 @@ export default function CreateProposalPage() {
                       <div className="text-destructive bg-destructive/10 p-4 rounded-lg text-sm border border-destructive border-dashed">
                         <>
                           {simulationError ===
-                          "MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS"
-                            ? "The account must have some APT to create a proposal. Please add some APT to the Vault and try again."
+                          'MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS'
+                            ? 'The account must have some APT to create a proposal. Please add some APT to the Vault and try again.'
                             : simulationError}
                         </>
                       </div>
@@ -298,16 +334,22 @@ export default function CreateProposalPage() {
               ) : isSimulationSuccess ? (
                 <motion.div
                   key="simulation-success"
-                  initial={{ opacity: 0, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, filter: "blur(10px)" }}
+                  initial={{
+                    opacity: 0,
+                    filter: 'blur(10px)'
+                  }}
+                  animate={{
+                    opacity: 1,
+                    filter: 'blur(0px)'
+                  }}
+                  exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className={"grid grid-cols-2 divide-x"}>
+                  <CardContent className={'grid grid-cols-2 divide-x'}>
                     <div
                       className={cn(
-                        "flex flex-col gap-6",
-                        page === "set-details" ? "col-span-2" : "pr-12"
+                        'flex flex-col gap-6',
+                        page === 'set-details' ? 'col-span-2' : 'pr-12'
                       )}
                     >
                       <div>
@@ -369,7 +411,7 @@ export default function CreateProposalPage() {
                         </div>
                       </div>
 
-                      {page === "confirm" && (
+                      {page === 'confirm' && (
                         <>
                           <Callout
                             title="Always Verify"
@@ -380,7 +422,7 @@ export default function CreateProposalPage() {
                           <div className="flex gap-4">
                             <Button
                               variant="ghost"
-                              onClick={() => setPage("set-details")}
+                              onClick={() => setPage('set-details')}
                             >
                               <ArrowLeftIcon />
                               Go Back
@@ -397,7 +439,7 @@ export default function CreateProposalPage() {
                       )}
                     </div>
 
-                    {page === "confirm" && (
+                    {page === 'confirm' && (
                       <div className="flex flex-col gap-6 pl-12">
                         <div>
                           <h3 className="font-display text-lg font-semibold tracking-wide">

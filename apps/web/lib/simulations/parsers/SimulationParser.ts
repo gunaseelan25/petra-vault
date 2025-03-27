@@ -1,12 +1,12 @@
-import { UserTransactionResponse } from "@aptos-labs/ts-sdk";
-import { CoinStoreWritesetParser } from "./CoinStoreWritesetParser";
-import { CoinEventParser } from "./CoinEventParser";
-import { EventParser } from "@/lib/types/parsers";
-import { WritesetParser } from "@/lib/types/parsers";
-import { ObjectOwnersWritesetParser } from "./ObjectOwnersWritesetParser";
-import { FungibleAssetStoreWritesetParser } from "./FungibleAssetStoreWritesetParser";
-import { FungibleAssetEventParser } from "./FungibleAssetEventParser";
-import { getPairedMetadata } from "@/lib/fungibleAssets";
+import { UserTransactionResponse } from '@aptos-labs/ts-sdk';
+import { CoinStoreWritesetParser } from './CoinStoreWritesetParser';
+import { CoinEventParser } from './CoinEventParser';
+import { EventParser } from '@/lib/types/parsers';
+import { WritesetParser } from '@/lib/types/parsers';
+import { ObjectOwnersWritesetParser } from './ObjectOwnersWritesetParser';
+import { FungibleAssetStoreWritesetParser } from './FungibleAssetStoreWritesetParser';
+import { FungibleAssetEventParser } from './FungibleAssetEventParser';
+import { getPairedMetadata } from '@/lib/fungibleAssets';
 
 export class SimulationContext {
   public coinEventGuidToCoinType: { [eventGuid: string]: string } = {};
@@ -61,7 +61,7 @@ export class SimulationContext {
         balanceChanges[address][coinType] = {
           delta,
           coinType,
-          faAddress: getPairedMetadata(coinType),
+          faAddress: getPairedMetadata(coinType)
         };
       })
     );
@@ -72,7 +72,11 @@ export class SimulationContext {
           // If the address doesn't have a balance change already, create one.
           if (!balanceChanges[address]) {
             return (balanceChanges[address] = {
-              [faAddress]: { delta, faAddress, coinType: undefined },
+              [faAddress]: {
+                delta,
+                faAddress,
+                coinType: undefined
+              }
             });
           }
 
@@ -85,13 +89,13 @@ export class SimulationContext {
             const [coinType, change] = pairedCoinBalanceChange;
             balanceChanges[address][coinType] = {
               ...change,
-              delta: change.delta + delta,
+              delta: change.delta + delta
             };
           } else {
             balanceChanges[address][faAddress] = {
               delta,
               faAddress,
-              coinType: undefined,
+              coinType: undefined
             };
           }
         })
@@ -105,12 +109,12 @@ export default class SimulationParser {
   private static writesetParsers: { [key: string]: WritesetParser } = {
     coinStore: new CoinStoreWritesetParser(),
     objectOwners: new ObjectOwnersWritesetParser(),
-    fungibleAssetStore: new FungibleAssetStoreWritesetParser(),
+    fungibleAssetStore: new FungibleAssetStoreWritesetParser()
   };
 
   private static eventParsers: { [key: string]: EventParser } = {
     coinEvent: new CoinEventParser(),
-    fungibleAssetEvent: new FungibleAssetEventParser(),
+    fungibleAssetEvent: new FungibleAssetEventParser()
   };
 
   static parseTransaction(transaction: UserTransactionResponse) {

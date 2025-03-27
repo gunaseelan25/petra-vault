@@ -1,6 +1,6 @@
-import { Endpoints } from "@/lib/constants";
-import { useQuery } from "@tanstack/react-query";
-import { z } from "zod";
+import { Endpoints } from '@/lib/constants';
+import { useQuery } from '@tanstack/react-query';
+import { z } from 'zod';
 
 export const fetchCoinsResponseSchema = z.record(
   z.record(z.number().nullable())
@@ -10,10 +10,10 @@ export type FetchCoinsResponse = z.infer<typeof fetchCoinsResponseSchema>;
 
 export const usePetraCoinsPrices = () => {
   return useQuery({
-    queryKey: ["petra-coins-prices"],
+    queryKey: ['petra-coins-prices'],
     queryFn: async () => {
       const response = await fetch(`${Endpoints.PETRA_PRICING}/prices`);
       return (await response.json()) as FetchCoinsResponse;
-    },
+    }
   });
 };

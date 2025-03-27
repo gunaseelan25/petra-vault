@@ -1,42 +1,42 @@
 import AddOwnerProposalForm, {
-  AddOwnerProposalFormValues,
-} from "../forms/AddOwnerProposalForm";
+  AddOwnerProposalFormValues
+} from '../forms/AddOwnerProposalForm';
 
-import { Separator } from "../ui/separator";
+import { Separator } from '../ui/separator';
 
-import { DialogTitle } from "../ui/dialog";
+import { DialogTitle } from '../ui/dialog';
 
-import { DialogContent, DialogHeader } from "../ui/dialog";
+import { DialogContent, DialogHeader } from '../ui/dialog';
 
-import { DialogDescription } from "../ui/dialog";
-import { useEffect, useMemo, useState } from "react";
-import { createMultisigTransactionPayloadData } from "@/lib/payloads";
-import { useActiveVault } from "@/context/ActiveVaultProvider";
-import CodeBlock from "../CodeBlock";
-import { Button } from "../ui/button";
-import { ExternalLinkIcon, Pencil1Icon } from "@radix-ui/react-icons";
-import { toast } from "sonner";
-import { getExplorerUrl } from "@aptos-labs/js-pro";
-import { AptosAvatar } from "aptos-avatars-react";
-import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
+import { DialogDescription } from '../ui/dialog';
+import { useEffect, useMemo, useState } from 'react';
+import { createMultisigTransactionPayloadData } from '@/lib/payloads';
+import { useActiveVault } from '@/context/ActiveVaultProvider';
+import CodeBlock from '../CodeBlock';
+import { Button } from '../ui/button';
+import { ExternalLinkIcon, Pencil1Icon } from '@radix-ui/react-icons';
+import { toast } from 'sonner';
+import { getExplorerUrl } from '@aptos-labs/js-pro';
+import { AptosAvatar } from 'aptos-avatars-react';
+import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
 import {
   useSignAndSubmitTransaction,
-  useWaitForTransaction,
-} from "@aptos-labs/react";
-import { useRouter } from "next/navigation";
-import { Abis } from "@/lib/abis";
-import { jsonStringify } from "@/lib/storage";
-import useAnalytics from "@/hooks/useAnalytics";
+  useWaitForTransaction
+} from '@aptos-labs/react';
+import { useRouter } from 'next/navigation';
+import { Abis } from '@/lib/abis';
+import { jsonStringify } from '@/lib/storage';
+import useAnalytics from '@/hooks/useAnalytics';
 
 export default function AddOwnerModal({
   owners,
-  signaturesRequired,
+  signaturesRequired
 }: {
   owners: string[];
   signaturesRequired: number;
 }) {
   const trackEvent = useAnalytics();
-  const [page, setPage] = useState<"add" | "confirm">("add");
+  const [page, setPage] = useState<'add' | 'confirm'>('add');
   const [savedFormValues, setSavedFormValues] =
     useState<AddOwnerProposalFormValues>();
 
@@ -52,36 +52,36 @@ export default function AddOwnerModal({
       vaultAddress,
       payload: {
         abi: Abis[
-          "0x1::multisig_account::add_owners_and_update_signatures_required"
+          '0x1::multisig_account::add_owners_and_update_signatures_required'
         ],
         function:
-          "0x1::multisig_account::add_owners_and_update_signatures_required",
+          '0x1::multisig_account::add_owners_and_update_signatures_required',
         functionArguments: [
           [savedFormValues.address],
-          savedFormValues.signaturesRequired,
-        ],
-      },
+          savedFormValues.signaturesRequired
+        ]
+      }
     });
 
     return {
       transactionPayload: payload,
       innerPayload: {
         function:
-          "0x1::multisig_account::add_owners_and_update_signatures_required",
+          '0x1::multisig_account::add_owners_and_update_signatures_required',
         functionArguments: [
           [savedFormValues.address],
-          savedFormValues.signaturesRequired,
+          savedFormValues.signaturesRequired
         ],
-        typeArguments: [],
-      },
+        typeArguments: []
+      }
     };
   }, [savedFormValues, vaultAddress]);
 
   const { hash, signAndSubmitTransaction, isPending } =
     useSignAndSubmitTransaction({
       onSuccess: (data) => {
-        trackEvent("create_add_owner_proposal", { hash: data.hash });
-      },
+        trackEvent('create_add_owner_proposal', { hash: data.hash });
+      }
     });
 
   const { isSuccess, isError } = useWaitForTransaction({ hash });
@@ -93,17 +93,17 @@ export default function AddOwnerModal({
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Successfully created the transaction");
+      toast.success('Successfully created the transaction');
       router.push(`/vault/${id}/transactions`);
     } else if (isError) {
-      toast.error("Failed to create the transaction");
+      toast.error('Failed to create the transaction');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, isError]);
 
   return (
     <DialogContent>
-      {page === "add" && (
+      {page === 'add' && (
         <div className="w-full flex flex-col gap-4">
           <DialogHeader className="w-full">
             <DialogTitle>Add Owners</DialogTitle>
@@ -119,13 +119,13 @@ export default function AddOwnerModal({
             signaturesRequired={Number(signaturesRequired ?? 1)}
             onSubmit={(values) => {
               setSavedFormValues(values);
-              setPage("confirm");
+              setPage('confirm');
             }}
           />
         </div>
       )}
 
-      {page === "confirm" && savedFormValues && transactionPayload && (
+      {page === 'confirm' && savedFormValues && transactionPayload && (
         <div className="w-full flex flex-col gap-4">
           <DialogHeader className="w-full">
             <DialogTitle>Confirm New Proposal</DialogTitle>
@@ -171,8 +171,8 @@ export default function AddOwnerModal({
               <div className="flex items-center mt-2 gap-2 font-display">
                 <span className="font-medium">
                   {savedFormValues.signaturesRequired} signature
-                  {savedFormValues.signaturesRequired === 1 ? "" : "s"}
-                </span>{" "}
+                  {savedFormValues.signaturesRequired === 1 ? '' : 's'}
+                </span>{' '}
                 <span className="text-muted-foreground">
                   required out of {(owners?.length ?? 0) + 1} owners
                 </span>
@@ -197,7 +197,7 @@ export default function AddOwnerModal({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setPage("add")}
+                onClick={() => setPage('add')}
               >
                 Back
               </Button>

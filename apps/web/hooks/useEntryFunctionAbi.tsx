@@ -1,28 +1,28 @@
-import { useClients } from "@aptos-labs/react";
-import { fetchEntryFunctionAbi } from "@aptos-labs/ts-sdk";
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useClients } from '@aptos-labs/react';
+import { fetchEntryFunctionAbi } from '@aptos-labs/ts-sdk';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 interface useEntryFunctionAbiParameters
-  extends Omit<UseQueryOptions, "queryKey" | "queryFn"> {
+  extends Omit<UseQueryOptions, 'queryKey' | 'queryFn'> {
   entryFunction?: string;
 }
 
 export default function useEntryFunctionAbi({
-  entryFunction,
+  entryFunction
 }: useEntryFunctionAbiParameters) {
   const { aptos } = useClients();
 
   return useQuery({
-    queryKey: ["function-abi", entryFunction],
+    queryKey: ['function-abi', entryFunction],
     enabled: entryFunction !== undefined,
     queryFn: async () => {
-      if (!entryFunction) throw new Error("Requires `entryFunction`");
+      if (!entryFunction) throw new Error('Requires `entryFunction`');
 
       const [moduleAddress, moduleName, functionName] =
-        entryFunction.split("::");
+        entryFunction.split('::');
 
       if (!moduleAddress || !moduleName || !functionName) {
-        throw new Error("Invalid entry function");
+        throw new Error('Invalid entry function');
       }
 
       return await fetchEntryFunctionAbi(
@@ -31,6 +31,6 @@ export default function useEntryFunctionAbi({
         functionName,
         aptos.config
       );
-    },
+    }
   });
 }

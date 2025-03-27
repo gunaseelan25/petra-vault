@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { PropsWithChildren } from "react";
-import { ActiveProposalProvider } from "@/context/ActiveProposalProvider";
-import { useParams } from "next/navigation";
-import { isNumber } from "@/lib/units";
+import { PropsWithChildren } from 'react';
+import { ActiveProposalProvider } from '@/context/ActiveProposalProvider';
+import { useParams } from 'next/navigation';
+import { isNumber } from '@/lib/units';
 
 export default function ProposalLayout({ children }: PropsWithChildren) {
   const { sequenceNumber } = useParams();

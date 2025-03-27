@@ -1,5 +1,5 @@
-import { Ed25519Account, Ed25519PrivateKey, Network } from "@aptos-labs/ts-sdk";
-import { MockPetraWallet } from "./MockPetraWallet";
+import { Ed25519Account, Ed25519PrivateKey, Network } from '@aptos-labs/ts-sdk';
+import { MockPetraWallet } from './MockPetraWallet';
 
 /**
  * This class can be stored in Window to transport non-serializable objects
@@ -13,7 +13,7 @@ export class MockPetraTransport {
     return {
       address: account.address.toString(),
       publicKey: account.publicKey.toString(),
-      type: "ed25519",
+      type: 'ed25519'
     };
   }
 
@@ -21,13 +21,17 @@ export class MockPetraTransport {
     return this.wallet.accounts.map((account) => ({
       address: account.address.toString(),
       publicKey: account.publicKey.toString(),
-      type: "ed25519",
+      type: 'ed25519'
     }));
   }
 
   async getNetwork() {
     const network = await this.wallet.getNetwork();
-    return { name: network.name, chainId: network.chainId, url: network.url };
+    return {
+      name: network.name,
+      chainId: network.chainId,
+      url: network.url
+    };
   }
 
   async getAccountPrivateKey() {
@@ -37,7 +41,7 @@ export class MockPetraTransport {
   async setAccountWithPrivateKey(privateKey: string) {
     await this.wallet.setAccount(
       new Ed25519Account({
-        privateKey: new Ed25519PrivateKey(privateKey),
+        privateKey: new Ed25519PrivateKey(privateKey)
       })
     );
   }

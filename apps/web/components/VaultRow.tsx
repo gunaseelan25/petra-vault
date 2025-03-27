@@ -1,18 +1,18 @@
-import { AptosAvatar } from "aptos-avatars-react";
-import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
-import { Vault } from "@/lib/types/vaults";
-import { createVaultId } from "@/lib/vaults";
-import Link from "next/link";
-import { useAptBalance } from "@aptos-labs/react";
-import { Skeleton } from "./ui/skeleton";
-import { formatUnits } from "@aptos-labs/js-pro";
-import { AnimatePresence, motion } from "motion/react";
-import { Network } from "@aptos-labs/ts-sdk";
+import { AptosAvatar } from 'aptos-avatars-react';
+import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
+import { Vault } from '@/lib/types/vaults';
+import { createVaultId } from '@/lib/vaults';
+import Link from 'next/link';
+import { useAptBalance } from '@aptos-labs/react';
+import { Skeleton } from './ui/skeleton';
+import { formatUnits } from '@aptos-labs/js-pro';
+import { AnimatePresence, motion } from 'motion/react';
+import { Network } from '@aptos-labs/ts-sdk';
 
 export default function VaultRow({ vault }: { vault: Vault }) {
   const { data: balance, isLoading: isLoadingBalance } = useAptBalance({
     address: vault.address,
-    network: { network: vault.network },
+    network: { network: vault.network }
   });
 
   return (
@@ -55,8 +55,8 @@ export default function VaultRow({ vault }: { vault: Vault }) {
                 exit={{ opacity: 0 }}
               >
                 {Number(formatUnits(balance, 8)).toLocaleString(undefined, {
-                  minimumSignificantDigits: 2,
-                })}{" "}
+                  minimumSignificantDigits: 2
+                })}{' '}
                 APT
               </motion.p>
             )}

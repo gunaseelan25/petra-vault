@@ -1,12 +1,12 @@
-import { ModuleViewReturnType } from "@/lib/types/modules";
-import { useViewModule, UseViewModuleParameters } from "@aptos-labs/react";
+import { ModuleViewReturnType } from '@/lib/types/modules';
+import { useViewModule, UseViewModuleParameters } from '@aptos-labs/react';
 
 export interface UseMultisigCanExecuteOptions
   extends Omit<
     UseViewModuleParameters<
-      ModuleViewReturnType<"0x1::multisig_account::can_be_executed">
+      ModuleViewReturnType<'0x1::multisig_account::can_be_executed'>
     >,
-    "payload"
+    'payload'
   > {
   address: string;
   sequenceNumber: number;
@@ -18,13 +18,13 @@ export default function useMultisigCanExecute({
   ...options
 }: UseMultisigCanExecuteOptions) {
   const { data, ...query } = useViewModule<
-    ModuleViewReturnType<"0x1::multisig_account::can_be_executed">
+    ModuleViewReturnType<'0x1::multisig_account::can_be_executed'>
   >({
     payload: {
-      function: "0x1::multisig_account::can_be_executed",
-      functionArguments: [address, sequenceNumber],
+      function: '0x1::multisig_account::can_be_executed',
+      functionArguments: [address, sequenceNumber]
     },
-    ...options,
+    ...options
   });
   return { data: data?.at(0), ...query };
 }

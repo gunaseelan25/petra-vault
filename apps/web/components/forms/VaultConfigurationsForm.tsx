@@ -1,42 +1,42 @@
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Plus, Trash2 } from "lucide-react";
-import { motion } from "motion/react";
-import { useAccount } from "@aptos-labs/react";
-import { VaultSignerSchema } from "@/lib/types/signers";
-import { AccountAddress } from "@aptos-labs/ts-sdk";
-import { useEffect } from "react";
+  FormMessage
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Plus, Trash2 } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useAccount } from '@aptos-labs/react';
+import { VaultSignerSchema } from '@/lib/types/signers';
+import { AccountAddress } from '@aptos-labs/ts-sdk';
+import { useEffect } from 'react';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { cn } from "@/lib/utils";
+  SelectValue
+} from '../ui/select';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   signers: z.array(VaultSignerSchema).min(1, {
-    message: "At least one signer is required.",
+    message: 'At least one signer is required.'
   }),
   signaturesRequired: z.coerce
     .number()
-    .min(1, { message: "The signatures required must be at least 1." })
-    .max(32, { message: "The signatures required must be less than 32" })
+    .min(1, { message: 'The signatures required must be at least 1.' })
+    .max(32, { message: 'The signatures required must be less than 32' })
     .refine((val) => val > 0, {
-      message: "Signatures required must be greater than 0",
-    }),
+      message: 'Signatures required must be greater than 0'
+    })
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -46,7 +46,7 @@ interface VaultConfigurationsFormProps {
 }
 
 export default function VaultConfigurationsForm({
-  onSubmit,
+  onSubmit
 }: VaultConfigurationsFormProps) {
   const account = useAccount();
 
@@ -55,29 +55,29 @@ export default function VaultConfigurationsForm({
     defaultValues: {
       signers: [
         {
-          address: account?.address?.toString() ?? "",
-          name: "Me",
-        },
+          address: account?.address?.toString() ?? '',
+          name: 'Me'
+        }
       ],
-      signaturesRequired: 1,
-    },
+      signaturesRequired: 1
+    }
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "signers",
+    name: 'signers'
   });
 
   useEffect(() => {
     if (account?.address && fields[0] && fields[0]?.address === undefined) {
       fields[0].address = account.address;
-      form.setValue("signers", fields);
+      form.setValue('signers', fields);
     }
   }, [account, fields, form]);
 
   useEffect(() => {
-    if (fields.length < form.getValues("signaturesRequired")) {
-      form.setValue("signaturesRequired", fields.length);
+    if (fields.length < form.getValues('signaturesRequired')) {
+      form.setValue('signaturesRequired', fields.length);
     }
   }, [fields, form]);
 
@@ -124,15 +124,15 @@ export default function VaultConfigurationsForm({
                               data-testid={`owner-address-input-${index}`}
                               value={
                                 index === 0
-                                  ? (account?.address?.toString() ?? "")
+                                  ? (account?.address?.toString() ?? '')
                                   : field.value instanceof AccountAddress &&
                                       field.value.equals(AccountAddress.ZERO)
-                                    ? ""
+                                    ? ''
                                     : field.value.toString()
                               }
                               readOnly={index === 0}
                               className={
-                                index === 0 ? "bg-muted cursor-not-allowed" : ""
+                                index === 0 ? 'bg-muted cursor-not-allowed' : ''
                               }
                             />
                           </FormControl>
@@ -146,14 +146,14 @@ export default function VaultConfigurationsForm({
                     variant="ghost"
                     size="icon"
                     className={cn(
-                      index === 0 ? "pointer-events-none" : undefined
+                      index === 0 ? 'pointer-events-none' : undefined
                     )}
                     onClick={() => remove(index)}
                   >
                     <Trash2
                       className={cn(
-                        "h-4 w-4",
-                        index === 0 ? "hidden" : undefined
+                        'h-4 w-4',
+                        index === 0 ? 'hidden' : undefined
                       )}
                     />
                   </Button>
@@ -164,7 +164,12 @@ export default function VaultConfigurationsForm({
               type="button"
               size="sm"
               variant="outline"
-              onClick={() => append({ address: AccountAddress.ZERO, name: "" })}
+              onClick={() =>
+                append({
+                  address: AccountAddress.ZERO,
+                  name: ''
+                })
+              }
               data-testid="onboarding-add-owner-button"
             >
               <Plus className="h-4 w-4 mr-2" />

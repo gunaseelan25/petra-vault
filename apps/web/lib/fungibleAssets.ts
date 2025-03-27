@@ -1,5 +1,5 @@
-import { AccountAddress, createObjectAddress } from "@aptos-labs/ts-sdk";
-import { createUserDerivedObjectAddress } from "./objects";
+import { AccountAddress, createObjectAddress } from '@aptos-labs/ts-sdk';
+import { createUserDerivedObjectAddress } from './objects';
 
 /**
  * Returns the paired Fungible Asset metadata paired for a given coin type. If the
@@ -9,7 +9,7 @@ import { createUserDerivedObjectAddress } from "./objects";
  * @returns The paired metadata address for the given coin type
  */
 export const getPairedMetadata = (coinType: string) =>
-  coinType === "0x1::aptos_coin::AptosCoin"
+  coinType === '0x1::aptos_coin::AptosCoin'
     ? AccountAddress.A.toStringLong()
     : createObjectAddress(AccountAddress.A, coinType).toStringLong();
 

@@ -1,18 +1,18 @@
-import { Ed25519Account, Network } from "@aptos-labs/ts-sdk";
-import { test } from "./fixtures";
-import { expect } from "@playwright/test";
-import { parseApt } from "@aptos-labs/js-pro";
-import { getPublishableContractJson } from "@/tests/lib/constants";
-import fs from "fs/promises";
-import path from "path";
+import { Ed25519Account, Network } from '@aptos-labs/ts-sdk';
+import { test } from './fixtures';
+import { expect } from '@playwright/test';
+import { parseApt } from '@aptos-labs/js-pro';
+import { getPublishableContractJson } from '@/tests/lib/constants';
+import fs from 'fs/promises';
+import path from 'path';
 
-test("send coins using 0x1::aptos_account::transfer", async ({
+test('send coins using 0x1::aptos_account::transfer', async ({
   onboarding,
   vault,
   proposal,
   aptos,
   navigation,
-  page,
+  page
 }) => {
   const alice = Ed25519Account.generate();
 
@@ -22,34 +22,34 @@ test("send coins using 0x1::aptos_account::transfer", async ({
 
   const vaultAddress = await vault.getVaultAddress();
 
-  await aptos.fundAccount(vaultAddress, Number(parseApt("1")));
+  await aptos.fundAccount(vaultAddress, Number(parseApt('1')));
 
   const prevBalance = await aptos.getAccountAPTAmount(vaultAddress);
 
   await proposal.createProposal(
-    "0x1::aptos_account::transfer",
+    '0x1::aptos_account::transfer',
     [],
-    [alice.accountAddress.toString(), parseApt("0.1").toString()]
+    [alice.accountAddress.toString(), parseApt('0.1').toString()]
   );
 
   await navigation.navigateToPendingTransaction(1);
 
-  await page.getByTestId("execute-transaction-button").click();
+  await page.getByTestId('execute-transaction-button').click();
 
-  await page.getByTestId("pending-transactions-empty").click();
+  await page.getByTestId('pending-transactions-empty').click();
 
   const newBalance = await aptos.getAccountAPTAmount(vaultAddress);
 
-  expect(newBalance).toBe(prevBalance - Number(parseApt("0.1")));
+  expect(newBalance).toBe(prevBalance - Number(parseApt('0.1')));
 });
 
-test("send coins using 0x1::aptos_account::transfer_coins to test type arguments", async ({
+test('send coins using 0x1::aptos_account::transfer_coins to test type arguments', async ({
   onboarding,
   vault,
   aptos,
   navigation,
   page,
-  proposal,
+  proposal
 }) => {
   const alice = Ed25519Account.generate();
 
@@ -59,34 +59,34 @@ test("send coins using 0x1::aptos_account::transfer_coins to test type arguments
 
   const vaultAddress = await vault.getVaultAddress();
 
-  await aptos.fundAccount(vaultAddress, Number(parseApt("1")));
+  await aptos.fundAccount(vaultAddress, Number(parseApt('1')));
 
   const prevBalance = await aptos.getAccountAPTAmount(vaultAddress);
 
   await proposal.createProposal(
-    "0x1::aptos_account::transfer_coins",
-    ["0x1::aptos_coin::AptosCoin"],
-    [alice.accountAddress.toString(), parseApt("0.1").toString()]
+    '0x1::aptos_account::transfer_coins',
+    ['0x1::aptos_coin::AptosCoin'],
+    [alice.accountAddress.toString(), parseApt('0.1').toString()]
   );
 
   await navigation.navigateToPendingTransaction(1);
 
-  await page.getByTestId("execute-transaction-button").click();
+  await page.getByTestId('execute-transaction-button').click();
 
-  await page.getByTestId("pending-transactions-empty").click();
+  await page.getByTestId('pending-transactions-empty').click();
 
   const newBalance = await aptos.getAccountAPTAmount(vaultAddress);
 
-  expect(newBalance).toBe(prevBalance - Number(parseApt("0.1")));
+  expect(newBalance).toBe(prevBalance - Number(parseApt('0.1')));
 });
 
-test("send coins using 0x1::aptos_account::batch_transfer to test array inputs", async ({
+test('send coins using 0x1::aptos_account::batch_transfer to test array inputs', async ({
   onboarding,
   vault,
   aptos,
   navigation,
   page,
-  proposal,
+  proposal
 }) => {
   const alice = Ed25519Account.generate();
 
@@ -96,37 +96,37 @@ test("send coins using 0x1::aptos_account::batch_transfer to test array inputs",
 
   const vaultAddress = await vault.getVaultAddress();
 
-  await aptos.fundAccount(vaultAddress, Number(parseApt("1")));
+  await aptos.fundAccount(vaultAddress, Number(parseApt('1')));
 
   const prevBalance = await aptos.getAccountAPTAmount(vaultAddress);
 
   await proposal.createProposal(
-    "0x1::aptos_account::batch_transfer",
+    '0x1::aptos_account::batch_transfer',
     [],
     [
       [alice.accountAddress.toString(), alice.accountAddress.toString()],
-      [parseApt("0.1").toString(), parseApt("0.1").toString()],
+      [parseApt('0.1').toString(), parseApt('0.1').toString()]
     ]
   );
 
   await navigation.navigateToPendingTransaction(1);
 
-  await page.getByTestId("execute-transaction-button").click();
+  await page.getByTestId('execute-transaction-button').click();
 
-  await page.getByTestId("pending-transactions-empty").click();
+  await page.getByTestId('pending-transactions-empty').click();
 
   const newBalance = await aptos.getAccountAPTAmount(vaultAddress);
 
-  expect(newBalance).toBe(prevBalance - Number(parseApt("0.2")));
+  expect(newBalance).toBe(prevBalance - Number(parseApt('0.2')));
 });
 
-test("publish contract", async ({
+test('publish contract', async ({
   onboarding,
   vault,
   navigation,
   proposal,
   page,
-  aptos,
+  aptos
 }) => {
   const alice = Ed25519Account.generate();
 
@@ -136,7 +136,7 @@ test("publish contract", async ({
 
   const vaultAddress = await vault.getVaultAddress();
 
-  await aptos.fundAccount(vaultAddress, Number(parseApt("1")));
+  await aptos.fundAccount(vaultAddress, Number(parseApt('1')));
 
   const contractJson = getPublishableContractJson(vaultAddress);
 
@@ -151,22 +151,22 @@ test("publish contract", async ({
 
   await navigation.navigateToPendingTransaction(1);
 
-  await page.getByTestId("execute-transaction-button").click();
+  await page.getByTestId('execute-transaction-button').click();
 
-  await page.getByTestId("pending-transactions-empty").click();
+  await page.getByTestId('pending-transactions-empty').click();
 
   const modules = await aptos.getAccountModules(vaultAddress);
 
   expect(modules.length).toBeGreaterThan(0);
 });
 
-test("send coins from vault", async ({
+test('send coins from vault', async ({
   onboarding,
   vault,
   aptos,
   navigation,
   page,
-  proposal,
+  proposal
 }) => {
   const alice = Ed25519Account.generate();
 
@@ -176,9 +176,9 @@ test("send coins from vault", async ({
 
   const vaultAddress = await vault.getVaultAddress();
 
-  await aptos.fundAccount(alice.accountAddress, Number(parseApt("1")));
+  await aptos.fundAccount(alice.accountAddress, Number(parseApt('1')));
 
-  await aptos.fundAccount(vaultAddress, Number(parseApt("1")));
+  await aptos.fundAccount(vaultAddress, Number(parseApt('1')));
 
   const prevBalance = await aptos.getAccountAPTAmount(vaultAddress);
 
@@ -186,11 +186,11 @@ test("send coins from vault", async ({
 
   await navigation.navigateToPendingTransaction(1);
 
-  await page.getByTestId("execute-transaction-button").click();
+  await page.getByTestId('execute-transaction-button').click();
 
-  await page.getByTestId("pending-transactions-empty").click();
+  await page.getByTestId('pending-transactions-empty').click();
 
   const newBalance = await aptos.getAccountAPTAmount(vaultAddress);
 
-  expect(newBalance).toBe(prevBalance - Number(parseApt("0.1")));
+  expect(newBalance).toBe(prevBalance - Number(parseApt('0.1')));
 });

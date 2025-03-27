@@ -3,14 +3,14 @@ import {
   AccountAddressInput,
   UserTransactionResponse,
   WriteSetChange,
-  WriteSetChangeWriteResource,
-} from "@aptos-labs/ts-sdk";
-import { UseQueryResult } from "@tanstack/react-query";
+  WriteSetChangeWriteResource
+} from '@aptos-labs/ts-sdk';
+import { UseQueryResult } from '@tanstack/react-query';
 
 export function isWriteResourceChange(
   change: WriteSetChange
 ): change is WriteSetChangeWriteResource {
-  return change.type === "write_resource";
+  return change.type === 'write_resource';
 }
 
 /**
@@ -41,6 +41,6 @@ export function getSimulationQueryErrors(
     result.isError || (result.data && !result.data.success),
     result.error?.message ??
       result.data?.vm_status ??
-      "An unknown error occurred with simulating your transaction.",
+      'An unknown error occurred with simulating your transaction.'
   ];
 }

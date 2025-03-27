@@ -17,13 +17,13 @@ import {
   U256,
   Bool,
   MoveVector,
-  SimpleEntryFunctionArgumentTypes,
-} from "@aptos-labs/ts-sdk";
+  SimpleEntryFunctionArgumentTypes
+} from '@aptos-labs/ts-sdk';
 import {
   deserializerToHex,
   formatMoveVectorU8,
-  getTypeTagDeserializerCls,
-} from "./bcs";
+  getTypeTagDeserializerCls
+} from './bcs';
 
 export const createMultisigTransactionPayloadData = (args: {
   vaultAddress: string;
@@ -31,21 +31,21 @@ export const createMultisigTransactionPayloadData = (args: {
 }): InputGenerateTransactionPayloadData => {
   const payload = generateTransactionPayloadWithABI({
     ...args.payload,
-    multisigAddress: AccountAddress.from(args.vaultAddress),
+    multisigAddress: AccountAddress.from(args.vaultAddress)
   });
 
   if (!payload.multiSig.transaction_payload) {
     throw new Error(
-      "`createMultisigTransactionPayloadData` could not find transaction payload."
+      '`createMultisigTransactionPayloadData` could not find transaction payload.'
     );
   }
 
   return {
-    function: "0x1::multisig_account::create_transaction",
+    function: '0x1::multisig_account::create_transaction',
     functionArguments: [
       args.vaultAddress,
-      payload.multiSig.transaction_payload.bcsToBytes(),
-    ],
+      payload.multiSig.transaction_payload.bcsToBytes()
+    ]
   };
 };
 
@@ -56,13 +56,13 @@ export const createMultisigVoteTransactionPayloadData = (args: {
 }): InputGenerateTransactionPayloadData => {
   if (args.approve) {
     return {
-      function: "0x1::multisig_account::approve_transaction",
-      functionArguments: [args.vaultAddress, args.sequenceNumber],
+      function: '0x1::multisig_account::approve_transaction',
+      functionArguments: [args.vaultAddress, args.sequenceNumber]
     };
   } else {
     return {
-      function: "0x1::multisig_account::reject_transaction",
-      functionArguments: [args.vaultAddress, args.sequenceNumber],
+      function: '0x1::multisig_account::reject_transaction',
+      functionArguments: [args.vaultAddress, args.sequenceNumber]
     };
   }
 };
@@ -77,7 +77,7 @@ export const deserializeMultisigTransactionPayload = (payload: string) => {
   return {
     function: `${transactionPayload.module_name.address.toString()}::${transactionPayload.module_name.name.identifier}::${transactionPayload.function_name.identifier}`,
     functionArguments: transactionPayload.args,
-    typeArguments: transactionPayload.type_args,
+    typeArguments: transactionPayload.type_args
   };
 };
 
@@ -138,6 +138,6 @@ export const formatPayloadWithAbi = (
         ? formatFunctionArgument(arg, type)
         : arg.bcsToHex().toString();
     }),
-    typeArguments: payload.typeArguments.map((type) => type?.toString()),
+    typeArguments: payload.typeArguments.map((type) => type?.toString())
   };
 };

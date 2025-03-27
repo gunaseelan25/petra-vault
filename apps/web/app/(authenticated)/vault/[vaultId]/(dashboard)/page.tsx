@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useCoins } from "@/context/CoinsProvider";
-import { AnimatePresence, motion } from "motion/react";
-import { useMemo } from "react";
-import { parseUnits } from "@aptos-labs/js-pro";
-import { Skeleton } from "@/components/ui/skeleton";
-import CoinAvatar from "@/components/CoinAvatar";
+import { useCoins } from '@/context/CoinsProvider';
+import { AnimatePresence, motion } from 'motion/react';
+import { useMemo } from 'react';
+import { parseUnits } from '@aptos-labs/js-pro';
+import { Skeleton } from '@/components/ui/skeleton';
+import CoinAvatar from '@/components/CoinAvatar';
 
 export default function VaultPage() {
   const { coins } = useCoins();
@@ -84,7 +84,7 @@ export default function VaultPage() {
                 Number(balance.amount) /
                 Math.pow(10, balance.metadata.decimals);
               const formattedAmount = amount.toLocaleString(undefined, {
-                maximumFractionDigits: 6,
+                maximumFractionDigits: 6
               });
 
               const symbol = metadata?.symbol || balance.metadata.symbol;
@@ -92,10 +92,10 @@ export default function VaultPage() {
 
               // Calculate USD value if price is available
               const usdValue = price?.usd
-                ? (amount * price.usd).toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                    maximumFractionDigits: 2,
+                ? (amount * price.usd).toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 2
                   })
                 : undefined;
 
@@ -119,8 +119,8 @@ export default function VaultPage() {
                         <span
                           className={
                             price.usd_24h_change > 0
-                              ? "text-green-500"
-                              : "text-red-500"
+                              ? 'text-green-500'
+                              : 'text-red-500'
                           }
                         >
                           {price.usd_24h_change.toFixed(2)}%

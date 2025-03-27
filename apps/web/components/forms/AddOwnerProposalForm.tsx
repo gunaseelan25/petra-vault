@@ -1,37 +1,37 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   FormField,
   FormItem,
   FormLabel,
   FormControl,
   FormMessage,
-  Form,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { useForm } from "react-hook-form";
-import { isAddress } from "@/lib/address";
-import { Separator } from "../ui/separator";
+  Form
+} from '../ui/form';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { useForm } from 'react-hook-form';
+import { isAddress } from '@/lib/address';
+import { Separator } from '../ui/separator';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectValue,
-  SelectTrigger,
-} from "../ui/select";
+  SelectTrigger
+} from '../ui/select';
 
 const formSchema = z.object({
   address: z
     .string()
-    .min(1, "Address is required")
-    .refine((val) => isAddress(val), { message: "Invalid Aptos address" }),
-  name: z.string().min(1, "Name is required"),
+    .min(1, 'Address is required')
+    .refine((val) => isAddress(val), { message: 'Invalid Aptos address' }),
+  name: z.string().min(1, 'Name is required'),
   signaturesRequired: z.coerce
     .number()
-    .min(1, "Signatures required must be greater than 0"),
+    .min(1, 'Signatures required must be greater than 0')
 });
 
 export type AddOwnerProposalFormValues = z.infer<typeof formSchema>;
@@ -47,20 +47,20 @@ export default function AddOwnerProposalForm({
   onSubmit,
   owners,
   signaturesRequired,
-  vaultAddress,
+  vaultAddress
 }: AddOwnerProposalFormProps) {
   const formSchemaWithOwners = formSchema.refine(
     (data) => ![...owners, vaultAddress].includes(data.address),
-    { message: "Address is already an owner", path: ["address"] }
+    { message: 'Address is already an owner', path: ['address'] }
   );
 
   const form = useForm<AddOwnerProposalFormValues>({
     resolver: zodResolver(formSchemaWithOwners),
     defaultValues: {
-      address: "",
-      name: "",
-      signaturesRequired,
-    },
+      address: '',
+      name: '',
+      signaturesRequired
+    }
   });
 
   return (

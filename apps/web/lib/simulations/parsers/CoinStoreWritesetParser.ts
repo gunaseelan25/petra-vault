@@ -1,7 +1,7 @@
-import type { WriteSetChange } from "@aptos-labs/ts-sdk";
-import type { WritesetParser } from "@/lib/types/parsers";
-import { isWriteResourceChange, serializeEventGuid } from "../shared";
-import { SimulationContext } from "./SimulationParser";
+import type { WriteSetChange } from '@aptos-labs/ts-sdk';
+import type { WritesetParser } from '@/lib/types/parsers';
+import { isWriteResourceChange, serializeEventGuid } from '../shared';
+import { SimulationContext } from './SimulationParser';
 
 /**
  * Parser for mapping a coin event guid to its coin type.

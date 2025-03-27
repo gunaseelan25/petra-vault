@@ -1,17 +1,17 @@
-import constate from "constate";
-import useMultisigTransaction from "@/hooks/useMultisigTransaction";
-import { useActiveVault } from "./ActiveVaultProvider";
-import useMultisigCanExecute from "@/hooks/useMultisigCanExecute";
-import useMultisigSignaturesRequired from "@/hooks/useMultisigSignaturesRequired";
-import useEntryFunctionAbi from "@/hooks/useEntryFunctionAbi";
-import { deserializeMultisigTransactionPayload } from "@/lib/payloads";
-import useMultisigOwners from "@/hooks/useMultisigOwners";
+import constate from 'constate';
+import useMultisigTransaction from '@/hooks/useMultisigTransaction';
+import { useActiveVault } from './ActiveVaultProvider';
+import useMultisigCanExecute from '@/hooks/useMultisigCanExecute';
+import useMultisigSignaturesRequired from '@/hooks/useMultisigSignaturesRequired';
+import useEntryFunctionAbi from '@/hooks/useEntryFunctionAbi';
+import { deserializeMultisigTransactionPayload } from '@/lib/payloads';
+import useMultisigOwners from '@/hooks/useMultisigOwners';
 import {
   useAccount,
   useClients,
-  useSimulateTransaction,
-} from "@aptos-labs/react";
-import { useQuery } from "@tanstack/react-query";
+  useSimulateTransaction
+} from '@aptos-labs/react';
+import { useQuery } from '@tanstack/react-query';
 import {
   AccountAddress,
   buildTransaction,
@@ -20,11 +20,11 @@ import {
   MultiSig,
   MultiSigTransactionPayload,
   TransactionPayloadEntryFunction,
-  TransactionPayloadMultiSig,
-} from "@aptos-labs/ts-sdk";
-import { getSimulationQueryErrors } from "@/lib/simulations/shared";
-import useMultisigSequenceNumber from "@/hooks/useMultisigSequenceNumber";
-import useMultisigPendingTransactions from "@/hooks/useMultisigPendingTransactions";
+  TransactionPayloadMultiSig
+} from '@aptos-labs/ts-sdk';
+import { getSimulationQueryErrors } from '@/lib/simulations/shared';
+import useMultisigSequenceNumber from '@/hooks/useMultisigSequenceNumber';
+import useMultisigPendingTransactions from '@/hooks/useMultisigPendingTransactions';
 
 export const [ActiveProposalProvider, useActiveProposal] = constate(
   ({ sequenceNumber }: { sequenceNumber: number }) => {
@@ -34,7 +34,7 @@ export const [ActiveProposalProvider, useActiveProposal] = constate(
 
     const latestSequenceNumber = useMultisigSequenceNumber({
       address: vaultAddress,
-      network: { network },
+      network: { network }
     });
 
     const pendingTransactions = useMultisigPendingTransactions({
@@ -42,29 +42,29 @@ export const [ActiveProposalProvider, useActiveProposal] = constate(
       network: { network },
       enabled:
         latestSequenceNumber.data !== undefined &&
-        sequenceNumber !== latestSequenceNumber.data + 1,
+        sequenceNumber !== latestSequenceNumber.data + 1
     });
 
     const transaction = useMultisigTransaction({
       address: vaultAddress,
       sequenceNumber,
-      network: { network },
+      network: { network }
     });
 
     const owners = useMultisigOwners({
       address: vaultAddress,
-      network: { network },
+      network: { network }
     });
 
     const canExecute = useMultisigCanExecute({
       address: vaultAddress,
       sequenceNumber,
-      network: { network },
+      network: { network }
     });
 
     const signaturesRequired = useMultisigSignaturesRequired({
       address: vaultAddress,
-      network: { network },
+      network: { network }
     });
 
     const innerPayload = transaction.data?.payload
@@ -72,18 +72,18 @@ export const [ActiveProposalProvider, useActiveProposal] = constate(
       : undefined;
 
     const entryFunctionAbi = useEntryFunctionAbi({
-      entryFunction: innerPayload?.function,
+      entryFunction: innerPayload?.function
     });
 
     const simulationPayload = useQuery({
       queryKey: [
-        "simulation-proposal-transaction-payload",
+        'simulation-proposal-transaction-payload',
         transaction.data?.payload,
-        account?.address?.toString(),
+        account?.address?.toString()
       ],
       queryFn: async () => {
         if (!transaction.data?.payload || !account?.address)
-          throw new Error("Missing required transaction payload");
+          throw new Error('Missing required transaction payload');
 
         const multisigPayload = MultiSigTransactionPayload.deserialize(
           new Deserializer(
@@ -96,11 +96,11 @@ export const [ActiveProposalProvider, useActiveProposal] = constate(
           sender: vaultAddress,
           payload: new TransactionPayloadEntryFunction(
             multisigPayload.transaction_payload
-          ),
+          )
         });
       },
       refetchInterval: 20 * 1000,
-      staleTime: 0,
+      staleTime: 0
     });
 
     const simulation = useSimulateTransaction({
@@ -110,15 +110,15 @@ export const [ActiveProposalProvider, useActiveProposal] = constate(
       options: {
         estimateMaxGasAmount: true,
         estimateGasUnitPrice: true,
-        estimatePrioritizedGasUnitPrice: true,
-      },
+        estimatePrioritizedGasUnitPrice: true
+      }
     });
 
     const transactionPayload = useQuery({
-      queryKey: ["proposal-transaction-payload", simulation.data?.hash],
+      queryKey: ['proposal-transaction-payload', simulation.data?.hash],
       queryFn: async () => {
         if (!transaction.data?.payload || !account?.address || !simulation.data)
-          throw new Error("Missing required transaction payload");
+          throw new Error('Missing required transaction payload');
 
         const multisigPayload = MultiSigTransactionPayload.deserialize(
           new Deserializer(
@@ -135,11 +135,11 @@ export const [ActiveProposalProvider, useActiveProposal] = constate(
           options: {
             maxGasAmount: Number(simulation.data.gas_used) * 2,
             gasUnitPrice: Number(simulation.data.gas_unit_price),
-            expireTimestamp: Number(simulation.data.expiration_timestamp_secs),
-          },
+            expireTimestamp: Number(simulation.data.expiration_timestamp_secs)
+          }
         });
       },
-      enabled: !!simulationPayload.data,
+      enabled: !!simulationPayload.data
     });
 
     const isUserApproved =
@@ -181,7 +181,7 @@ export const [ActiveProposalProvider, useActiveProposal] = constate(
       simulation: {
         ...simulation,
         isSimulationError,
-        simulationError,
+        simulationError
       },
       sequenceNumber,
       transaction,
@@ -198,7 +198,7 @@ export const [ActiveProposalProvider, useActiveProposal] = constate(
       hasEnoughRejections,
       latestSequenceNumber,
       pendingTransactionsAhead,
-      isNext,
+      isNext
     };
   }
 );

@@ -1,35 +1,35 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { Send } from "lucide-react";
+import * as React from 'react';
+import { Send } from 'lucide-react';
 
-import { NavVaults } from "@/components/NavVaults";
-import { NavUser } from "@/components/NavUser";
+import { NavVaults } from '@/components/NavVaults';
+import { NavUser } from '@/components/NavUser';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
-} from "@/components/ui/sidebar";
-import { parseVaultId } from "@/lib/vaults";
-import { useMemo } from "react";
-import { usePathname } from "next/navigation";
+  SidebarHeader
+} from '@/components/ui/sidebar';
+import { parseVaultId } from '@/lib/vaults';
+import { useMemo } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   FilePlusIcon,
   GearIcon,
   GlobeIcon,
   HomeIcon,
-  Pencil1Icon,
-} from "@radix-ui/react-icons";
-import { NavItemGroup } from "./NavItemGroup";
-import { getExplorerUrl } from "@aptos-labs/js-pro";
+  Pencil1Icon
+} from '@radix-ui/react-icons';
+import { NavItemGroup } from './NavItemGroup';
+import { getExplorerUrl } from '@aptos-labs/js-pro';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
 
   const activeVaultId = useMemo(() => {
-    const parts = pathname.split("/");
-    if (parts[1] !== "vault" || !parts[2]) return undefined;
+    const parts = pathname.split('/');
+    if (parts[1] !== 'vault' || !parts[2]) return undefined;
     const parsedVaultId = parseVaultId(parts[2]);
     return parsedVaultId ? parts[2] : undefined;
   }, [pathname]);
@@ -38,47 +38,47 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return {
       actions: [
         {
-          name: "Home",
+          name: 'Home',
           url: activeVaultId ? `/vault/${activeVaultId}` : undefined,
           activePaths: [
             `/vault/${activeVaultId}`,
-            `/vault/${activeVaultId}/transactions`,
+            `/vault/${activeVaultId}/transactions`
           ],
-          icon: HomeIcon,
+          icon: HomeIcon
         },
         {
-          name: "Create Proposal",
+          name: 'Create Proposal',
           url: activeVaultId
             ? `/vault/${activeVaultId}/proposal/create`
             : undefined,
-          icon: Pencil1Icon,
+          icon: Pencil1Icon
         },
         {
-          name: "Publish Contract",
+          name: 'Publish Contract',
           url: activeVaultId
             ? `/vault/${activeVaultId}/proposal/publish-contract`
             : undefined,
-          icon: FilePlusIcon,
-        },
+          icon: FilePlusIcon
+        }
       ],
 
       management: [
         {
-          name: "View in Explorer",
+          name: 'View in Explorer',
           url: activeVaultId
             ? getExplorerUrl({
                 network: parseVaultId(activeVaultId)?.network,
-                path: `account/${parseVaultId(activeVaultId)?.address.toString()}`,
+                path: `account/${parseVaultId(activeVaultId)?.address.toString()}`
               })
             : undefined,
           icon: GlobeIcon,
-          target: "_blank",
+          target: '_blank'
         },
         {
-          name: "Settings",
+          name: 'Settings',
           url: activeVaultId ? `/vault/${activeVaultId}/settings` : undefined,
-          icon: GearIcon,
-        },
+          icon: GearIcon
+        }
       ],
 
       secondary: [
@@ -90,13 +90,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         //   size: "sm",
         // },
         {
-          name: "Feedback",
-          url: "https://github.com/aptos-labs/petra-wallet",
+          name: 'Feedback',
+          url: 'https://github.com/aptos-labs/petra-wallet',
           icon: Send,
-          size: "sm",
-          target: "_blank",
-        },
-      ],
+          size: 'sm',
+          target: '_blank'
+        }
+      ]
     };
   }, [activeVaultId]);
 

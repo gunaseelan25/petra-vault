@@ -23,6 +23,6 @@ At the beginning of all tests, you must call `onboarding.connectWallet` to conne
 
 **It is IMPORTANT to note that the injection occurs every time `page.goto` is called. Therefore, make sure to only call `page.goto` ONCE and AT THE BEGINNING of a test for the duration of a single test.**
 
-This mock wallet is injected into the page via `page.addInitScript`. The mock wallet is bundled into a IIFE and passed to the `window` object.
+This mock wallet is injected into the page via `page.addInitScript` and communicated to via the `window` object.
 
-If you would like to navigate somewhere, use the `navigation` fixture to do so.
+If you would like to navigate somewhere, we recommend using the `navigation` fixture to do so.

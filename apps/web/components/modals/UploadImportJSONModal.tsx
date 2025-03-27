@@ -1,25 +1,25 @@
-import { useState } from "react";
-import DropZone from "../DropZone";
+import { useState } from 'react';
+import DropZone from '../DropZone';
 import {
   DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import { useQuery } from "@tanstack/react-query";
-import { storageOptionsSerializers } from "@/lib/storage";
-import { Vault, VaultSchema } from "@/lib/types/vaults";
-import { z, ZodError } from "zod";
-import { useClients } from "@aptos-labs/react";
-import { Button } from "../ui/button";
+  DialogTitle
+} from '../ui/dialog';
+import { useQuery } from '@tanstack/react-query';
+import { storageOptionsSerializers } from '@/lib/storage';
+import { Vault, VaultSchema } from '@/lib/types/vaults';
+import { z, ZodError } from 'zod';
+import { useClients } from '@aptos-labs/react';
+import { Button } from '../ui/button';
 
 export interface UploadImportJSONModalProps {
   onImport: (vaults: Vault[]) => void;
 }
 
 export default function UploadImportJSONModal({
-  onImport,
+  onImport
 }: UploadImportJSONModalProps) {
   const { client } = useClients();
 
@@ -28,11 +28,11 @@ export default function UploadImportJSONModal({
   const {
     data: vaults,
     error,
-    isLoading,
+    isLoading
   } = useQuery({
-    queryKey: ["import-vaults", file?.name, file?.lastModified],
+    queryKey: ['import-vaults', file?.name, file?.lastModified],
     queryFn: async () => {
-      if (!file) throw new Error("File not found.");
+      if (!file) throw new Error('File not found.');
       const rawJson = await file?.text();
 
       const parsedJson = JSON.parse(rawJson, storageOptionsSerializers.reviver);
@@ -44,22 +44,22 @@ export default function UploadImportJSONModal({
         await Promise.all(
           vaults.map((e) =>
             client.fetchResourceType<object>({
-              resourceType: "0x1::multisig_account::MultisigAccount",
+              resourceType: '0x1::multisig_account::MultisigAccount',
               accountAddress: e.address,
-              network: { network: e.network },
+              network: { network: e.network }
             })
           )
         );
       } catch {
         throw new Error(
-          "One or more accounts in the JSON is not a MultisigAccount"
+          'One or more accounts in the JSON is not a MultisigAccount'
         );
       }
 
       return vaults;
     },
     enabled: !!file,
-    retry: 1,
+    retry: 1
   });
 
   const handleImport = () => {
@@ -92,15 +92,15 @@ export default function UploadImportJSONModal({
             onClick={handleImport}
             data-testid="confirm-import-vaults-json-button"
           >
-            {!vaults && "Upload a Backup File"}
+            {!vaults && 'Upload a Backup File'}
             {vaults &&
-              `Import ${vaults.length} vault${vaults.length > 1 ? "s" : ""}`}
+              `Import ${vaults.length} vault${vaults.length > 1 ? 's' : ''}`}
           </Button>
         </DialogClose>
         {error && (
           <p className="text-destructive text-sm mt-4">
             {error instanceof ZodError
-              ? "The backup file is not in a proper format."
+              ? 'The backup file is not in a proper format.'
               : error.message}
           </p>
         )}

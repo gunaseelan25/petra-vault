@@ -1,8 +1,8 @@
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { useState } from "react";
-import { FormMessage } from "./ui/form";
-import { PlusIcon, Cross1Icon } from "@radix-ui/react-icons";
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { useState } from 'react';
+import { FormMessage } from './ui/form';
+import { PlusIcon, Cross1Icon } from '@radix-ui/react-icons';
 
 interface ArrayInputProps {
   value?: string[];
@@ -58,7 +58,7 @@ export default function FormArrayInput({
         <Button
           type="button"
           variant="outline"
-          onClick={() => setValues([...values, ""])}
+          onClick={() => setValues([...values, ''])}
           data-testid="add-array-input"
         >
           <PlusIcon className="w-4 h-4" />

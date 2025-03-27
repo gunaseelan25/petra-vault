@@ -13,8 +13,8 @@ import {
   U16,
   Deserializer,
   U8,
-  MoveVector,
-} from "@aptos-labs/ts-sdk";
+  MoveVector
+} from '@aptos-labs/ts-sdk';
 
 export const deserializerToHex = (deserializer: Deserializer) => {
   return Hex.fromHexInput(

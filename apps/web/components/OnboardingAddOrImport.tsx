@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
-import MultisigNameForm from "@/components/forms/VaultNameForm";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import useMultisigDiscoveredAccounts from "@/hooks/useMultisigDiscoveredAccounts";
-import { getExplorerUrl } from "@aptos-labs/js-pro";
-import { useAccount, useClients, useNetwork } from "@aptos-labs/react";
-import { AptosAvatar } from "aptos-avatars-react";
-import { ExternalLinkIcon } from "lucide-react";
-import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
-import { useOnboarding } from "@/context/OnboardingProvider";
-import ExpandingContainer from "./ExpandingContainer";
-import { hasWindow } from "@/lib/utils";
-import { LoadingSpinner } from "./LoaderSpinner";
-import { useMutation } from "@tanstack/react-query";
-import { ModuleViewReturnType } from "@/lib/types/modules";
-import { toast } from "sonner";
-import { motion } from "motion/react";
-import { useVaults } from "@/context/useVaults";
-import { Dialog, DialogTrigger } from "./ui/dialog";
-import UploadImportJSONModal from "./modals/UploadImportJSONModal";
-import { Vault } from "@/lib/types/vaults";
-import { useRouter } from "next/navigation";
-import { AccountAddress } from "@aptos-labs/ts-sdk";
-import useAnalytics from "@/hooks/useAnalytics";
+import MultisigNameForm from '@/components/forms/VaultNameForm';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import useMultisigDiscoveredAccounts from '@/hooks/useMultisigDiscoveredAccounts';
+import { getExplorerUrl } from '@aptos-labs/js-pro';
+import { useAccount, useClients, useNetwork } from '@aptos-labs/react';
+import { AptosAvatar } from 'aptos-avatars-react';
+import { ExternalLinkIcon } from 'lucide-react';
+import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
+import { useOnboarding } from '@/context/OnboardingProvider';
+import ExpandingContainer from './ExpandingContainer';
+import { hasWindow } from '@/lib/utils';
+import { LoadingSpinner } from './LoaderSpinner';
+import { useMutation } from '@tanstack/react-query';
+import { ModuleViewReturnType } from '@/lib/types/modules';
+import { toast } from 'sonner';
+import { motion } from 'motion/react';
+import { useVaults } from '@/context/useVaults';
+import { Dialog, DialogTrigger } from './ui/dialog';
+import UploadImportJSONModal from './modals/UploadImportJSONModal';
+import { Vault } from '@/lib/types/vaults';
+import { useRouter } from 'next/navigation';
+import { AccountAddress } from '@aptos-labs/ts-sdk';
+import useAnalytics from '@/hooks/useAnalytics';
 
 export default function OnboardingAddOrImport() {
   const trackEvent = useAnalytics();
@@ -41,7 +41,7 @@ export default function OnboardingAddOrImport() {
   const { data: discoveredAccounts, isLoading: isLoadingDiscoveredAccounts } =
     useMultisigDiscoveredAccounts({
       address: account?.address.toString(),
-      network,
+      network
     });
 
   const filteredDiscoveredAccounts = discoveredAccounts?.filter(
@@ -51,22 +51,22 @@ export default function OnboardingAddOrImport() {
 
   const {
     mutate: handleLookUpAndImportAccount,
-    isPending: isLookingUpAndImporting,
+    isPending: isLookingUpAndImporting
   } = useMutation({
     mutationFn: async (address: string) => {
       if (!account) {
-        toast.error("Please connect your wallet to import a Multisig account");
+        toast.error('Please connect your wallet to import a Multisig account');
         return;
       }
 
       try {
         const owners = await client.fetchViewModule<
-          ModuleViewReturnType<"0x1::multisig_account::owners">
+          ModuleViewReturnType<'0x1::multisig_account::owners'>
         >({
           payload: {
-            function: "0x1::multisig_account::owners",
-            functionArguments: [address],
-          },
+            function: '0x1::multisig_account::owners',
+            functionArguments: [address]
+          }
         });
 
         if (
@@ -75,26 +75,26 @@ export default function OnboardingAddOrImport() {
             ?.find((e) => AccountAddress.from(e).equals(account?.address))
         ) {
           vaultName.set(address);
-          page.set("set-name");
+          page.set('set-name');
           importVaultAddress.set(address);
         } else {
           toast.error(
-            "Your connected account is not an owner of this Multisig account."
+            'Your connected account is not an owner of this Multisig account.'
           );
         }
-        trackEvent("manual_import_vault", { owners: owners.length });
+        trackEvent('manual_import_vault', { owners: owners.length });
       } catch {
-        toast.error("This account is not a Multisig account");
+        toast.error('This account is not a Multisig account');
       }
-    },
+    }
   });
 
   const handleImportVaults = (vaults: Vault[]) => {
-    trackEvent("backup_import_vault", { vault_count: vaults.length });
+    trackEvent('backup_import_vault', { vault_count: vaults.length });
     importVaults(vaults);
     router.push(`/`);
     toast.success(
-      `Imported ${vaults.length} vault${vaults.length > 1 ? "s" : ""} successfully`
+      `Imported ${vaults.length} vault${vaults.length > 1 ? 's' : ''} successfully`
     );
   };
 
@@ -111,9 +111,9 @@ export default function OnboardingAddOrImport() {
           <MultisigNameForm
             onSubmit={(values) => {
               vaultName.set(values.name);
-              importVaultAddress.set("");
-              page.set("set-config");
-              trackEvent("set_vault_name", {});
+              importVaultAddress.set('');
+              page.set('set-config');
+              trackEvent('set_vault_name', {});
             }}
           />
         </CardContent>
@@ -214,7 +214,7 @@ export default function OnboardingAddOrImport() {
                         <a
                           href={getExplorerUrl({
                             network: network.network,
-                            path: `account/${e.toString()}`,
+                            path: `account/${e.toString()}`
                           })}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -227,7 +227,7 @@ export default function OnboardingAddOrImport() {
                           variant="link"
                           size="sm"
                           onClick={() => {
-                            trackEvent("select_discovered_vault", {});
+                            trackEvent('select_discovered_vault', {});
                             importVaultAddress.set(e.toString());
                             handleLookUpAndImportAccount(e.toString());
                           }}

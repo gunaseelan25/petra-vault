@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import {
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { useParams, useRouter } from "next/navigation";
-import { useVaults } from "@/context/useVaults";
-import { useMemo } from "react";
-import { createVaultId, parseVaultId } from "@/lib/vaults";
-import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
-import { AptosAvatar } from "aptos-avatars-react";
-import { Network } from "@aptos-labs/ts-sdk";
+  SidebarMenuItem
+} from '@/components/ui/sidebar';
+import { useParams, useRouter } from 'next/navigation';
+import { useVaults } from '@/context/useVaults';
+import { useMemo } from 'react';
+import { createVaultId, parseVaultId } from '@/lib/vaults';
+import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
+import { AptosAvatar } from 'aptos-avatars-react';
+import { Network } from '@aptos-labs/ts-sdk';
 import {
   CaretSortIcon,
   CheckCircledIcon,
-  PlusIcon,
-} from "@radix-ui/react-icons";
-import { Button } from "./ui/button";
-import Link from "next/link";
+  PlusIcon
+} from '@radix-ui/react-icons';
+import { Button } from './ui/button';
+import Link from 'next/link';
 
 export function NavVaults() {
   const router = useRouter();
@@ -63,19 +63,19 @@ export function NavVaults() {
               {parsedVaultId && (
                 <div className="flex aspect-square size-8 items-center justify-center">
                   <AptosAvatar
-                    value={parsedVaultId?.address.toString() ?? ""}
+                    value={parsedVaultId?.address.toString() ?? ''}
                     size={32}
                   />
                 </div>
               )}
               <div className="flex flex-col gap-0.5 leading-none">
                 <span className="font-semibold font-display">
-                  {selectedVault ? selectedVault.name : "No vault selected"}
+                  {selectedVault ? selectedVault.name : 'No vault selected'}
                 </span>
                 <span className="text-muted-foreground">
                   {selectedVault
                     ? truncateAddress(selectedVault.address.toString())
-                    : "Select a vault"}
+                    : 'Select a vault'}
                 </span>
               </div>
               <CaretSortIcon className="ml-auto" />

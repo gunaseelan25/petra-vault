@@ -1,15 +1,15 @@
-import { NetworkInfo } from "@aptos-labs/js-pro";
-import { useAptosCore } from "@aptos-labs/react";
+import { NetworkInfo } from '@aptos-labs/js-pro';
+import { useAptosCore } from '@aptos-labs/react';
 import {
   AccountAddress,
   Network,
   TransactionResponseType,
-  UserTransactionResponse,
-} from "@aptos-labs/ts-sdk";
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+  UserTransactionResponse
+} from '@aptos-labs/ts-sdk';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 export interface ExecutionEvent {
-  type: "success" | "failed" | "rejected";
+  type: 'success' | 'failed' | 'rejected';
   version: string;
   payload?: string;
   approvals?: number;
@@ -20,7 +20,7 @@ export interface ExecutionEvent {
 }
 
 interface UseMultisigExecutionEventsParameters
-  extends Omit<UseQueryOptions<ExecutionEvent[]>, "queryFn" | "queryKey"> {
+  extends Omit<UseQueryOptions<ExecutionEvent[]>, 'queryFn' | 'queryKey'> {
   address: string;
   network?: NetworkInfo;
 }
@@ -36,37 +36,39 @@ export default function useMultisigExecutionEvents({
 
   const query = useQuery<ExecutionEvent[]>({
     ...options,
-    queryKey: ["multisig-execution-events", address, activeNetwork],
+    queryKey: ['multisig-execution-events', address, activeNetwork],
     queryFn: async () => {
       const { aptos } = core.client.getClients({ network });
 
       // TODO: Add pagination
       const events = await aptos.getEvents({
         options: {
-          orderBy: [{ transaction_version: "desc" }],
+          orderBy: [{ transaction_version: 'desc' }],
           where:
             activeNetwork.network === Network.DEVNET
               ? {
                   indexed_type: {
                     _in: [
-                      "0x1::multisig_account::TransactionExecutionSucceeded",
-                      "0x1::multisig_account::TransactionExecutionFailed",
-                      "0x1::multisig_account::ExecuteRejectedTransaction",
-                    ],
+                      '0x1::multisig_account::TransactionExecutionSucceeded',
+                      '0x1::multisig_account::TransactionExecutionFailed',
+                      '0x1::multisig_account::ExecuteRejectedTransaction'
+                    ]
                   },
-                  data: { _contains: { multisig_account: address } },
+                  data: {
+                    _contains: { multisig_account: address }
+                  }
                 }
               : {
                   indexed_type: {
                     _in: [
-                      "0x1::multisig_account::TransactionExecutionSucceededEvent",
-                      "0x1::multisig_account::TransactionExecutionFailedEvent",
-                      "0x1::multisig_account::ExecuteRejectedTransactionEvent",
-                    ],
+                      '0x1::multisig_account::TransactionExecutionSucceededEvent',
+                      '0x1::multisig_account::TransactionExecutionFailedEvent',
+                      '0x1::multisig_account::ExecuteRejectedTransactionEvent'
+                    ]
                   },
-                  account_address: { _eq: address },
-                },
-        },
+                  account_address: { _eq: address }
+                }
+        }
       });
 
       // TODO: Optimize this
@@ -74,7 +76,7 @@ export default function useMultisigExecutionEvents({
         events.map((event) =>
           core.client.fetchTransaction({
             ledgerVersion: event.transaction_version,
-            network,
+            network
           })
         )
       );
@@ -95,58 +97,58 @@ export default function useMultisigExecutionEvents({
 
         if (
           event.indexed_type ===
-            "0x1::multisig_account::TransactionExecutionSucceeded" ||
+            '0x1::multisig_account::TransactionExecutionSucceeded' ||
           event.indexed_type ===
-            "0x1::multisig_account::TransactionExecutionSucceededEvent"
+            '0x1::multisig_account::TransactionExecutionSucceededEvent'
         ) {
           acc.push({
-            type: "success",
+            type: 'success',
             version: event.transaction_version,
             payload: event.data.transaction_payload,
             approvals: Number(event.data.num_approvals),
             executor: AccountAddress.from(event.data.executor),
             sequenceNumber: Number(event.data.sequence_number),
-            transaction,
+            transaction
           });
         }
 
         if (
           event.indexed_type ===
-            "0x1::multisig_account::TransactionExecutionFailed" ||
+            '0x1::multisig_account::TransactionExecutionFailed' ||
           event.indexed_type ===
-            "0x1::multisig_account::TransactionExecutionFailedEvent"
+            '0x1::multisig_account::TransactionExecutionFailedEvent'
         ) {
           acc.push({
-            type: "failed",
+            type: 'failed',
             version: event.transaction_version,
             payload: event.data.transaction_payload,
             approvals: Number(event.data.num_approvals),
             executor: AccountAddress.from(event.data.executor),
             sequenceNumber: Number(event.data.sequence_number),
-            transaction,
+            transaction
           });
         }
 
         if (
           event.indexed_type ===
-            "0x1::multisig_account::ExecuteRejectedTransaction" ||
+            '0x1::multisig_account::ExecuteRejectedTransaction' ||
           event.indexed_type ===
-            "0x1::multisig_account::ExecuteRejectedTransactionEvent"
+            '0x1::multisig_account::ExecuteRejectedTransactionEvent'
         ) {
           acc.push({
-            type: "rejected",
+            type: 'rejected',
             version: event.transaction_version,
             payload: event.data.transaction_payload,
             rejections: Number(event.data.num_rejections),
             executor: AccountAddress.from(event.data.executor),
             sequenceNumber: Number(event.data.sequence_number),
-            transaction,
+            transaction
           });
         }
 
         return acc;
       }, [] as ExecutionEvent[]);
-    },
+    }
   });
 
   return query;

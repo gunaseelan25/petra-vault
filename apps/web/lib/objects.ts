@@ -1,9 +1,9 @@
 import {
   AccountAddress,
   AccountAddressInput,
-  DeriveScheme,
-} from "@aptos-labs/ts-sdk";
-import { sha3_256 } from "@noble/hashes/sha3";
+  DeriveScheme
+} from '@aptos-labs/ts-sdk';
+import { sha3_256 } from '@noble/hashes/sha3';
 
 /**
  * Deterministically derives an object address from the source address and
@@ -26,7 +26,7 @@ export const createUserDerivedObjectAddress = (
   const bytes = new Uint8Array([
     ...sourceBytes,
     ...objectBytes,
-    DeriveScheme.DeriveObjectAddressFromObject,
+    DeriveScheme.DeriveObjectAddressFromObject
   ]);
 
   return new AccountAddress(sha3_256(bytes));

@@ -3,10 +3,10 @@ import {
   Ed25519PrivateKey,
   Ed25519PublicKey,
   Hex,
-  Network,
-} from "@aptos-labs/ts-sdk";
-import { AccountInfo, NetworkInfo } from "@aptos-labs/wallet-standard";
-import { Page } from "@playwright/test";
+  Network
+} from '@aptos-labs/ts-sdk';
+import { AccountInfo, NetworkInfo } from '@aptos-labs/wallet-standard';
+import { Page } from '@playwright/test';
 
 /**
  * IMPORTANT: This fixture requires that there be one navigation at the beginning of each test.
@@ -46,7 +46,7 @@ export default class WalletFixture {
       address: account.address,
       publicKey: new Ed25519PublicKey(
         Hex.fromHexInput(account.publicKey).toUint8Array()
-      ),
+      )
     });
   }
 
@@ -68,7 +68,7 @@ export default class WalletFixture {
           address: account.address,
           publicKey: new Ed25519PublicKey(
             Hex.fromHexInput(account.publicKey).toUint8Array()
-          ),
+          )
         })
     );
   }
@@ -88,7 +88,7 @@ export default class WalletFixture {
     );
 
     return new Ed25519Account({
-      privateKey: new Ed25519PrivateKey(privateKey),
+      privateKey: new Ed25519PrivateKey(privateKey)
     });
   }
 
@@ -109,7 +109,7 @@ export default class WalletFixture {
     return {
       name: network.name,
       chainId: network.chainId,
-      url: network.url,
+      url: network.url
     } satisfies NetworkInfo;
   }
 

@@ -1,7 +1,7 @@
-import type { Event } from "@aptos-labs/ts-sdk";
-import { normalizeAddress } from "../shared";
-import { EventParser } from "@/lib/types/parsers";
-import { SimulationContext } from "./SimulationParser";
+import type { Event } from '@aptos-labs/ts-sdk';
+import { normalizeAddress } from '../shared';
+import { EventParser } from '@/lib/types/parsers';
+import { SimulationContext } from './SimulationParser';
 
 export class FungibleAssetEventParser implements EventParser {
   private applyChange(
@@ -32,7 +32,7 @@ export class FungibleAssetEventParser implements EventParser {
 
   parseEvent(context: SimulationContext, event: Event) {
     switch (event.type) {
-      case "0x1::fungible_asset::Deposit": {
+      case '0x1::fungible_asset::Deposit': {
         this.applyChange(
           context,
           normalizeAddress(event.data.store),
@@ -40,7 +40,7 @@ export class FungibleAssetEventParser implements EventParser {
         );
         return true;
       }
-      case "0x1::fungible_asset::Withdraw": {
+      case '0x1::fungible_asset::Withdraw': {
         this.applyChange(
           context,
           normalizeAddress(event.data.store),
