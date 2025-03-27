@@ -43,7 +43,7 @@ import { useRouter } from "next/navigation";
 import { Abis } from "@/lib/abis";
 import { getSimulationQueryErrors } from "@/lib/simulations/shared";
 import { jsonStringify } from "@/lib/storage";
-
+import useAnalytics from "@/hooks/useAnalytics";
 const publishModuleJsonSchema = z.object({
   function_id: z.string(),
   type_args: z.array(z.object({ type: z.string(), value: z.string() })),
@@ -54,6 +54,7 @@ const publishModuleJsonSchema = z.object({
 });
 
 export default function PublishContractPage() {
+  const trackEvent = useAnalytics();
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -62,15 +63,6 @@ export default function PublishContractPage() {
   const [file, setFile] = useState<File | null>(null);
 
   const [page, setPage] = useState<"draft" | "confirm">("draft");
-
-  const {
-    hash,
-    signAndSubmitTransaction,
-    isPending: isSigningAndSubmitting,
-  } = useSignAndSubmitTransaction();
-
-  const { isSuccess, isLoading: isWaitingForTransaction } =
-    useWaitForTransaction({ hash });
 
   const { data: jsonData, isError: isJsonError } = useQuery({
     queryKey: ["publish-module", file?.lastModified],
@@ -113,6 +105,19 @@ export default function PublishContractPage() {
       return { transactionPayload: undefined, innerPayload: undefined };
     }
   }, [jsonData, vaultAddress]);
+
+  const {
+    hash,
+    signAndSubmitTransaction,
+    isPending: isSigningAndSubmitting,
+  } = useSignAndSubmitTransaction({
+    onSuccess: (data) => {
+      trackEvent("create_publish_contract_proposal", { hash: data.hash });
+    },
+  });
+
+  const { isSuccess, isLoading: isWaitingForTransaction } =
+    useWaitForTransaction({ hash });
 
   const createProposal = useCallback(() => {
     if (!transactionPayload) {

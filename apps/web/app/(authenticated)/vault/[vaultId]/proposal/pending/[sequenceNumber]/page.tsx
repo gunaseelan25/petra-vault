@@ -40,8 +40,11 @@ import { PendingTransactionRow } from "@/components/PendingTransactionRow";
 import { useRouter } from "next/navigation";
 import { jsonStringify } from "@/lib/storage";
 import Link from "next/link";
+import useAnalytics from "@/hooks/useAnalytics";
 
 export default function ProposalPage() {
+  const trackEvent = useAnalytics();
+
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -78,7 +81,20 @@ export default function ProposalPage() {
     hash: secondaryActionHash,
     signAndSubmitTransaction: signAndSubmitSecondaryAction,
     isPending: isSignAndSubmitSecondaryActionPending,
-  } = useSignAndSubmitTransaction();
+  } = useSignAndSubmitTransaction({
+    onSuccess(data, variables) {
+      trackEvent("vote_proposal", {
+        hash: data.hash,
+        action:
+          "data" in variables &&
+          "function" in variables.data &&
+          variables.data.function ===
+            "0x1::multisig_account::approve_transaction"
+            ? "approve"
+            : "reject",
+      });
+    },
+  });
 
   const {
     isSuccess: isSecondaryActionSuccess,
@@ -111,7 +127,25 @@ export default function ProposalPage() {
     hash: primaryActionHash,
     signAndSubmitTransaction: signAndSubmitPrimaryAction,
     isPending: isSignAndSubmitPrimaryActionPending,
-  } = useSignAndSubmitTransaction();
+  } = useSignAndSubmitTransaction({
+    onSuccess(data, variables) {
+      if ("data" in variables && "function" in variables.data) {
+        if (
+          variables.data.function ===
+          "0x1::multisig_account::execute_transaction"
+        ) {
+          trackEvent("execute_proposal", {
+            hash: data.hash,
+          });
+        } else if (
+          variables.data.function ===
+          "0x1::multisig_account::execute_rejected_transaction"
+        ) {
+          trackEvent("remove_proposal", { hash: data.hash });
+        }
+      }
+    },
+  });
 
   const {
     isSuccess: isPrimaryActionSuccess,

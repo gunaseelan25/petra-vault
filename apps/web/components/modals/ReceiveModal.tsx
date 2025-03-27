@@ -1,4 +1,8 @@
-import { DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useActiveVault } from "@/context/ActiveVaultProvider";
 import { QRCodeSVG } from "qrcode.react";
 import { motion } from "motion/react";
@@ -9,6 +13,7 @@ import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
 import { AptosAvatar } from "aptos-avatars-react";
 import VerticalCutReveal from "../ui/vertical-cut-reveal";
 import CopyButton from "../CopyButton";
+
 export default function ReceiveModal() {
   const { vaultAddress, vault } = useActiveVault();
 
@@ -31,6 +36,7 @@ export default function ReceiveModal() {
   return (
     <DialogContent className="max-w-md">
       <DialogTitle />
+      <DialogDescription />
       <div className="flex flex-col gap-4 py-4">
         <div className="flex flex-col items-center">
           <div className="font-display text-lg font-semibold">

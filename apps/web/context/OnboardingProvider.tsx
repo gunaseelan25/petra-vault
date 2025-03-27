@@ -18,8 +18,11 @@ import {
 } from "@aptos-labs/ts-sdk";
 import { Vault } from "@/lib/types/vaults";
 import { createVaultId } from "@/lib/vaults";
+import useAnalytics from "@/hooks/useAnalytics";
 
 export const [OnboardingProvider, useOnboarding] = constate(() => {
+  const trackEvent = useAnalytics();
+
   const { createVault } = useVaults();
   const network = useNetwork();
   const router = useRouter();
@@ -42,7 +45,15 @@ export const [OnboardingProvider, useOnboarding] = constate(() => {
     hash,
     signAndSubmitTransaction,
     isPending: isSigningAndSubmittingCreation,
-  } = useSignAndSubmitTransaction();
+  } = useSignAndSubmitTransaction({
+    onSuccess: (data) => {
+      trackEvent("create_new_vault", {
+        hash: data.hash,
+        signatures_required: vaultSignaturesRequired,
+        owners: vaultSigners.length,
+      });
+    },
+  });
   const {
     data: transaction,
     isSuccess,

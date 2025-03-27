@@ -40,8 +40,11 @@ import { Separator } from "@/components/ui/separator";
 import Callout from "@/components/Callout";
 import { getSimulationQueryErrors } from "@/lib/simulations/shared";
 import { jsonStringify } from "@/lib/storage";
+import useAnalytics from "@/hooks/useAnalytics";
 
 export default function CreateProposalPage() {
+  const trackEvent = useAnalytics();
+
   const router = useRouter();
 
   const [page, setPage] = useState<"set-details" | "confirm">("set-details");
@@ -55,10 +58,20 @@ export default function CreateProposalPage() {
     hash,
     signAndSubmitTransaction,
     isPending: isSigningAndSubmitting,
-  } = useSignAndSubmitTransaction();
+  } = useSignAndSubmitTransaction({
+    onSuccess: (data) => {
+      trackEvent("create_proposal", {
+        entry_function_id: entryFunction.value,
+        hash: data.hash,
+      });
+    },
+  });
 
-  const { isSuccess, isLoading: isWaitingForTransaction } =
-    useWaitForTransaction({ hash });
+  const {
+    isSuccess,
+    isError,
+    isLoading: isWaitingForTransaction,
+  } = useWaitForTransaction({ hash });
 
   const { transactionPayload, innerPayload } = useMemo(() => {
     if (!abi.value || !isFormValid.value) {
@@ -105,20 +118,23 @@ export default function CreateProposalPage() {
   });
 
   const createProposal = useCallback(() => {
-    if (!transactionPayload) {
+    if (!transactionPayload || !entryFunction.value) {
       toast.error(`There was an error creating your proposal`);
       return;
     }
 
     signAndSubmitTransaction({ data: transactionPayload });
-  }, [signAndSubmitTransaction, transactionPayload]);
+  }, [signAndSubmitTransaction, transactionPayload, entryFunction.value]);
 
   useEffect(() => {
     if (isSuccess) {
       toast.success("Proposal created");
       router.push(`/vault/${id}/transactions`);
+    } else if (isError) {
+      toast.error("Proposal creation failed");
     }
-  }, [isSuccess, router, vaultAddress, hash, id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess, isError]);
 
   const balanceChanges =
     simulation.data &&

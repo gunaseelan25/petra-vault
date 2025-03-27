@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import AppProviders from "@/context/AppProviders";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { ReactScan } from "@/components/ReactScan";
+import Analytics from "@/components/background/Analytics";
 
 const workSans = Work_Sans({
   display: "swap",
@@ -48,6 +49,7 @@ export default function RootLayout({
             <Toaster richColors closeButton />
           </ThemeProvider>
         </body>
+        <Analytics />
       </AppProviders>
     </html>
   );

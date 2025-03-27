@@ -25,8 +25,10 @@ import UploadImportJSONModal from "./modals/UploadImportJSONModal";
 import { Vault } from "@/lib/types/vaults";
 import { useRouter } from "next/navigation";
 import { AccountAddress } from "@aptos-labs/ts-sdk";
+import useAnalytics from "@/hooks/useAnalytics";
 
 export default function OnboardingAddOrImport() {
+  const trackEvent = useAnalytics();
   const router = useRouter();
   const { page, vaultName, importVaultAddress } = useOnboarding();
   const { vaults, importVaults } = useVaults();
@@ -80,6 +82,7 @@ export default function OnboardingAddOrImport() {
             "Your connected account is not an owner of this Multisig account."
           );
         }
+        trackEvent("manual_import_vault", { owners: owners.length });
       } catch {
         toast.error("This account is not a Multisig account");
       }
@@ -87,6 +90,7 @@ export default function OnboardingAddOrImport() {
   });
 
   const handleImportVaults = (vaults: Vault[]) => {
+    trackEvent("backup_import_vault", { vault_count: vaults.length });
     importVaults(vaults);
     router.push(`/`);
     toast.success(
@@ -109,6 +113,7 @@ export default function OnboardingAddOrImport() {
               vaultName.set(values.name);
               importVaultAddress.set("");
               page.set("set-config");
+              trackEvent("set_vault_name", {});
             }}
           />
         </CardContent>
@@ -222,6 +227,7 @@ export default function OnboardingAddOrImport() {
                           variant="link"
                           size="sm"
                           onClick={() => {
+                            trackEvent("select_discovered_vault", {});
                             importVaultAddress.set(e.toString());
                             handleLookUpAndImportAccount(e.toString());
                           }}

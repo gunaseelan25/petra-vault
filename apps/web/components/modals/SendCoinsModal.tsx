@@ -14,7 +14,7 @@ import { ArrowLeftIcon, Pencil1Icon } from "@radix-ui/react-icons";
 import { formatUnits, parseUnits } from "@aptos-labs/js-pro";
 import CodeBlock from "../CodeBlock";
 import { AptosAvatar } from "aptos-avatars-react";
-import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
+import { AccountAddress, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 import { createMultisigTransactionPayloadData } from "@/lib/payloads";
 import { useActiveVault } from "@/context/ActiveVaultProvider";
 import {
@@ -37,12 +37,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import { jsonStringify } from "@/lib/storage";
 import CoinAvatar from "../CoinAvatar";
-
+import useAnalytics from "@/hooks/useAnalytics";
 interface SendCoinsModalProps {
   onClose?: () => void;
 }
 
 export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
+  const trackEvent = useAnalytics();
   const queryClient = useQueryClient();
 
   const [page, setPage] = useState<
@@ -202,7 +203,19 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
   });
 
   const { hash, signAndSubmitTransaction, isPending } =
-    useSignAndSubmitTransaction();
+    useSignAndSubmitTransaction({
+      onSuccess: (data) => {
+        if (!selectedCoin) return;
+        trackEvent("create_send_coins_proposal", {
+          hash: data.hash,
+          asset: selectedCoin?.balance.assetType,
+          asset_name: selectedCoin.balance.metadata.name,
+          asset_symbol: selectedCoin.balance.metadata.symbol,
+          amount: amount,
+          recipient: AccountAddress.from(recipient).toStringWithoutPrefix(),
+        });
+      },
+    });
 
   const { isSuccess } = useWaitForTransaction({ hash });
 

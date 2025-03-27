@@ -26,6 +26,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Abis } from "@/lib/abis";
 import { jsonStringify } from "@/lib/storage";
+import useAnalytics from "@/hooks/useAnalytics";
 
 export default function AddOwnerModal({
   owners,
@@ -34,6 +35,7 @@ export default function AddOwnerModal({
   owners: string[];
   signaturesRequired: number;
 }) {
+  const trackEvent = useAnalytics();
   const [page, setPage] = useState<"add" | "confirm">("add");
   const [savedFormValues, setSavedFormValues] =
     useState<AddOwnerProposalFormValues>();
@@ -76,9 +78,13 @@ export default function AddOwnerModal({
   }, [savedFormValues, vaultAddress]);
 
   const { hash, signAndSubmitTransaction, isPending } =
-    useSignAndSubmitTransaction();
+    useSignAndSubmitTransaction({
+      onSuccess: (data) => {
+        trackEvent("create_add_owner_proposal", { hash: data.hash });
+      },
+    });
 
-  const { isSuccess } = useWaitForTransaction({ hash });
+  const { isSuccess, isError } = useWaitForTransaction({ hash });
 
   const createProposal = async () => {
     if (!transactionPayload) return;
@@ -89,9 +95,11 @@ export default function AddOwnerModal({
     if (isSuccess) {
       toast.success("Successfully created the transaction");
       router.push(`/vault/${id}/transactions`);
+    } else if (isError) {
+      toast.error("Failed to create the transaction");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess]);
+  }, [isSuccess, isError]);
 
   return (
     <DialogContent>

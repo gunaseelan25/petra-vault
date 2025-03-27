@@ -24,12 +24,15 @@ import { useRouter } from "next/navigation";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Abis } from "@/lib/abis";
 import { jsonStringify } from "@/lib/storage";
+import useAnalytics from "@/hooks/useAnalytics";
 
 export default function RemoveOwnerModal({
   ownerToRemove,
 }: {
   ownerToRemove: string;
 }) {
+  const trackEvent = useAnalytics();
+
   const router = useRouter();
 
   const { vaultAddress, id, network, signaturesRequired, owners } =
@@ -54,9 +57,13 @@ export default function RemoveOwnerModal({
   }, [ownerToRemove, vaultAddress]);
 
   const { hash, signAndSubmitTransaction, isPending } =
-    useSignAndSubmitTransaction();
+    useSignAndSubmitTransaction({
+      onSuccess: (data) => {
+        trackEvent("create_remove_owner_proposal", { hash: data.hash });
+      },
+    });
 
-  const { isSuccess } = useWaitForTransaction({ hash });
+  const { isSuccess, isError } = useWaitForTransaction({ hash });
 
   const createProposal = async () => {
     if (!transactionPayload) return;
@@ -67,9 +74,11 @@ export default function RemoveOwnerModal({
     if (isSuccess) {
       toast.success("Successfully created the transaction");
       router.push(`/vault/${id}/transactions`);
+    } else if (isError) {
+      toast.error("Failed to create the transaction");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess]);
+  }, [isSuccess, isError]);
 
   const newSignaturesRequired =
     signaturesRequired.data &&

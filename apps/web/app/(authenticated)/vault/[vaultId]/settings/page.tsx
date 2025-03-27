@@ -23,19 +23,20 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AccountAddress } from "@aptos-labs/ts-sdk";
 import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-  AlertDialogDescription,
-} from "@/components/ui/alert-dialog";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+  Dialog,
+  DialogHeader,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import useAnalytics from "@/hooks/useAnalytics";
 
 export default function VaultSettingsPage() {
+  const trackEvent = useAnalytics();
+
   const router = useRouter();
 
   // This is a patch to reset the modal's state when it is closed.
@@ -197,45 +198,47 @@ export default function VaultSettingsPage() {
             </CardHeader>
             <CardContent>
               <br />
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
+              <Dialog>
+                <DialogTrigger asChild>
                   <Button
                     variant="destructive"
                     data-testid="delete-vault-button"
+                    onClick={() => trackEvent("delete_vault_attempt", {})}
                   >
                     <TrashIcon />
                     Remove Vault
                   </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Remove Vault</AlertDialogTitle>
-                    <AlertDialogDescription>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Remove Vault</DialogTitle>
+                    <DialogDescription className="mt-2 font-sans">
                       Remove this vault from local storage. This action cannot
                       be undone. The vault will still be available on-chain and
                       can be re-imported using a backup file or vault address.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
+                    </DialogDescription>
+                  </DialogHeader>
 
-                  <AlertDialogFooter>
-                    <AlertDialogCancel asChild>
+                  <DialogFooter className="mt-4">
+                    <DialogClose asChild>
                       <Button variant="outline">Cancel</Button>
-                    </AlertDialogCancel>
-                    <AlertDialogAction asChild>
+                    </DialogClose>
+                    <DialogClose asChild>
                       <Button
                         variant="destructive"
                         onClick={() => {
                           deleteVault(AccountAddress.from(vaultAddress));
+                          trackEvent("delete_vault_success", {});
                           router.push("/");
                         }}
                         data-testid="confirm-delete-vault-button"
                       >
                         Remove Vault
                       </Button>
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </section>
         </div>

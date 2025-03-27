@@ -13,8 +13,10 @@ import useMultisigSignaturesRequired from "@/hooks/useMultisigSignaturesRequired
 import { toast } from "sonner";
 import { AccountAddress } from "@aptos-labs/ts-sdk";
 import { useNetwork } from "@aptos-labs/react";
+import useAnalytics from "@/hooks/useAnalytics";
 
 export default function OnboardingImportSetName() {
+  const trackEvent = useAnalytics();
   const { importVaultAddress, importVault } = useOnboarding();
   const network = useNetwork();
 
@@ -25,6 +27,30 @@ export default function OnboardingImportSetName() {
   const { data: signaturesRequired } = useMultisigSignaturesRequired({
     address: importVaultAddress.current,
   });
+
+  const handleImportVault = (name: string) => {
+    if (!owners || !signaturesRequired) {
+      toast.error("Failed to fetch owners or signatures required");
+      return;
+    }
+
+    trackEvent("create_imported_vault", {
+      signatures_required: signaturesRequired,
+      owners: owners.length,
+    });
+
+    importVault({
+      type: "framework",
+      name: name,
+      signers: owners.map((e, i) => ({
+        address: AccountAddress.from(e),
+        name: `Owner ${i + 1}`,
+      })),
+      signaturesRequired,
+      address: AccountAddress.from(importVaultAddress.current),
+      network: network.network,
+    });
+  };
 
   if (!importVaultAddress.current) {
     return <div>No vault address found</div>;
@@ -47,24 +73,7 @@ export default function OnboardingImportSetName() {
         <CardContent>
           <VaultImportNameForm
             address={importVaultAddress.current}
-            onSubmit={(e) => {
-              if (!owners || !signaturesRequired) {
-                toast.error("Failed to fetch owners or signatures required");
-                return;
-              }
-
-              importVault({
-                type: "framework",
-                name: e.name,
-                signers: owners.map((e, i) => ({
-                  address: AccountAddress.from(e),
-                  name: `Owner ${i + 1}`,
-                })),
-                signaturesRequired,
-                address: AccountAddress.from(importVaultAddress.current),
-                network: network.network,
-              });
-            }}
+            onSubmit={(e) => handleImportVault(e.name)}
           >
             <div>
               <Label>Owners</Label>

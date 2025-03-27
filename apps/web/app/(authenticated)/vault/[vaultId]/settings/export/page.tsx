@@ -14,8 +14,9 @@ import { DownloadIcon } from "@radix-ui/react-icons";
 import CodeBlock from "@/components/CodeBlock";
 import { jsonStringify } from "@/lib/storage";
 import CopyButton from "@/components/CopyButton";
-
+import useAnalytics from "@/hooks/useAnalytics";
 export default function ExportSettingsPage() {
+  const trackEvent = useAnalytics();
   const { vaults } = useVaults();
 
   const exportVaultsJSON = jsonStringify(vaults);
@@ -45,7 +46,13 @@ export default function ExportSettingsPage() {
             </div>
             <br />
             <div className="flex gap-2">
-              <Button asChild data-testid="export-vaults-button">
+              <Button
+                asChild
+                data-testid="export-vaults-button"
+                onClick={() => {
+                  trackEvent("download_backup_file", {});
+                }}
+              >
                 <a
                   href={`data:text/json;charset=utf-8,${exportVaultsJSON}`}
                   download="petra-vaults-export.json"

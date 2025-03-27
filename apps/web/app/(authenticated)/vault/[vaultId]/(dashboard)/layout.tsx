@@ -16,6 +16,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ReceiveModal from "@/components/modals/ReceiveModal";
 import PageVaultHeader from "@/components/PageVaultHeader";
 import SendCoinsModal from "@/components/modals/SendCoinsModal";
+import useAnalytics from "@/hooks/useAnalytics";
 
 const tabs = [
   {
@@ -31,6 +32,7 @@ const tabs = [
 ] as const;
 
 export default function VaultLayout({ children }: PropsWithChildren) {
+  const trackEvent = useAnalytics();
   const [isSendCoinsModalOpen, setIsSendCoinsModalOpen] = useState(false);
 
   const pathname = usePathname();
@@ -83,7 +85,10 @@ export default function VaultLayout({ children }: PropsWithChildren) {
             <Button
               size="lg"
               className="px-6"
-              onClick={() => setIsSendCoinsModalOpen(true)}
+              onClick={() => {
+                trackEvent("send_coins_review_draft", {});
+                setIsSendCoinsModalOpen(true);
+              }}
               disabled={!isOwner}
               data-testid="send-coins-button"
             >

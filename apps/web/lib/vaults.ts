@@ -7,7 +7,7 @@ export const createVaultId = (vault: Pick<Vault, "network" | "address">) => {
   return `${vault.network}:${vault.address.toString()}`;
 };
 
-export const parseVaultId = (vaultId: string) => {
+export const  parseVaultId = (vaultId: string) => {
   const [network, address] = vaultId.split(":");
   if (!network || !address) return undefined;
 
