@@ -4,6 +4,7 @@ import { formatUnits } from '@aptos-labs/js-pro';
 import { useFungibleAssetMetadata } from '@aptos-labs/react';
 import { useActiveVault } from '@/context/ActiveVaultProvider';
 import CoinAvatar from './CoinAvatar';
+import { getPairedMetadata } from '@/lib/fungibleAssets';
 
 interface SimulationCoinRowProps {
   asset: string;
@@ -19,7 +20,7 @@ export default function SimulationCoinRow({
   const { coinMetadataList, coinPrices } = useCoins();
 
   const coinMetadata = coinMetadataList?.data.find(
-    (e) => e.asset_type === asset
+    (e) => e.asset_type === asset || getPairedMetadata(e.asset_type) === asset
   );
 
   const coinPrice = coinPrices?.[asset];

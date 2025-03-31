@@ -50,9 +50,9 @@ export function NavItemGroup({
               {isActive && (
                 <motion.div
                   layoutId="active-nav-item"
-                  className="absolute left-0 right-0 top-0 bottom-0 inset-0 bg-accent/80 z-0 rounded-md"
+                  className="absolute left-0 right-0 top-0 bottom-0 inset-0 bg-accent/80 z-0 rounded-md border"
                   transition={{
-                    duration: 0.2,
+                    duration: 0.05,
                     type: 'spring',
                     damping: 31,
                     stiffness: 200
@@ -63,14 +63,17 @@ export function NavItemGroup({
                 asChild
                 disabled={!item.url || item.disabled}
                 size={size}
-                className={
-                  isActive ? 'hover:!bg-transparent' : 'hover:!bg-accent/40'
-                }
+                className={cn(
+                  'transition-all',
+                  isActive
+                    ? 'hover:!bg-transparent text-foreground'
+                    : 'hover:!bg-accent/40 text-foreground/85'
+                )}
                 data-testid={`nav-item-${item.name.toLowerCase()}`}
               >
                 <Link
                   href={item.url ?? '/'}
-                  className="relative flex z-10"
+                  className="relative flex z-10 "
                   target={item.target}
                 >
                   <item.icon />

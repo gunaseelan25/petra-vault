@@ -1,3 +1,5 @@
+'use client';
+
 import { useActiveVault } from '@/context/ActiveVaultProvider';
 import { useNetwork } from '@aptos-labs/react';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
