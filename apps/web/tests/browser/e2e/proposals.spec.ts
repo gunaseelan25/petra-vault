@@ -145,6 +145,8 @@ test('publish contract', async ({
     `tests/browser/e2e/temp/publishable-contract.json`
   );
 
+  await fs.mkdir(path.dirname(contractJsonFilePath), { recursive: true });
+
   await fs.writeFile(contractJsonFilePath, contractJson);
 
   await proposal.createPublishContractProposal(contractJsonFilePath);

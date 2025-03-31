@@ -1,0 +1,5 @@
+{
+  "extends": "@aptos-labs/typescript-config-petra-vault/library.json",
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

@@ -65,7 +65,7 @@ export const [OnboardingProvider, useOnboarding] = constate(() => {
       data: {
         function: '0x1::multisig_account::create_with_owners',
         functionArguments: [
-          vaultSigners.slice(1).map((signer) => signer.address),
+          vaultSigners.slice(1).map((signer) => signer.address.toString()),
           vaultSignaturesRequired,
           [],
           []

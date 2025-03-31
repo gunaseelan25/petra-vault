@@ -4,7 +4,7 @@ export class NavigationFixture {
   constructor(private page: Page) {}
 
   async navigateTo(
-    location: 'settings' | 'home' | 'create proposal' | 'publish contract'
+    location: 'settings' | 'dashboard' | 'create proposal' | 'publish contract'
   ) {
     await this.page.getByTestId(`nav-item-${location}`).click();
   }
@@ -16,7 +16,7 @@ export class NavigationFixture {
   }
 
   async navigateToHomeTab(tab: 'transactions' | 'coins') {
-    await this.navigateTo('home');
+    await this.navigateTo('dashboard');
 
     await this.page.getByTestId(`home-tab-item-${tab}`).click();
   }

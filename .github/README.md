@@ -103,8 +103,8 @@ cp .env.example .env.local
 Required environment variables:
 
 ```bash
-# Enable React performance scanning
 NEXT_PUBLIC_ENABLE_REACT_SCAN=0
+NEXT_PUBLIC_ENABLE_EMBEDDED=1
 
 # API Keys for Aptos networks (obtain from https://developers.aptos.dev)
 NEXT_PUBLIC_APTOS_MAINNET_API_KEY=<api_key>

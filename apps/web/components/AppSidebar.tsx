@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Send } from 'lucide-react';
+import { FileCode, Send } from 'lucide-react';
 
 import { NavVaults } from '@/components/NavVaults';
 import { NavUser } from '@/components/NavUser';
@@ -15,11 +15,12 @@ import { parseVaultId } from '@/lib/vaults';
 import { useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import {
-  FilePlusIcon,
   GearIcon,
   GlobeIcon,
   HomeIcon,
-  Pencil1Icon
+  Pencil1Icon,
+  CubeIcon,
+  ReaderIcon
 } from '@radix-ui/react-icons';
 import { NavItemGroup } from './NavItemGroup';
 import { getExplorerUrl } from '@aptos-labs/js-pro';
@@ -38,7 +39,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return {
       actions: [
         {
-          name: 'Home',
+          name: 'Dashboard',
           url: activeVaultId ? `/vault/${activeVaultId}` : undefined,
           activePaths: [
             `/vault/${activeVaultId}`,
@@ -58,8 +59,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: activeVaultId
             ? `/vault/${activeVaultId}/proposal/publish-contract`
             : undefined,
-          icon: FilePlusIcon
-        }
+          icon: FileCode
+        },
+        ...(process.env.NEXT_PUBLIC_ENABLE_EMBEDDED === '1'
+          ? [
+              {
+                name: 'Explore Apps',
+                url: activeVaultId
+                  ? `/vault/${activeVaultId}/explore`
+                  : undefined,
+                activePaths: [
+                  `/vault/${activeVaultId}/explore`,
+                  `/vault/${activeVaultId}/explore/embedded`
+                ],
+                icon: CubeIcon
+              }
+            ]
+          : [])
       ],
 
       management: [
@@ -82,13 +98,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       ],
 
       secondary: [
-        // {
-        //   name: "Support",
-        //   url: "https://github.com/aptos-labs/petra-wallet",
-        //   icon: LifeBuoy,
-        //   target: "_blank",
-        //   size: "sm",
-        // },
+        {
+          name: 'Documentation',
+          url: 'https://petra.app/vault',
+          icon: ReaderIcon,
+          target: '_blank',
+          size: 'sm'
+        },
         {
           name: 'Feedback',
           url: 'https://github.com/aptos-labs/petra-wallet',

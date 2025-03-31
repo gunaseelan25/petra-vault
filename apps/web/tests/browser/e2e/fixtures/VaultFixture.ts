@@ -17,7 +17,7 @@ export class VaultFixture {
   ) {}
 
   async getVaultAddress() {
-    await this.navigation.navigateTo('home');
+    await this.navigation.navigateTo('dashboard');
 
     await this.page.getByTestId('vault-address').click();
 

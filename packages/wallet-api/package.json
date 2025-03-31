@@ -1,0 +1,15 @@
+{
+  "name": "@aptos-labs/wallet-api",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@aptos-labs/eslint-config-petra-vault": "workspace:*",
+    "@aptos-labs/typescript-config-petra-vault": "workspace:*"
+  },
+  "dependencies": {
+    "@aptos-labs/ts-sdk": "1.36.0"
+  }
+}

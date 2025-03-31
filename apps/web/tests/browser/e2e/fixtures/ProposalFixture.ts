@@ -36,7 +36,7 @@ export class ProposalFixture {
     amount: number,
     asset: string = '0x1::aptos_coin::AptosCoin'
   ) {
-    await this.navigation.navigateTo('home');
+    await this.navigation.navigateTo('dashboard');
 
     await this.page.getByTestId('send-coins-button').click();
 

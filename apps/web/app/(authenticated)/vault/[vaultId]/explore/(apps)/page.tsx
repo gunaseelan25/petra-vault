@@ -1,0 +1,64 @@
+'use client';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ecosystemApps } from '@/lib/ecosystem';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { ArrowTopRightIcon } from '@radix-ui/react-icons';
+import Link from 'next/link';
+import { useActiveVault } from '@/context/ActiveVaultProvider';
+
+export default function VaultExplorePage() {
+  const { id } = useActiveVault();
+
+  return (
+    <div className="flex-1 flex flex-col">
+      <br />
+      {/* Apps */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {ecosystemApps.map((app) => (
+          <Link
+            key={app.name}
+            href={`/vault/${id}/explore/embedded?url=${app.link}`}
+          >
+            <Card className="hover:bg-accent/30 transition-all cursor-pointer">
+              <CardContent>
+                <div className="flex justify-between gap-4">
+                  <div className="flex flex-1 flex-col gap-2">
+                    <p className="font-medium font-display">{app.name}</p>
+                    <div className="flex items-center gap-2  w-full flex-wrap">
+                      {app.categories.map((category) => (
+                        <Badge
+                          key={category}
+                          variant="secondary"
+                          className="capitalize text-xs"
+                        >
+                          {category}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <img
+                    src={app.logoUrl}
+                    alt={app.name}
+                    className="w-8 h-8 rounded-full"
+                  />
+                </div>
+
+                <Separator className="my-4" />
+
+                <div className="text-xs text-muted-foreground flex justify-between gap-2">
+                  <p className="flex-1">{app.description}</p>
+                  <Button variant="ghost" size="icon">
+                    <ArrowTopRightIcon className="size-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
