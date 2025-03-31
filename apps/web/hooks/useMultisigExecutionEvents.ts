@@ -1,12 +1,18 @@
 import { NetworkInfo } from '@aptos-labs/js-pro';
-import { useAptosCore } from '@aptos-labs/react';
+import { useClients } from '@aptos-labs/react';
 import {
   AccountAddress,
   Network,
   TransactionResponseType,
   UserTransactionResponse
 } from '@aptos-labs/ts-sdk';
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import {
+  DefaultError,
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions
+} from '@tanstack/react-query';
 
 export interface ExecutionEvent {
   type: 'success' | 'failed' | 'rejected';
@@ -20,9 +26,24 @@ export interface ExecutionEvent {
 }
 
 interface UseMultisigExecutionEventsParameters
-  extends Omit<UseQueryOptions<ExecutionEvent[]>, 'queryFn' | 'queryKey'> {
+  extends Omit<
+    UseInfiniteQueryOptions<
+      ExecutionEvent[],
+      DefaultError,
+      InfiniteData<ExecutionEvent[]>,
+      ExecutionEvent[],
+      QueryKey,
+      number
+    >,
+    | 'queryFn'
+    | 'queryKey'
+    | 'initialPageParam'
+    | 'getNextPageParam'
+    | 'getPreviousPageParam'
+  > {
   address: string;
   network?: NetworkInfo;
+  page?: number;
 }
 
 export default function useMultisigExecutionEvents({
@@ -30,22 +51,20 @@ export default function useMultisigExecutionEvents({
   network,
   ...options
 }: UseMultisigExecutionEventsParameters) {
-  const core = useAptosCore();
+  const { aptos, client } = useClients({ network });
 
-  const activeNetwork = network ?? core.network;
-
-  const query = useQuery<ExecutionEvent[]>({
+  return useInfiniteQuery({
     ...options,
-    queryKey: ['multisig-execution-events', address, activeNetwork],
-    queryFn: async () => {
-      const { aptos } = core.client.getClients({ network });
-
-      // TODO: Add pagination
+    queryKey: ['multisig-execution-events', address, network],
+    initialPageParam: 0,
+    queryFn: async ({ pageParam = 0 }) => {
       const events = await aptos.getEvents({
         options: {
           orderBy: [{ transaction_version: 'desc' }],
+          offset: pageParam,
+          limit: 100,
           where:
-            activeNetwork.network === Network.DEVNET
+            network?.network === Network.DEVNET
               ? {
                   indexed_type: {
                     _in: [
@@ -71,10 +90,9 @@ export default function useMultisigExecutionEvents({
         }
       });
 
-      // TODO: Optimize this
       const transactions = await Promise.all(
         events.map((event) =>
-          core.client.fetchTransaction({
+          client.fetchTransaction({
             ledgerVersion: event.transaction_version,
             network
           })
@@ -148,8 +166,11 @@ export default function useMultisigExecutionEvents({
 
         return acc;
       }, [] as ExecutionEvent[]);
-    }
+    },
+    getPreviousPageParam: (_, __, ___, allPageParams) => allPageParams.at(-1),
+    getNextPageParam: (lastPage, _, lastPageParam) =>
+      lastPage.length === 0 || lastPage.length !== 100
+        ? undefined
+        : lastPageParam + lastPage.length
   });
-
-  return query;
 }

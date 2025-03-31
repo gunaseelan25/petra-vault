@@ -12,7 +12,7 @@ export interface UseMultisigOwnersOptions
   address: string;
 }
 
-export default function useMultisigPendingTransactions({
+export default function useMultisigOwners({
   address,
   ...options
 }: UseMultisigOwnersOptions) {

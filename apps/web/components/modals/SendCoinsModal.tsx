@@ -160,7 +160,12 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
 
   const { data: simulationData } = useSimulateTransaction({
     data: innerPayload,
-    network: { network }
+    network: { network },
+    options: {
+      estimateGasUnitPrice: true,
+      estimateMaxGasAmount: true,
+      estimatePrioritizedGasUnitPrice: true
+    }
   });
 
   const { data: isPayloadValid, error: payloadError } = useQuery({
@@ -293,34 +298,24 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
         <DialogDescription />
 
         <div className="flex flex-col items-center px-6 pb-0">
-          <div className="font-display text-lg font-semibold">
-            <VerticalCutReveal
-              splitBy="characters"
-              staggerDuration={0.025}
-              staggerFrom="first"
-              transition={{
-                type: 'spring',
-                stiffness: 200,
-                damping: 21
-              }}
-            >
-              Send Coins
-            </VerticalCutReveal>
-          </div>
-          <div className="text-sm text-muted-foreground">
-            <VerticalCutReveal
-              splitBy="characters"
-              staggerDuration={0.015}
-              staggerFrom="first"
-              transition={{
-                type: 'spring',
-                stiffness: 200,
-                damping: 21
-              }}
-            >
-              Create a proposal to send coins to another wallet.
-            </VerticalCutReveal>
-          </div>
+          <VerticalCutReveal
+            splitBy="characters"
+            staggerDuration={0.025}
+            staggerFrom="first"
+            containerClassName="font-display text-lg font-semibold"
+            transition={{ type: 'spring', stiffness: 200, damping: 21 }}
+          >
+            Send Coins
+          </VerticalCutReveal>
+          <VerticalCutReveal
+            splitBy="characters"
+            staggerDuration={0.015}
+            staggerFrom="first"
+            containerClassName="flex items-center justify-center text-sm text-muted-foreground"
+            transition={{ type: 'spring', stiffness: 200, damping: 21 }}
+          >
+            Create a proposal to send coins to another wallet.
+          </VerticalCutReveal>
         </div>
 
         <ExpandingContainer className="p-6 pt-2">

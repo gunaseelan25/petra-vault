@@ -1,17 +1,26 @@
 'use client';
 
 import TransactionRow from '@/components/TransactionRow';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import VaultDetailsPendingTransactions from '@/components/VaultDetailsPendingTransactions';
 import { useActiveVault } from '@/context/ActiveVaultProvider';
-import useMultisigExecutionEvents from '@/hooks/useMultisigExecutionEvents';
+import useMultisigExecutionEvents, {
+  ExecutionEvent
+} from '@/hooks/useMultisigExecutionEvents';
 import { hasWindow } from '@/lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { useMemo } from 'react';
 
 export default function VaultTransactionsPage() {
   const { vaultAddress, network, isOwner } = useActiveVault();
-  const { data: executionEvents, isLoading } = useMultisigExecutionEvents({
+  const {
+    data: executionEvents,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useMultisigExecutionEvents({
     address: vaultAddress,
     network: { network },
     refetchInterval: 10000
@@ -21,7 +30,7 @@ export default function VaultTransactionsPage() {
     if (!executionEvents) return undefined;
 
     // Sort transactions by timestamp in descending order (newest first)
-    const sortedEvents = [...executionEvents].sort((a, b) => {
+    const sortedEvents = executionEvents.pages.flat().sort((a, b) => {
       const timestampA = a.transaction?.timestamp
         ? Number(a.transaction.timestamp) / 1000
         : 0;
@@ -32,7 +41,7 @@ export default function VaultTransactionsPage() {
     });
 
     // Group by month
-    const groupedByMonth: Record<string, typeof executionEvents> = {};
+    const groupedByMonth: Record<string, ExecutionEvent[]> = {};
 
     sortedEvents.forEach((event) => {
       if (!event.transaction?.timestamp) return;
@@ -53,7 +62,7 @@ export default function VaultTransactionsPage() {
   }, [executionEvents]);
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col pb-12">
       {isOwner && (
         <>
           <br />
@@ -122,14 +131,9 @@ export default function VaultTransactionsPage() {
                       return (
                         <motion.div
                           key={event.version}
-                          initial={{
-                            opacity: 0,
-                            y: 20
-                          }}
-                          animate={{
-                            opacity: 1,
-                            y: 0
-                          }}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="w-full"
                           transition={{
                             duration: 0.3,
                             delay: Math.min(index * 0.05, 0.6),
@@ -150,6 +154,25 @@ export default function VaultTransactionsPage() {
           </motion.div>
         )}
       </AnimatePresence>
+      <motion.div
+        className="flex justify-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Button
+          variant="secondary"
+          onClick={() => {
+            if (hasNextPage) fetchNextPage();
+          }}
+          disabled={!hasNextPage}
+          isLoading={isFetchingNextPage}
+        >
+          {hasNextPage
+            ? 'Load more transactions'
+            : 'No more transactions to load'}
+        </Button>
+      </motion.div>
     </div>
   );
 }

@@ -22,28 +22,24 @@ export default function ExportSettingsPage() {
   const exportVaultsJSON = jsonStringify(vaults);
 
   return (
-    <div className="py-6 flex flex-col gap-6">
-      <Card className="grid grid-cols-2 px-8">
-        <div>
-          <h3 className="font-display text-lg font-semibold tracking-wide">
-            Export Vaults
-          </h3>
-        </div>
-        <section>
-          <CardHeader>
+    <div className="pb-6 md:py-6 flex flex-col gap-6">
+      <Card className="grid md:grid-cols-2 md:px-8 border-0 md:border-1">
+        <h3 className="font-display text-lg font-semibold tracking-wide px-2 md:px-0">
+          Export Vaults
+        </h3>
+        <section className="px-2 md:px-6">
+          <CardHeader className="px-0">
             <CardTitle className="font-medium">Export Backup File</CardTitle>
             <CardDescription>
               This backup file can be used to import all your vaults onto other
               devices.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="max-h-96 overflow-auto w-full p-2 border rounded-md text-xs mt-4 bg-secondary">
-              <CodeBlock
-                value={exportVaultsJSON}
-                className="[&>pre]:!bg-transparent"
-              />
-            </div>
+          <CardContent className="px-0 grid">
+            <CodeBlock
+              value={exportVaultsJSON}
+              className="[&>pre]:!bg-transparent [&>pre]:p-2 bg-secondary border rounded-md mt-4 [&_code]:break-all overflow-scroll max-h-96"
+            />
             <br />
             <div className="flex gap-2">
               <Button
@@ -67,6 +63,7 @@ export default function ExportSettingsPage() {
           </CardContent>
         </section>
       </Card>
+      <br />
     </div>
   );
 }

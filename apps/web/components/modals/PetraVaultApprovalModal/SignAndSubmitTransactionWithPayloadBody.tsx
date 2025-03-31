@@ -117,27 +117,25 @@ export default function SignAndSubmitTransactionWithPayloadBody({
     <div className="flex flex-col">
       <div className="mt-2">
         <p className="font-display font-semibold mb-2">Balances Changes</p>
-        <div>
-          {balanceChanges ? (
-            <div className="pb-4 pt-2 flex flex-col gap-2">
-              {Object.entries(balanceChanges).map(([asset, change]) => (
-                <SimulationCoinRow
-                  key={`${vaultAddress}-${asset}`}
-                  asset={asset}
-                  delta={change.delta}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-muted-foreground border border-dashed rounded-lg w-full bg-secondary text-center text-sm py-8">
-              {simulation.isLoading ? (
-                <LoadingSpinner className="mx-auto" />
-              ) : (
-                'No balance changes'
-              )}
-            </div>
-          )}
-        </div>
+        {balanceChanges ? (
+          <div className="pb-4 pt-2 flex flex-col gap-2">
+            {Object.entries(balanceChanges).map(([asset, change]) => (
+              <SimulationCoinRow
+                key={`${vaultAddress}-${asset}`}
+                asset={asset}
+                delta={change.delta}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-muted-foreground border border-dashed rounded-lg w-full bg-secondary text-center text-sm py-8">
+            {simulation.isLoading ? (
+              <LoadingSpinner className="mx-auto" />
+            ) : (
+              'No balance changes'
+            )}
+          </div>
+        )}
       </div>
 
       <div className="mt-2">

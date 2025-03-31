@@ -50,18 +50,21 @@ export function PendingTransactionRow({
     <motion.div className="flex items-center w-full p-2 px-4 hover:bg-secondary/70 group-data-expanded:!bg-secondary transition-all rounded-md cursor-pointer">
       <div
         className={cn(
-          'flex p-2 items-center justify-between rounded-full',
+          'p-2 items-center justify-between rounded-full hidden md:flex',
           statusBackgroundColor,
           statusTextColor
         )}
       >
         {statusIcon}
       </div>
-      <div className="px-4 py-1 text-left">
+      <div className="md:px-4 py-1 text-left">
         <p className={cn('text-sm font-display font-semibold')}>
           {getEntryFunctionDisplayName(payload.function)}
           {isNext && (
-            <Badge variant="success" className="ml-2 uppercase">
+            <Badge
+              variant="success"
+              className="ml-2 uppercase text-[10px] md:text-xs"
+            >
               Next
             </Badge>
           )}
@@ -74,16 +77,19 @@ export function PendingTransactionRow({
           )}
         </p>
       </div>
-      <div className="flex items-center ml-auto gap-4">
+      <div className="flex flex-col md:flex-row items-center ml-auto gap-1 md:gap-4 ">
         {showSequenceNumber && (
-          <Badge variant="outline" className="font-display">
+          <Badge
+            variant="outline"
+            className="font-display text-[10px] md:text-xs"
+          >
             Sequence Number #{sequenceNumber}
           </Badge>
         )}
         {signaturesRequired && (
           <Badge
             variant={hasEnoughApprovals ? 'success' : 'secondary'}
-            className="ml-auto"
+            className="ml-auto text-[10px] md:text-xs"
           >
             <CheckIcon />
             {transaction.votes.approvals.length} / {signaturesRequired}

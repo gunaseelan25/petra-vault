@@ -8,10 +8,40 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowTopRightIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { useActiveVault } from '@/context/ActiveVaultProvider';
+import {
+  groupAndSortWallets,
+  useWallet
+} from '@aptos-labs/wallet-adapter-react';
 
 export default function VaultExplorePage() {
   const { id } = useActiveVault();
 
+  const { wallets = [], notDetectedWallets = [] } = useWallet();
+
+  const { availableWallets } = groupAndSortWallets([
+    ...wallets,
+    ...notDetectedWallets
+  ]);
+
+  if (!availableWallets.find((e) => e.name === 'Petra')) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center gap-8">
+          <img src="/petra_logo.png" alt="Petra Logo" className="w-12 mr-2" />
+          <p className="font-display text-center">
+            The <b>Petra Wallet extension</b> is required to use this feature.
+            Please install it and refresh the page to continue.
+          </p>
+          <Link
+            href="https://chromewebstore.google.com/detail/petra-aptos-wallet/ejjladinnckdgjemekebdpeokbikhfci"
+            target="_blank"
+          >
+            <Button className="w-fit">Install Petra Wallet</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="flex-1 flex flex-col">
       <br />

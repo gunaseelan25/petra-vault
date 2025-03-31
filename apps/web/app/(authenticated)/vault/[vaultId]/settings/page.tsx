@@ -49,23 +49,21 @@ export default function VaultSettingsPage() {
     useActiveVault();
 
   return (
-    <div className="py-6 flex flex-col gap-6 h-full">
-      <Card className="grid grid-cols-2 px-8">
-        <div>
-          <h3 className="font-display text-lg font-semibold tracking-wide">
-            Vault Owners
-          </h3>
-        </div>
-        <div>
+    <div className="pb-6 md:py-6 flex flex-col gap-6">
+      <Card className="grid md:grid-cols-2 md:px-8 border-0 md:border-1">
+        <h3 className="font-display text-lg font-semibold tracking-wide px-2 md:px-0">
+          Vault Owners
+        </h3>
+        <div className="px-2 md:px-6">
           <section>
-            <CardHeader>
+            <CardHeader className="px-0">
               <CardTitle className="font-medium">Owners</CardTitle>
               <CardDescription>
                 Vault owners are accounts that can vote, can propose, and sign
                 and execute transactions.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-0">
               {owners.isLoading ? (
                 <Skeleton className="w-full h-8" />
               ) : (
@@ -146,11 +144,11 @@ export default function VaultSettingsPage() {
           </section>
 
           <br />
-          <Separator />
+          <Separator className="hidden md:block" />
           <br />
 
           <section>
-            <CardHeader>
+            <CardHeader className="px-0">
               <CardTitle className="font-medium">
                 Transaction Signatures Required
               </CardTitle>
@@ -158,7 +156,7 @@ export default function VaultSettingsPage() {
                 The number of signatures required to execute a transaction.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-0">
               {signaturesRequired.isLoading ? (
                 <Skeleton className="w-full h-8" />
               ) : (
@@ -180,15 +178,15 @@ export default function VaultSettingsPage() {
         </div>
       </Card>
 
-      <Card className="grid grid-cols-2 px-8">
-        <div>
-          <h3 className="font-display text-lg font-semibold tracking-wide">
-            Dangerous Actions
-          </h3>
-        </div>
-        <div>
+      <Separator className="md:hidden" />
+
+      <Card className="grid md:grid-cols-2 md:px-8 border-0 md:border-1">
+        <h3 className="font-display text-lg font-semibold tracking-wide px-2 md:px-0">
+          Dangerous Actions
+        </h3>
+        <div className="px-2 md:px-6">
           <section>
-            <CardHeader>
+            <CardHeader className="px-0">
               <CardTitle className="font-medium">Delete Vault</CardTitle>
               <CardDescription>
                 Remove this vault from local storage. This action cannot be
@@ -196,7 +194,7 @@ export default function VaultSettingsPage() {
                 re-imported using a backup file or vault address.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-0">
               <br />
               <Dialog>
                 <DialogTrigger asChild>
@@ -243,6 +241,7 @@ export default function VaultSettingsPage() {
           </section>
         </div>
       </Card>
+      <br />
     </div>
   );
 }

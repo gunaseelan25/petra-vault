@@ -44,3 +44,10 @@ export function getSimulationQueryErrors(
       'An unknown error occurred with simulating your transaction.'
   ];
 }
+
+export const explainError = (error?: string) => {
+  if (error?.includes('MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS')) {
+    return 'The account must have some APT to create a proposal. Please add some APT to the Vault and try again.';
+  }
+  return error;
+};

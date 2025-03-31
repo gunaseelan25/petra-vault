@@ -6,7 +6,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
@@ -21,8 +20,7 @@ import {
   createMultisigVoteTransactionPayloadData,
   formatPayloadWithAbi
 } from '@/lib/payloads';
-import { Button } from '@/components/ui/button';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   useSignAndSubmitTransaction,
@@ -30,7 +28,6 @@ import {
 } from '@aptos-labs/react';
 import { toast } from 'sonner';
 import { useActiveVault } from '@/context/ActiveVaultProvider';
-import Callout from '@/components/Callout';
 import { Separator } from '@/components/ui/separator';
 import { AnimatePresence, motion } from 'motion/react';
 import { LoadingSpinner } from '@/components/LoaderSpinner';
@@ -41,6 +38,8 @@ import { useRouter } from 'next/navigation';
 import { jsonStringify } from '@/lib/storage';
 import Link from 'next/link';
 import useAnalytics from '@/hooks/useAnalytics';
+import ExecuteProposalConfirmationActions from '@/components/ExecuteProposalConfirmationActions';
+import { padEstimatedGas } from '@/lib/gas';
 
 export default function ProposalPage() {
   const trackEvent = useAnalytics();
@@ -109,14 +108,17 @@ export default function ProposalPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSecondaryActionSuccess]);
 
-  const handleSecondaryAction = (approve: boolean) =>
-    signAndSubmitSecondaryAction({
-      data: createMultisigVoteTransactionPayloadData({
-        vaultAddress,
-        sequenceNumber,
-        approve
-      })
-    });
+  const handleSecondaryAction = useCallback(
+    (approve: boolean) =>
+      signAndSubmitSecondaryAction({
+        data: createMultisigVoteTransactionPayloadData({
+          vaultAddress,
+          sequenceNumber,
+          approve
+        })
+      }),
+    [sequenceNumber, signAndSubmitSecondaryAction, vaultAddress]
+  );
 
   const isSecondaryActionLoading =
     isSignAndSubmitSecondaryActionPending || isSecondaryTransactionLoading;
@@ -134,9 +136,7 @@ export default function ProposalPage() {
           variables.data.function ===
           '0x1::multisig_account::execute_transaction'
         ) {
-          trackEvent('execute_proposal', {
-            hash: data.hash
-          });
+          trackEvent('execute_proposal', { hash: data.hash });
         } else if (
           variables.data.function ===
           '0x1::multisig_account::execute_rejected_transaction'
@@ -161,42 +161,90 @@ export default function ProposalPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPrimaryActionSuccess]);
 
-  const handlePrimaryAction = async (action: 'execute' | 'remove') => {
-    if (action === 'remove') {
-      signAndSubmitPrimaryAction({
-        data: {
-          function: '0x1::multisig_account::execute_rejected_transaction',
-          functionArguments: [vaultAddress]
-        }
-      });
-    }
-
-    if (action === 'execute') {
-      const transaction = await transactionPayload.refetch();
-
-      if (!transaction.data) {
-        return toast.error(
-          'There was an issue building your transaction, please try again.'
-        );
+  const handlePrimaryAction = useCallback(
+    async (action: 'execute' | 'remove') => {
+      if (action === 'remove') {
+        signAndSubmitPrimaryAction({
+          data: {
+            function: '0x1::multisig_account::execute_rejected_transaction',
+            functionArguments: [vaultAddress]
+          }
+        });
       }
 
-      signAndSubmitPrimaryAction({ transaction: transaction.data });
-    }
-  };
+      if (action === 'execute') {
+        const transaction = await transactionPayload.refetch();
+
+        if (!transaction.data) {
+          return toast.error(
+            'There was an issue building your transaction, please try again.'
+          );
+        }
+
+        signAndSubmitPrimaryAction({ transaction: transaction.data });
+      }
+    },
+    [signAndSubmitPrimaryAction, transactionPayload, vaultAddress]
+  );
 
   const isPrimaryActionLoading =
     isSignAndSubmitPrimaryActionPending || isPrimaryTransactionLoading;
 
+  // Conditionals
+
+  const actionsVariant = useMemo(() => {
+    if (!hasEnoughApprovals && !hasEnoughRejections) return 'voting';
+    if (hasEnoughRejections && !hasEnoughApprovals && isNext)
+      return 'can-remove';
+    if (hasEnoughApprovals && canExecute.data && isNext) return 'can-execute';
+    return 'waiting';
+  }, [hasEnoughApprovals, hasEnoughRejections, canExecute.data, isNext]);
+
+  const renderConfirmationActions = useMemo(
+    // eslint-disable-next-line react/display-name
+    () => () => {
+      return (
+        <ExecuteProposalConfirmationActions
+          actionVariant={actionsVariant}
+          isPrimaryActionLoading={isPrimaryActionLoading}
+          isPrimaryActionDisabled={
+            !isNext ||
+            (hasEnoughApprovals ? !canExecute.data : !hasEnoughRejections)
+          }
+          isSecondaryActionLoading={isSecondaryActionLoading}
+          onRemoveTransaction={() => handlePrimaryAction('remove')}
+          onExecuteTransaction={() => handlePrimaryAction('execute')}
+          onVote={(approve) => handleSecondaryAction(approve)}
+          hasUserCastedVote={hasUserCastedVote}
+          isUserApproved={isUserApproved}
+        />
+      );
+    },
+    [
+      actionsVariant,
+      canExecute.data,
+      handlePrimaryAction,
+      handleSecondaryAction,
+      hasEnoughApprovals,
+      hasEnoughRejections,
+      hasUserCastedVote,
+      isNext,
+      isPrimaryActionLoading,
+      isSecondaryActionLoading,
+      isUserApproved
+    ]
+  );
+
   if (!transaction) return null;
 
   return (
-    <div className="p-8 h-full">
+    <div className="p-4 md:p-8 h-full">
       <PageVaultHeader title={`Proposal #${sequenceNumber}`} />
 
       <br />
 
-      <div className="h-full grid grid-cols-8 gap-4">
-        <Card className="col-span-5 h-fit">
+      <div className="pb-12 grid grid-cols-8 gap-4">
+        <Card className="col-span-8 lg:col-span-5 h-fit">
           <CardHeader>
             <CardTitle>Transaction Details</CardTitle>
             <CardDescription>
@@ -223,218 +271,108 @@ export default function ProposalPage() {
               </div>
             </div>
 
-            <div>
-              <div className="pt-2">
-                <AnimatePresence mode="popLayout">
-                  {simulation.isLoading ? (
-                    <motion.div
-                      key="simulation-loading"
-                      initial={{
-                        opacity: 0,
-                        filter: 'blur(10px)'
-                      }}
-                      animate={{
-                        opacity: 1,
-                        filter: 'blur(0px)'
-                      }}
-                      exit={{
-                        opacity: 0,
-                        filter: 'blur(10px)'
-                      }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="w-full flex justify-center items-center py-8">
-                        <LoadingSpinner />
+            <div className="pt-2">
+              <AnimatePresence mode="popLayout">
+                {simulation.isLoading ? (
+                  <motion.div
+                    key="simulation-loading"
+                    initial={{ opacity: 0, filter: 'blur(10px)' }}
+                    animate={{ opacity: 1, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, filter: 'blur(10px)' }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="w-full flex justify-center items-center py-8">
+                      <LoadingSpinner />
+                    </div>
+                  </motion.div>
+                ) : simulation.isError ? (
+                  <motion.div
+                    key="simulation-error"
+                    initial={{ opacity: 0, filter: 'blur(10px)' }}
+                    animate={{ opacity: 1, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, filter: 'blur(10px)' }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <CardTitle>Transaction Simulation</CardTitle>
+                    <CardDescription className="mb-4">
+                      This simulation shows a preview of the transaction&apos;s
+                      details when executed.
+                    </CardDescription>
+                    <div className="w-full flex justify-center items-center">
+                      <div className="text-destructive bg-destructive/10 p-4 rounded-lg text-sm border border-destructive border-dashed">
+                        <>{simulation.simulationError}</>
                       </div>
-                    </motion.div>
-                  ) : simulation.isError ? (
-                    <motion.div
-                      key="simulation-error"
-                      initial={{
-                        opacity: 0,
-                        filter: 'blur(10px)'
-                      }}
-                      animate={{
-                        opacity: 1,
-                        filter: 'blur(0px)'
-                      }}
-                      exit={{
-                        opacity: 0,
-                        filter: 'blur(10px)'
-                      }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <CardTitle>Transaction Simulation</CardTitle>
-                      <CardDescription className="mb-4">
-                        This simulation shows a preview of the
-                        transaction&apos;s details when executed.
-                      </CardDescription>
-                      <div className="w-full flex justify-center items-center">
-                        <div className="text-destructive bg-destructive/10 p-4 rounded-lg text-sm border border-destructive border-dashed">
-                          <>{simulation.simulationError}</>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ) : simulation.isSuccess ? (
-                    <motion.div
-                      key="simulation-success"
-                      initial={{
-                        opacity: 0,
-                        filter: 'blur(10px)'
-                      }}
-                      animate={{
-                        opacity: 1,
-                        filter: 'blur(0px)'
-                      }}
-                      exit={{
-                        opacity: 0,
-                        filter: 'blur(10px)'
-                      }}
-                      transition={{ duration: 0.3 }}
-                      className="flex flex-col gap-4"
-                    >
-                      <div>
-                        <CardHeader className="px-0">
-                          <CardTitle>Balance Changes</CardTitle>
-                          <CardDescription className="mb-4">
-                            This shows a preview of the vault&apos;s asset
-                            changes after the transaction is executed.
-                          </CardDescription>
-                        </CardHeader>
-                        <div>
-                          {balanceChanges ? (
-                            <div className="pb-4 pt-2 flex flex-col gap-2">
-                              {Object.entries(balanceChanges).map(
-                                ([asset, change]) => (
-                                  <SimulationCoinRow
-                                    key={`${vaultAddress}-${asset}`}
-                                    asset={asset}
-                                    delta={change.delta}
-                                  />
-                                )
-                              )}
-                            </div>
-                          ) : (
-                            <div className="text-muted-foreground border border-dashed rounded-lg w-full bg-secondary text-center text-sm py-8">
-                              No balance changes
-                            </div>
+                    </div>
+                  </motion.div>
+                ) : simulation.isSuccess ? (
+                  <motion.div
+                    key="simulation-success"
+                    initial={{ opacity: 0, filter: 'blur(10px)' }}
+                    animate={{ opacity: 1, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, filter: 'blur(10px)' }}
+                    transition={{ duration: 0.3 }}
+                    className="flex flex-col gap-4"
+                  >
+                    <div>
+                      <CardHeader className="!px-0">
+                        <CardTitle>Balance Changes</CardTitle>
+                        <CardDescription className="mb-4">
+                          This shows a preview of the vault&apos;s asset changes
+                          after the transaction is executed.
+                        </CardDescription>
+                      </CardHeader>
+                      {balanceChanges ? (
+                        <div className="pb-4 pt-2 flex flex-col gap-2">
+                          {Object.entries(balanceChanges).map(
+                            ([asset, change]) => (
+                              <SimulationCoinRow
+                                key={`${vaultAddress}-${asset}`}
+                                asset={asset}
+                                delta={change.delta}
+                              />
+                            )
                           )}
                         </div>
-                      </div>
-                      <div>
-                        <CardHeader className="px-0">
-                          <CardTitle>Miscellaneous Details</CardTitle>
-                          <CardDescription>
-                            Other details about the transaction including gas
-                            and expiration.
-                          </CardDescription>
-                        </CardHeader>
-                        <div className="pt-4 mb-4">
-                          <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground font-display">
-                            <span>Max Gas Amount:</span>
-                            <span>{Number(simulation.data.gas_used) * 2}</span>
-                            <span>Gas Unit Price:</span>
-                            <span>{simulation.data.gas_unit_price}</span>
-                            <span>Expiration Timestamp:</span>
-                            <span>
-                              {new Date(
-                                Number(
-                                  simulation.data.expiration_timestamp_secs
-                                ) * 1000
-                              ).toLocaleString()}
-                            </span>
-                          </div>
+                      ) : (
+                        <div className="text-muted-foreground border border-dashed rounded-lg w-full bg-secondary text-center text-sm py-8">
+                          No balance changes
                         </div>
+                      )}
+                    </div>
+                    <div>
+                      <CardHeader className="!px-0">
+                        <CardTitle>Miscellaneous Details</CardTitle>
+                        <CardDescription>
+                          Other details about the transaction including gas and
+                          expiration.
+                        </CardDescription>
+                      </CardHeader>
+                      <div className="py-4 grid grid-cols-2 gap-2 text-sm text-muted-foreground font-display">
+                        <span>Max Gas Amount:</span>
+                        <span>
+                          {padEstimatedGas(Number(simulation.data.gas_used))}
+                        </span>
+                        <span>Gas Unit Price:</span>
+                        <span>{simulation.data.gas_unit_price}</span>
+                        <span>Expiration Timestamp:</span>
+                        <span>
+                          {new Date(
+                            Number(simulation.data.expiration_timestamp_secs) *
+                              1000
+                          ).toLocaleString()}
+                        </span>
                       </div>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-              </div>
+                    </div>
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
             </div>
 
-            {!hasEnoughApprovals && !hasEnoughRejections && (
-              <Callout
-                status="error"
-                title="Transaction is not ready to be executed"
-                description="The transaction does not have enough approvals or rejections. Please cast votes to either reject or approve the transaction."
-              />
-            )}
-            {hasEnoughRejections && !hasEnoughApprovals && isNext && (
-              <Callout
-                status="error"
-                title="Transaction has been rejected"
-                description="The transaction has enough rejections to be removed from the sequence."
-              />
-            )}
-            {(hasEnoughApprovals || hasEnoughRejections) &&
-              !canExecute.data &&
-              !isNext && (
-                <Callout
-                  status="loading"
-                  title="Transaction is waiting for execution"
-                  description="Please execute transactions ahead of the sequence in order to execute this transaction."
-                />
-              )}
-            {hasEnoughApprovals && canExecute.data && isNext && (
-              <Callout
-                status="success"
-                title="Transaction is ready to be executed"
-                description="The transaction has enough approvals and can be executed."
-              />
-            )}
+            <div className="hidden lg:block">{renderConfirmationActions()}</div>
           </CardContent>
-          <Separator />
-          <CardFooter className="flex gap-4 max-w-2xl">
-            {(!hasUserCastedVote || isUserApproved) && (
-              <Button
-                variant="outline"
-                className="flex-1"
-                isLoading={isSecondaryActionLoading}
-                onClick={() => handleSecondaryAction(false)}
-                data-testid="reject-transaction-button"
-              >
-                Reject
-              </Button>
-            )}
-
-            {!isUserApproved && (
-              <Button
-                variant="outline"
-                className="flex-1"
-                isLoading={isSecondaryActionLoading}
-                onClick={() => handleSecondaryAction(true)}
-                data-testid="approve-transaction-button"
-              >
-                Approve
-              </Button>
-            )}
-
-            {hasUserCastedVote &&
-              (hasEnoughApprovals ? (
-                <Button
-                  className="flex-1"
-                  disabled={!canExecute.data || !isNext}
-                  isLoading={isPrimaryActionLoading}
-                  onClick={() => handlePrimaryAction('execute')}
-                  data-testid="execute-transaction-button"
-                >
-                  Execute Transaction
-                </Button>
-              ) : (
-                <Button
-                  className="flex-1"
-                  disabled={!isNext || !hasEnoughRejections}
-                  isLoading={isPrimaryActionLoading}
-                  onClick={() => handlePrimaryAction('remove')}
-                  data-testid="remove-transaction-button"
-                >
-                  Remove Transaction
-                </Button>
-              ))}
-          </CardFooter>
         </Card>
 
-        <div className="col-span-3 h-full flex flex-col gap-4">
+        <div className="col-span-8 lg:col-span-3 h-full flex flex-col gap-4">
           <Card>
             <CardHeader>
               <CardTitle>Confirmations</CardTitle>
@@ -471,6 +409,7 @@ export default function ProposalPage() {
                               ? 'destructive'
                               : 'secondary'
                         }
+                        className="px-1"
                       >
                         {isApproved ? (
                           <CheckCircledIcon />
@@ -521,7 +460,7 @@ export default function ProposalPage() {
 
           {simulation.data && (
             <>
-              <Card className="gap-0">
+              <Card className="!gap-0">
                 <CardHeader>
                   <CardTitle>Writesets</CardTitle>
                   <CardDescription>
@@ -530,15 +469,13 @@ export default function ProposalPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="max-h-96 overflow-auto w-full p-2 border rounded-md text-xs mt-4 bg-secondary">
-                    <CodeBlock
-                      value={jsonStringify(simulation.data.changes)}
-                      className="[&>pre]:!bg-transparent"
-                    />
-                  </div>
+                  <CodeBlock
+                    value={jsonStringify(simulation.data.changes)}
+                    className="[&>pre]:!bg-transparent [&>pre]:!p-2 max-h-96 overflow-auto w-full p-2 border rounded-md text-xs mt-4 bg-secondary"
+                  />
                 </CardContent>
               </Card>
-              <Card className="gap-0">
+              <Card className="!gap-0">
                 <CardHeader>
                   <CardTitle>Events</CardTitle>
                   <CardDescription>
@@ -547,16 +484,18 @@ export default function ProposalPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="max-h-96 overflow-auto w-full p-2 border rounded-md text-xs mt-4 bg-secondary">
-                    <CodeBlock
-                      value={jsonStringify(simulation.data.events)}
-                      className="[&>pre]:!bg-transparent"
-                    />
-                  </div>
+                  <CodeBlock
+                    value={jsonStringify(simulation.data.events)}
+                    className="[&>pre]:!bg-transparent [&>pre]:!p-2 max-h-96 overflow-auto w-full p-2 border rounded-md text-xs mt-4 bg-secondary"
+                  />
                 </CardContent>
               </Card>
             </>
           )}
+
+          <Card className="block lg:hidden">
+            <CardContent>{renderConfirmationActions()}</CardContent>
+          </Card>
         </div>
       </div>
     </div>

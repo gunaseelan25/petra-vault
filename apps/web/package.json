@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "@aptos-labs/wallet-api": "workspace:*",
-    "@aptos-labs/js-pro": "0.1.0-beta.9",
-    "@aptos-labs/react": "0.1.0-beta.9",
+    "@aptos-labs/js-pro": "0.1.0-beta.11",
+    "@aptos-labs/react": "0.1.0-beta.11",
     "@aptos-labs/ts-sdk": "1.36.0",
     "@aptos-labs/wallet-adapter-react": "^4.1.5",
     "@aptos-labs/wallet-standard": "^0.3.0",

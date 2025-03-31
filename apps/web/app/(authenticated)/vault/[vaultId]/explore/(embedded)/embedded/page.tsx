@@ -51,7 +51,6 @@ export default function VaultExploreEmbeddedPage() {
 
     return () => {
       window.removeEventListener('message', handleRequest);
-      console.log('removing handler');
     };
   }, [handleRequest]);
 

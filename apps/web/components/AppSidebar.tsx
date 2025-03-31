@@ -48,14 +48,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           icon: HomeIcon
         },
         {
-          name: 'Create Proposal',
+          name: 'Proposals',
           url: activeVaultId
             ? `/vault/${activeVaultId}/proposal/create`
             : undefined,
           icon: Pencil1Icon
         },
         {
-          name: 'Publish Contract',
+          name: 'Smart Contracts',
           url: activeVaultId
             ? `/vault/${activeVaultId}/proposal/publish-contract`
             : undefined,
@@ -64,7 +64,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ...(process.env.NEXT_PUBLIC_ENABLE_EMBEDDED === '1'
           ? [
               {
-                name: 'Explore Apps',
+                name: 'Apps',
                 url: activeVaultId
                   ? `/vault/${activeVaultId}/explore`
                   : undefined,
@@ -93,7 +93,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {
           name: 'Settings',
           url: activeVaultId ? `/vault/${activeVaultId}/settings` : undefined,
-          icon: GearIcon
+          icon: GearIcon,
+          activePaths: [
+            `/vault/${activeVaultId}/settings`,
+            `/vault/${activeVaultId}/settings/export`
+          ]
         }
       ],
 

@@ -34,7 +34,7 @@ test('send coins using 0x1::aptos_account::transfer', async ({
 
   await navigation.navigateToPendingTransaction(1);
 
-  await page.getByTestId('execute-transaction-button').click();
+  await page.getByTestId('execute-transaction-button').first().click();
 
   await page.getByTestId('pending-transactions-empty').click();
 
@@ -71,7 +71,7 @@ test('send coins using 0x1::aptos_account::transfer_coins to test type arguments
 
   await navigation.navigateToPendingTransaction(1);
 
-  await page.getByTestId('execute-transaction-button').click();
+  await page.getByTestId('execute-transaction-button').first().click();
 
   await page.getByTestId('pending-transactions-empty').click();
 
@@ -111,7 +111,7 @@ test('send coins using 0x1::aptos_account::batch_transfer to test array inputs',
 
   await navigation.navigateToPendingTransaction(1);
 
-  await page.getByTestId('execute-transaction-button').click();
+  await page.getByTestId('execute-transaction-button').first().click();
 
   await page.getByTestId('pending-transactions-empty').click();
 
@@ -153,7 +153,7 @@ test('publish contract', async ({
 
   await navigation.navigateToPendingTransaction(1);
 
-  await page.getByTestId('execute-transaction-button').click();
+  await page.getByTestId('execute-transaction-button').first().click();
 
   await page.getByTestId('pending-transactions-empty').click();
 
@@ -188,7 +188,7 @@ test('send coins from vault', async ({
 
   await navigation.navigateToPendingTransaction(1);
 
-  await page.getByTestId('execute-transaction-button').click();
+  await page.getByTestId('execute-transaction-button').first().click();
 
   await page.getByTestId('pending-transactions-empty').click();
 

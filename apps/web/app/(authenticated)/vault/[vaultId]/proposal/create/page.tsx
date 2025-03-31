@@ -35,12 +35,18 @@ import { LoadingSpinner } from '@/components/LoaderSpinner';
 import { AnimatePresence, motion } from 'motion/react';
 import SimulationCoinRow from '@/components/SimulationCoinRow';
 import { cn } from '@/lib/utils';
-import { ArrowLeftIcon } from '@radix-ui/react-icons';
-import { Separator } from '@/components/ui/separator';
-import Callout from '@/components/Callout';
-import { getSimulationQueryErrors } from '@/lib/simulations/shared';
+import {
+  explainError,
+  getSimulationQueryErrors
+} from '@/lib/simulations/shared';
 import { jsonStringify } from '@/lib/storage';
 import useAnalytics from '@/hooks/useAnalytics';
+import {
+  EntryFunctionFormFunctionArguments,
+  EntryFunctionFormTypeArguments
+} from '@/lib/types/forms';
+import CreateProposalConfirmationActions from '@/components/CreateProposalConfirmationActions';
+import { padEstimatedGas } from '@/lib/gas';
 
 export default function CreateProposalPage() {
   const trackEvent = useAnalytics();
@@ -150,15 +156,29 @@ export default function CreateProposalPage() {
 
   const isCreatingProposal = isSigningAndSubmitting || isWaitingForTransaction;
 
+  const renderConfirmationActions = useMemo(
+    // eslint-disable-next-line react/display-name
+    () => () => {
+      return (
+        <CreateProposalConfirmationActions
+          onBack={() => setPage('set-details')}
+          onCreateProposal={createProposal}
+          isLoading={isCreatingProposal}
+        />
+      );
+    },
+    [createProposal, isCreatingProposal]
+  );
+
   return (
-    <div className="p-8 ">
+    <div className="p-4 md:p-8 flex flex-col h-full">
       <PageVaultHeader title="Create Proposal" />
 
       <br />
 
-      <div className="grid grid-cols-2 gap-4 h-full">
+      <div className="grid grid-cols-2 gap-4 pb-12">
         {page === 'set-details' && (
-          <div>
+          <div className="col-span-2 xl:col-span-1">
             <ExpandingContainer>
               <AnimatePresence mode="popLayout">
                 <MemoizedCreateProposalEntryFunctionForm
@@ -177,21 +197,9 @@ export default function CreateProposalPage() {
 
                 {abi.value && (
                   <motion.div
-                    initial={{
-                      opacity: 0,
-                      x: -10,
-                      filter: 'blur(8px)'
-                    }}
-                    animate={{
-                      opacity: 1,
-                      x: 0,
-                      filter: 'blur(0px)'
-                    }}
-                    exit={{
-                      opacity: 0,
-                      x: 10,
-                      filter: 'blur(8px)'
-                    }}
+                    initial={{ opacity: 0, x: -10, filter: 'blur(8px)' }}
+                    animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, x: 10, filter: 'blur(8px)' }}
                     transition={{ duration: 0.3 }}
                   >
                     <br />
@@ -210,23 +218,13 @@ export default function CreateProposalPage() {
                           functionArguments.value.length > 0
                             ? (functionArguments.value.map((arg) => ({
                                 value: arg
-                              })) as [
-                                { value: string },
-                                ...{
-                                  value: string;
-                                }[]
-                              ])
+                              })) as EntryFunctionFormFunctionArguments)
                             : undefined,
                         typeArguments:
                           typeArguments.value.length > 0
                             ? (typeArguments.value.map((arg) => ({
                                 value: arg
-                              })) as [
-                                { value: string },
-                                ...{
-                                  value: string;
-                                }[]
-                              ])
+                              })) as EntryFunctionFormTypeArguments)
                             : undefined
                       }}
                     />
@@ -234,19 +232,19 @@ export default function CreateProposalPage() {
                 )}
               </AnimatePresence>
             </ExpandingContainer>
-            <br />
-            <Button
-              disabled={!simulation.data?.success || !isFormValid.value}
-              onClick={() => setPage('confirm')}
-              data-testid="create-proposal-confirm-draft-button"
-            >
-              {!isSimulationError ? 'Confirm Draft' : 'Simulation Errors Found'}
-            </Button>
           </div>
         )}
 
         <Card
-          className={cn('w-full h-fit', page === 'confirm' && 'col-span-2')}
+          className={cn(
+            'w-full h-fit',
+            page === 'set-details'
+              ? isSimulationError || isSimulationSuccess
+                ? 'flex col-span-2 xl:col-span-1'
+                : 'hidden xl:flex col-span-2 xl:col-span-1'
+              : undefined,
+            page === 'confirm' && 'flex col-span-2'
+          )}
         >
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -265,15 +263,9 @@ export default function CreateProposalPage() {
             <AnimatePresence mode="popLayout">
               {!isFormValid.value ? (
                 <motion.div
-                  key="simulation-loading"
-                  initial={{
-                    opacity: 0,
-                    filter: 'blur(10px)'
-                  }}
-                  animate={{
-                    opacity: 1,
-                    filter: 'blur(0px)'
-                  }}
+                  key="simulation-idle"
+                  initial={{ opacity: 0, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
@@ -287,187 +279,132 @@ export default function CreateProposalPage() {
               ) : simulation.isLoading ? (
                 <motion.div
                   key="simulation-loading"
-                  initial={{
-                    opacity: 0,
-                    filter: 'blur(10px)'
-                  }}
-                  animate={{
-                    opacity: 1,
-                    filter: 'blur(0px)'
-                  }}
+                  initial={{ opacity: 0, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent>
-                    <div className="w-full flex justify-center items-center py-8">
-                      <LoadingSpinner />
-                    </div>
+                  <CardContent className="w-full flex justify-center items-center py-8">
+                    <LoadingSpinner />
                   </CardContent>
                 </motion.div>
               ) : isSimulationError ? (
                 <motion.div
                   key="simulation-error"
-                  initial={{
-                    opacity: 0,
-                    filter: 'blur(10px)'
-                  }}
-                  animate={{
-                    opacity: 1,
-                    filter: 'blur(0px)'
-                  }}
+                  initial={{ opacity: 0, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent>
-                    <div className="w-full flex justify-center items-center">
-                      <div className="text-destructive bg-destructive/10 p-4 rounded-lg text-sm border border-destructive border-dashed">
-                        <>
-                          {simulationError ===
-                          'MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS'
-                            ? 'The account must have some APT to create a proposal. Please add some APT to the Vault and try again.'
-                            : simulationError}
-                        </>
-                      </div>
+                  <CardContent className="w-full flex justify-center items-center">
+                    <div className="text-destructive bg-destructive/10 p-4 rounded-lg text-sm border border-destructive border-dashed">
+                      {explainError(simulationError)}
                     </div>
                   </CardContent>
                 </motion.div>
               ) : isSimulationSuccess ? (
                 <motion.div
                   key="simulation-success"
-                  initial={{
-                    opacity: 0,
-                    filter: 'blur(10px)'
-                  }}
-                  animate={{
-                    opacity: 1,
-                    filter: 'blur(0px)'
-                  }}
+                  initial={{ opacity: 0, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className={'grid grid-cols-2 divide-x'}>
+                  <CardContent
+                    className={'grid grid-cols-2 gap-6 xl:divide-x xl:gap-0'}
+                  >
                     <div
                       className={cn(
                         'flex flex-col gap-6',
-                        page === 'set-details' ? 'col-span-2' : 'pr-12'
+                        page === 'set-details' ? 'col-span-2' : 'xl:pr-12',
+                        page === 'confirm' && 'col-span-2 xl:col-span-1'
                       )}
                     >
                       <div>
-                        <div>
-                          <h3 className="font-display text-lg font-semibold tracking-wide">
-                            Balance Changes
-                          </h3>
-                          <div className="py-4">
-                            {balanceChanges ? (
-                              <div className="flex flex-col gap-2">
-                                {Object.entries(balanceChanges).map(
-                                  ([asset, change]) => (
-                                    <SimulationCoinRow
-                                      key={`${vaultAddress}-${asset}`}
-                                      asset={asset}
-                                      delta={change.delta}
-                                    />
-                                  )
-                                )}
-                              </div>
-                            ) : (
-                              <div className="text-muted-foreground">
-                                No balance changes
-                              </div>
-                            )}
-                          </div>
+                        <h3 className="font-display text-lg font-semibold tracking-wide">
+                          Balance Changes
+                        </h3>
+                        <div className="py-4">
+                          {balanceChanges ? (
+                            <div className="flex flex-col gap-2">
+                              {Object.entries(balanceChanges).map(
+                                ([asset, change]) => (
+                                  <SimulationCoinRow
+                                    key={`${vaultAddress}-${asset}`}
+                                    asset={asset}
+                                    delta={change.delta}
+                                  />
+                                )
+                              )}
+                            </div>
+                          ) : (
+                            <div className="text-muted-foreground">
+                              No balance changes
+                            </div>
+                          )}
                         </div>
 
                         <h3 className="font-display text-lg font-semibold tracking-wide">
                           Payload
                         </h3>
-                        <div className="max-h-96 overflow-auto w-full p-2 border rounded-md text-xs mt-4 bg-secondary">
-                          <CodeBlock
-                            value={jsonStringify(innerPayload)}
-                            className="[&>pre]:!bg-transparent"
-                          />
-                        </div>
+                        <CodeBlock
+                          value={jsonStringify(innerPayload)}
+                          className="[&>pre]:!bg-transparent [&>pre]:p-2 max-h-96 overflow-auto w-full border rounded-md text-xs mt-4 bg-secondary"
+                        />
                       </div>
 
                       <div>
                         <h3 className="font-display text-lg font-semibold tracking-wide">
                           Details
                         </h3>
-                        <div className="pt-4">
-                          <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground font-display">
-                            <span>Max Gas Amount:</span>
-                            <span>{Number(simulation.data.gas_used) * 2}</span>
-                            <span>Gas Unit Price:</span>
-                            <span>{simulation.data.gas_unit_price}</span>
-                            <span>Expiration Timestamp:</span>
-                            <span>
-                              {new Date(
-                                Number(
-                                  simulation.data.expiration_timestamp_secs
-                                ) * 1000
-                              ).toLocaleString()}
-                            </span>
-                          </div>
+                        <div className="grid grid-cols-2 pt-4 gap-2 text-sm text-muted-foreground font-display">
+                          <span>Max Gas Amount:</span>
+                          <span>
+                            {padEstimatedGas(Number(simulation.data.gas_used))}
+                          </span>
+                          <span>Gas Unit Price:</span>
+                          <span>{simulation.data.gas_unit_price}</span>
+                          <span>Expiration Timestamp:</span>
+                          <span>
+                            {new Date(
+                              Number(
+                                simulation.data.expiration_timestamp_secs
+                              ) * 1000
+                            ).toLocaleString()}
+                          </span>
                         </div>
                       </div>
 
                       {page === 'confirm' && (
-                        <>
-                          <Callout
-                            title="Always Verify"
-                            description="Before signing, always verify the transaction details and the transaction payload."
-                            status="loading"
-                          />
-                          <Separator />
-                          <div className="flex gap-4">
-                            <Button
-                              variant="ghost"
-                              onClick={() => setPage('set-details')}
-                            >
-                              <ArrowLeftIcon />
-                              Go Back
-                            </Button>
-                            <Button
-                              onClick={createProposal}
-                              isLoading={isCreatingProposal}
-                              data-testid="create-proposal-create-proposal-button"
-                            >
-                              Create Proposal
-                            </Button>
-                          </div>
-                        </>
+                        <div className="hidden xl:grid">
+                          {renderConfirmationActions()}
+                        </div>
                       )}
                     </div>
 
                     {page === 'confirm' && (
-                      <div className="flex flex-col gap-6 pl-12">
-                        <div>
-                          <h3 className="font-display text-lg font-semibold tracking-wide">
-                            Writesets
-                          </h3>
-                          <div>
-                            <div className="max-h-96 overflow-auto w-full p-2 border rounded-md text-xs mt-4 bg-secondary">
-                              <CodeBlock
-                                value={jsonStringify(simulation.data.changes)}
-                                className="[&>pre]:!bg-transparent"
-                              />
-                            </div>
-                          </div>
-                        </div>
+                      <div className="flex flex-col col-span-2 xl:col-span-1 gap-4 xl:pl-12">
+                        <h3 className="font-display text-lg font-semibold tracking-wide">
+                          Writesets
+                        </h3>
+                        <CodeBlock
+                          value={jsonStringify(simulation.data.changes)}
+                          className="[&>pre]:!bg-transparent [&>pre]:p-2 max-h-96 overflow-auto w-full border rounded-md text-xs bg-secondary"
+                        />
 
-                        <div>
-                          <h3 className="font-display text-lg font-semibold tracking-wide">
-                            Events
-                          </h3>
-                          <div>
-                            <div className="max-h-96 overflow-auto w-full p-2 border rounded-md text-xs mt-4 bg-secondary">
-                              <CodeBlock
-                                value={jsonStringify(simulation.data.events)}
-                                className="[&>pre]:!bg-transparent"
-                              />
-                            </div>
-                          </div>
-                        </div>
+                        <h3 className="font-display text-lg font-semibold tracking-wide">
+                          Events
+                        </h3>
+                        <CodeBlock
+                          value={jsonStringify(simulation.data.events)}
+                          className="[&>pre]:!bg-transparent [&>pre]:p-2 max-h-96 overflow-auto w-full border rounded-md text-xs bg-secondary"
+                        />
+                      </div>
+                    )}
+
+                    {page === 'confirm' && (
+                      <div className="col-span-2 xl:hidden">
+                        {renderConfirmationActions()}
                       </div>
                     )}
                   </CardContent>
@@ -476,6 +413,15 @@ export default function CreateProposalPage() {
             </AnimatePresence>
           </ExpandingContainer>
         </Card>
+
+        <Button
+          disabled={!simulation.data?.success || !isFormValid.value}
+          onClick={() => setPage('confirm')}
+          data-testid="create-proposal-confirm-draft-button"
+          className={cn('w-fit', page === 'confirm' && 'hidden')}
+        >
+          {!isSimulationError ? 'Confirm Draft' : 'Simulation Errors Found'}
+        </Button>
       </div>
     </div>
   );

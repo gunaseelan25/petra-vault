@@ -133,7 +133,7 @@ export const [ActiveProposalProvider, useActiveProposal] = constate(
             new MultiSig(AccountAddress.from(vaultAddress), multisigPayload)
           ),
           options: {
-            maxGasAmount: Number(simulation.data.gas_used) * 2,
+            maxGasAmount: Number(simulation.data.gas_used) * 10,
             gasUnitPrice: Number(simulation.data.gas_unit_price),
             expireTimestamp: Number(simulation.data.expiration_timestamp_secs)
           }

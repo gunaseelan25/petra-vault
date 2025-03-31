@@ -15,13 +15,7 @@ import Callout from '../Callout';
 import { useDebounce } from 'use-debounce';
 import useEntryFunctionAbi from '@/hooks/useEntryFunctionAbi';
 import { EntryFunctionABI } from '@aptos-labs/ts-sdk';
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardContent
-} from '../ui/card';
+import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import React from 'react';
 import ExpandingContainer from '../ExpandingContainer';
 import { AnimatePresence, motion } from 'motion/react';
@@ -97,69 +91,67 @@ export default function CreateProposalEntryFunctionForm({
               Define an entry function to call in this proposal.
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-0">
-            <ExpandingContainer className="px-6">
-              <FormField
-                control={form.control}
-                name="entryFunction"
-                render={({ field }) => {
-                  const handleOnChange = (e: string) => {
-                    setEntryFunction(e);
-                    onEntryFunctionChange?.(e);
-                    field.onChange(e);
-                  };
+          <ExpandingContainer className="px-6">
+            <FormField
+              control={form.control}
+              name="entryFunction"
+              render={({ field }) => {
+                const handleOnChange = (e: string) => {
+                  setEntryFunction(e);
+                  onEntryFunctionChange?.(e);
+                  field.onChange(e);
+                };
 
-                  return (
-                    <FormItem className="w-full">
-                      <FormLabel>Entry Function</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          {...field}
-                          onChange={(e) => handleOnChange(e.target.value)}
-                          data-testid="entry-function-input"
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Must be in the format:{' '}
-                        <span className="font-mono text-xs">{`0x{address}::{module_name}::{function_name}`}</span>
-                      </FormDescription>
-                      {!field.value && !disabled && (
-                        <div className="text-sm text-muted-foreground mt-0.5 flex items-center gap-2 w-full overflow-x-scroll">
-                          <span className="font-display text-sm font-medium mr-1">
-                            Presets{' '}
-                          </span>
-                          {entryFunctionPresets.map((preset) => (
-                            <Badge
-                              key={preset.value}
-                              variant="secondary"
-                              className="text-muted-foreground text-xs font-display cursor-pointer"
-                              onClick={() => handleOnChange(preset.value)}
-                            >
-                              {preset.label}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                    </FormItem>
-                  );
-                }}
-              />
+                return (
+                  <FormItem className="w-full">
+                    <FormLabel>Entry Function</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        {...field}
+                        onChange={(e) => handleOnChange(e.target.value)}
+                        data-testid="entry-function-input"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Must be in the format:{' '}
+                      <span className="font-mono text-xs">{`0x{address}::{module_name}::{function_name}`}</span>
+                    </FormDescription>
+                    {!field.value && !disabled && (
+                      <div className="text-sm text-muted-foreground mt-0.5 flex items-center gap-2 w-full xl:overflow-x-scroll flex-wrap">
+                        <span className="font-display text-sm font-medium mr-1">
+                          Presets{' '}
+                        </span>
+                        {entryFunctionPresets.map((preset) => (
+                          <Badge
+                            key={preset.value}
+                            variant="secondary"
+                            className="text-muted-foreground text-xs font-display cursor-pointer"
+                            onClick={() => handleOnChange(preset.value)}
+                          >
+                            {preset.label}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </FormItem>
+                );
+              }}
+            />
 
-              <CreateProposalEntryFunctionCallout
-                form={form}
-                status={
-                  abi.isLoading
-                    ? 'loading'
-                    : abi.isError
-                      ? 'error'
-                      : abi.isSuccess
-                        ? 'success'
-                        : undefined
-                }
-              />
-            </ExpandingContainer>
-          </CardContent>
+            <CreateProposalEntryFunctionCallout
+              form={form}
+              status={
+                abi.isLoading
+                  ? 'loading'
+                  : abi.isError
+                    ? 'error'
+                    : abi.isSuccess
+                      ? 'success'
+                      : undefined
+              }
+            />
+          </ExpandingContainer>
         </Card>
       </form>
     </Form>

@@ -1,12 +1,9 @@
 'use client';
 
-import VerticalCutReveal from '@/components/ui/vertical-cut-reveal';
 import { useCoins } from '@/context/CoinsProvider';
 import { useActiveVault } from '@/context/ActiveVaultProvider';
-import { cn, hasWindow } from '@/lib/utils';
+import { hasWindow } from '@/lib/utils';
 import { AnimatePresence, motion } from 'motion/react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { PropsWithChildren, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowTopRightIcon } from '@radix-ui/react-icons';
@@ -17,6 +14,7 @@ import ReceiveModal from '@/components/modals/ReceiveModal';
 import PageVaultHeader from '@/components/PageVaultHeader';
 import SendCoinsModal from '@/components/modals/SendCoinsModal';
 import useAnalytics from '@/hooks/useAnalytics';
+import LayoutTabs from '@/components/LayoutTabs';
 
 const tabs = [
   {
@@ -29,25 +27,23 @@ const tabs = [
     label: 'Transactions',
     href: '/vault/[vaultId]/transactions'
   }
-] as const;
+];
 
 export default function VaultLayout({ children }: PropsWithChildren) {
   const trackEvent = useAnalytics();
   const [isSendCoinsModalOpen, setIsSendCoinsModalOpen] = useState(false);
 
-  const pathname = usePathname();
-
   const { totalValue, isLoading: isLoadingCoins } = useCoins();
 
-  const { id, isOwner } = useActiveVault();
+  const { isOwner } = useActiveVault();
 
   return (
-    <div className="p-8 flex flex-col h-full">
+    <div className="p-4 md:p-8 flex flex-col h-full">
       <PageVaultHeader title="Dashboard" />
 
       <br />
 
-      <div className="flex items-center justify-between">
+      <div className="md:flex md:items-center md:justify-between">
         <div>
           <AnimatePresence mode="popLayout" initial={false}>
             {isLoadingCoins || !hasWindow() || totalValue === undefined ? (
@@ -77,14 +73,15 @@ export default function VaultLayout({ children }: PropsWithChildren) {
             )}
           </AnimatePresence>
         </div>
-        <div className="flex gap-2">
+
+        <div className="flex gap-2 mt-4 md:mt-0 w-full md:w-auto">
           <Dialog
             open={isSendCoinsModalOpen}
             onOpenChange={setIsSendCoinsModalOpen}
           >
             <Button
               size="lg"
-              className="px-6"
+              className="px-6 flex-1 md:flex-none"
               onClick={() => {
                 trackEvent('send_coins_review_draft', {});
                 setIsSendCoinsModalOpen(true);
@@ -98,7 +95,11 @@ export default function VaultLayout({ children }: PropsWithChildren) {
           </Dialog>
           <Dialog>
             <DialogTrigger asChild>
-              <Button size="lg" className="px-6" variant="outline">
+              <Button
+                size="lg"
+                className="px-6 flex-1 md:flex-none"
+                variant="outline"
+              >
                 Receive <ArrowDownRightIcon className="w-6 h-6" />
               </Button>
             </DialogTrigger>
@@ -109,40 +110,7 @@ export default function VaultLayout({ children }: PropsWithChildren) {
 
       <br />
 
-      <div className="flex border-b border-border-dark">
-        {tabs.map((tab, i) => {
-          const isActive = pathname === tab.href.replace('[vaultId]', id);
-          return (
-            <Link
-              key={tab.id}
-              href={tab.href.replace('[vaultId]', id)}
-              className={cn(
-                'px-4 py-2 relative font-display font-semibold tracking-wide transition-all',
-                isActive
-                  ? 'text-primary cursor-default'
-                  : 'hover:opacity-80 active:opacity-60 cursor-pointer'
-              )}
-              data-testid={`home-tab-item-${tab.id}`}
-            >
-              <VerticalCutReveal transition={{ delay: i * 0.05 }}>
-                {tab.label}
-              </VerticalCutReveal>
-              {isActive ? (
-                <motion.div
-                  layoutId="underline-dashboard"
-                  id="underline-dashboard"
-                  transition={{
-                    type: 'spring',
-                    stiffness: 200,
-                    damping: 21
-                  }}
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
-                />
-              ) : null}
-            </Link>
-          );
-        })}
-      </div>
+      <LayoutTabs layoutId="dashboard" tabs={tabs} />
 
       <div className="flex-1">{children}</div>
     </div>

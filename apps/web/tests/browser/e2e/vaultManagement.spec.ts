@@ -19,7 +19,7 @@ test('add a second owner', async ({
 
   await navigation.navigateToPendingTransaction(1);
 
-  await page.getByTestId('execute-transaction-button').click();
+  await page.getByTestId('execute-transaction-button').first().click();
 
   await page.getByTestId('pending-transactions-empty').click();
 
@@ -44,7 +44,7 @@ test('remove one of two owners', async ({
 
   await navigation.navigateToPendingTransaction(1);
 
-  await page.getByTestId('execute-transaction-button').click();
+  await page.getByTestId('execute-transaction-button').first().click();
 
   await page.getByTestId('pending-transactions-empty').click();
 

@@ -105,13 +105,15 @@ export default function VaultPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="flex items-center gap-4 p-4 rounded-lg border hover:bg-accent/50 transition-colors"
+                  className="flex items-center gap-2 md:gap-4 p-4 rounded-lg border hover:bg-accent/50 transition-colors"
                 >
                   <CoinAvatar coin={coin} size="lg" />
 
                   <div className="flex-1">
-                    <div className="font-medium font-display">{name}</div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="font-medium font-display text-sm md:text-md">
+                      {name}
+                    </div>
+                    <div className="text-xs md:text-sm text-muted-foreground">
                       {price?.usd ? (
                         <span>{`$${price.usd.toFixed(2)} `}</span>
                       ) : undefined}
@@ -131,7 +133,7 @@ export default function VaultPage() {
                           href={metadata.website_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="ml-2 text-xs underline hover:text-primary"
+                          className="ml-2 text-[10px] md:text-xs underline hover:text-primary"
                         >
                           Website
                         </a>
@@ -140,11 +142,11 @@ export default function VaultPage() {
                   </div>
 
                   <div className="text-right">
-                    <div className="font-medium font-display">
+                    <div className="font-medium font-display text-sm md:text-md">
                       {formattedAmount} {symbol}
                     </div>
                     {usdValue && (
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-xs md:text-sm text-muted-foreground">
                         {usdValue}
                       </div>
                     )}

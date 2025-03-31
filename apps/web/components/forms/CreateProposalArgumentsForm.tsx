@@ -19,21 +19,21 @@ import {
   CardContent
 } from '../ui/card';
 import React from 'react';
+import { EntryFunctionFormFunctionArguments } from '@/lib/types/forms';
+import { EntryFunctionFormTypeArguments } from '@/lib/types/forms';
 
 interface CreateProposalArgumentsFormProps {
   abi: EntryFunctionABI;
   onFunctionArgumentsChange?: (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    functionArguments: [] | [{ value?: any }, ...{ value?: any }[]]
+    functionArguments: EntryFunctionFormFunctionArguments
   ) => void;
   onTypeArgumentsChange?: (
-    typeArguments: [] | [{ value: string }, ...{ value: string }[]]
+    typeArguments: EntryFunctionFormTypeArguments
   ) => void;
   onIsFormValidChange?: (isValid: boolean) => void;
   defaultValues?: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    functionArguments?: [] | [{ value?: any }, ...{ value?: any }[]];
-    typeArguments?: [] | [{ value: string }, ...{ value: string }[]];
+    functionArguments?: EntryFunctionFormFunctionArguments;
+    typeArguments?: EntryFunctionFormTypeArguments;
   };
   disabled?: boolean;
 }

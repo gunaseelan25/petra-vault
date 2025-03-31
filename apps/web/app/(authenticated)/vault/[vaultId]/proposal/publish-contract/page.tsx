@@ -35,15 +35,19 @@ import { LoadingSpinner } from '@/components/LoaderSpinner';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import CodeBlock from '@/components/CodeBlock';
-import { ArrowLeftIcon } from '@radix-ui/react-icons';
-import { Separator } from '@/components/ui/separator';
 import Callout from '@/components/Callout';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Abis } from '@/lib/abis';
-import { getSimulationQueryErrors } from '@/lib/simulations/shared';
+import {
+  explainError,
+  getSimulationQueryErrors
+} from '@/lib/simulations/shared';
 import { jsonStringify } from '@/lib/storage';
 import useAnalytics from '@/hooks/useAnalytics';
+import CreateProposalConfirmationActions from '@/components/CreateProposalConfirmationActions';
+import { padEstimatedGas } from '@/lib/gas';
+
 const publishModuleJsonSchema = z.object({
   function_id: z.string(),
   type_args: z.array(z.object({ type: z.string(), value: z.string() })),
@@ -156,15 +160,31 @@ export default function PublishContractPage() {
 
   const isCreatingProposal = isSigningAndSubmitting || isWaitingForTransaction;
 
+  const renderConfirmationActions = useMemo(
+    // eslint-disable-next-line react/display-name
+    () => () => {
+      return (
+        <CreateProposalConfirmationActions
+          onBack={() => {
+            setPage('draft');
+            setFile(null);
+          }}
+          onCreateProposal={createProposal}
+          isLoading={isCreatingProposal}
+        />
+      );
+    },
+    [createProposal, isCreatingProposal]
+  );
   return (
-    <div className="p-8 ">
+    <div className="p-4 md:p-8 flex flex-col h-full">
       <PageVaultHeader title="Publish Contract" />
 
       <br />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
+      <div className="grid grid-cols-2 gap-4 pb-12">
         {page === 'draft' && (
-          <Card className="">
+          <Card className="col-span-2 xl:col-span-1">
             <CardHeader>
               <CardTitle>Publish Contract</CardTitle>
               <CardDescription>
@@ -176,16 +196,19 @@ export default function PublishContractPage() {
             <CardContent>
               <Callout
                 status="loading"
-                title="How can I get a publishing JSON?"
+                title="Publishing Smart Contracts Guide"
                 description={
-                  <>
-                    From the root of your Move project, you can run the
-                    following command to get a publishing JSON:
-                    <CodeBlock
-                      value="aptos move build-publish-payload --json-output-file output.json"
-                      className="[&>pre]:!bg-transparent mt-1 p-2 border bg-secondary rounded-md text-sm w-fit"
-                    />
-                  </>
+                  <p>
+                    Learn how to publish a smart contract using your Vault with{' '}
+                    <a
+                      className="font-bold underline"
+                      target="_blank"
+                      href="https://petra.app/vault/guides/publish-contract"
+                      rel="noopener noreferrer"
+                    >
+                      this guide.
+                    </a>
+                  </p>
                 }
               />
               <br />
@@ -196,22 +219,20 @@ export default function PublishContractPage() {
                 onFileUpload={setFile}
                 disabled={!isOwner}
               />
-              <br />
-              <Button
-                disabled={
-                  !file || !jsonData || !isSimulationSuccess || !isOwner
-                }
-                onClick={() => setPage('confirm')}
-                data-testid="publish-contract-confirm-draft-button"
-              >
-                Confirm Draft
-              </Button>
             </CardContent>
           </Card>
         )}
 
         <Card
-          className={cn('w-full h-fit', page === 'confirm' && 'col-span-2')}
+          className={cn(
+            'w-full h-fit',
+            page === 'draft'
+              ? isSimulationError || isJsonError || isSimulationSuccess
+                ? 'flex col-span-2 xl:col-span-1'
+                : 'hidden xl:flex col-span-2 xl:col-span-1'
+              : undefined,
+            page === 'confirm' && 'flex col-span-2'
+          )}
         >
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -230,15 +251,9 @@ export default function PublishContractPage() {
             <AnimatePresence mode="popLayout">
               {!file ? (
                 <motion.div
-                  key="simulation-loading"
-                  initial={{
-                    opacity: 0,
-                    filter: 'blur(10px)'
-                  }}
-                  animate={{
-                    opacity: 1,
-                    filter: 'blur(0px)'
-                  }}
+                  key="simulation-idle"
+                  initial={{ opacity: 0, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
@@ -251,175 +266,118 @@ export default function PublishContractPage() {
               ) : simulationData.isLoading ? (
                 <motion.div
                   key="simulation-loading"
-                  initial={{
-                    opacity: 0,
-                    filter: 'blur(10px)'
-                  }}
-                  animate={{
-                    opacity: 1,
-                    filter: 'blur(0px)'
-                  }}
+                  initial={{ opacity: 0, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent>
-                    <div className="w-full flex justify-center items-center py-8">
-                      <LoadingSpinner />
-                    </div>
+                  <CardContent className="w-full flex justify-center items-center py-8">
+                    <LoadingSpinner />
                   </CardContent>
                 </motion.div>
               ) : isSimulationError || isJsonError ? (
                 <motion.div
                   key="simulation-error"
-                  initial={{
-                    opacity: 0,
-                    filter: 'blur(10px)'
-                  }}
-                  animate={{
-                    opacity: 1,
-                    filter: 'blur(0px)'
-                  }}
+                  initial={{ opacity: 0, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent>
-                    <div className="w-full flex justify-center items-center">
-                      <div className="text-destructive bg-destructive/10 p-4 rounded-lg text-sm border border-destructive border-dashed">
-                        <>
-                          {isJsonError
-                            ? 'There is an issue with your JSON file. Please check the file and try again.'
-                            : simulationError}
-                        </>
-                      </div>
+                  <CardContent className="w-full flex justify-center items-center">
+                    <div className="text-destructive bg-destructive/10 p-4 rounded-lg text-sm border border-destructive border-dashed break-all">
+                      {isJsonError
+                        ? 'There is an issue with your JSON file. Please check the file and try again.'
+                        : explainError(simulationError)}
                     </div>
                   </CardContent>
                 </motion.div>
               ) : isSimulationSuccess ? (
                 <motion.div
                   key="simulation-success"
-                  initial={{
-                    opacity: 0,
-                    filter: 'blur(10px)'
-                  }}
-                  animate={{
-                    opacity: 1,
-                    filter: 'blur(0px)'
-                  }}
+                  initial={{ opacity: 0, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, filter: 'blur(10px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className={'grid grid-cols-2 divide-x'}>
+                  <CardContent
+                    className={'grid grid-cols-2 gap-6 xl:divide-x xl:gap-0'}
+                  >
                     <div
                       className={cn(
                         'flex flex-col gap-6',
-                        page === 'draft' ? 'col-span-2' : 'pr-12'
+                        page === 'draft' ? 'col-span-2' : 'xl:pr-12',
+                        page === 'confirm' && 'col-span-2 xl:col-span-1'
                       )}
                     >
                       <div>
                         <h3 className="font-display text-lg font-semibold tracking-wide">
                           Payload
                         </h3>
-                        <div className="max-h-96 overflow-auto w-full p-2 border rounded-md text-xs mt-4 bg-secondary">
-                          <CodeBlock
-                            value={jsonStringify(
-                              formatPayloadWithAbi(
-                                innerPayload,
-                                Abis['0x1::code::publish_package_txn']
-                              )
-                            )}
-                            className="[&>pre]:!bg-transparent"
-                          />
-                        </div>
+                        <CodeBlock
+                          value={jsonStringify(
+                            formatPayloadWithAbi(
+                              innerPayload,
+                              Abis['0x1::code::publish_package_txn']
+                            )
+                          )}
+                          className="[&>pre]:!bg-transparent [&>pre]:p-2 max-h-96 overflow-auto w-full border rounded-md text-xs mt-4 bg-secondary"
+                        />
                       </div>
 
                       <div>
                         <h3 className="font-display text-lg font-semibold tracking-wide">
                           Details
                         </h3>
-                        <div className="pt-4">
-                          <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground font-display">
-                            <span>Max Gas Amount:</span>
-                            <span>
-                              {Number(simulationData.data.gas_used) * 2}
-                            </span>
-                            <span>Gas Unit Price:</span>
-                            <span>{simulationData.data.gas_unit_price}</span>
-                            <span>Expiration Timestamp:</span>
-                            <span>
-                              {new Date(
-                                Number(
-                                  simulationData.data.expiration_timestamp_secs
-                                ) * 1000
-                              ).toLocaleString()}
-                            </span>
-                          </div>
+                        <div className="grid grid-cols-2 gap-2 pt-4 text-sm text-muted-foreground font-display">
+                          <span>Max Gas Amount:</span>
+                          <span>
+                            {padEstimatedGas(
+                              Number(simulationData.data.gas_used)
+                            )}
+                          </span>
+                          <span>Gas Unit Price:</span>
+                          <span>{simulationData.data.gas_unit_price}</span>
+                          <span>Expiration Timestamp:</span>
+                          <span>
+                            {new Date(
+                              Number(
+                                simulationData.data.expiration_timestamp_secs
+                              ) * 1000
+                            ).toLocaleString()}
+                          </span>
                         </div>
                       </div>
 
                       {page === 'confirm' && (
-                        <>
-                          <Callout
-                            title="Always Verify"
-                            description="Before signing, always verify the transaction details and the transaction payload."
-                            status="loading"
-                          />
-                          <Separator />
-                          <div className="flex gap-4">
-                            <Button
-                              variant="ghost"
-                              onClick={() => {
-                                setPage('draft');
-                                setFile(null);
-                              }}
-                            >
-                              <ArrowLeftIcon />
-                              Go Back
-                            </Button>
-                            <Button
-                              onClick={createProposal}
-                              isLoading={isCreatingProposal}
-                              data-testid="publish-contract-create-proposal-button"
-                            >
-                              Create Proposal
-                            </Button>
-                          </div>
-                        </>
+                        <div className="hidden xl:grid">
+                          {renderConfirmationActions()}
+                        </div>
                       )}
                     </div>
 
                     {page === 'confirm' && (
-                      <div className="flex flex-col gap-6 pl-12">
-                        <div>
-                          <h3 className="font-display text-lg font-semibold tracking-wide">
-                            Writesets
-                          </h3>
-                          <div>
-                            <div className="max-h-96 overflow-auto w-full p-2 border rounded-md text-xs mt-4 bg-secondary">
-                              <CodeBlock
-                                value={jsonStringify(
-                                  simulationData.data.changes
-                                )}
-                                className="[&>pre]:!bg-transparent"
-                              />
-                            </div>
-                          </div>
-                        </div>
+                      <div className="flex flex-col col-span-2 xl:col-span-1 gap-4 xl:pl-12">
+                        <h3 className="font-display text-lg font-semibold tracking-wide">
+                          Writesets
+                        </h3>
+                        <CodeBlock
+                          value={jsonStringify(simulationData.data.changes)}
+                          className="[&>pre]:!bg-transparent [&>pre]:p-2 max-h-96 overflow-auto w-full border rounded-md text-xs bg-secondary"
+                        />
 
-                        <div>
-                          <h3 className="font-display text-lg font-semibold tracking-wide">
-                            Events
-                          </h3>
-                          <div>
-                            <div className="max-h-96 overflow-auto w-full p-2 border rounded-md text-xs mt-4 bg-secondary">
-                              <CodeBlock
-                                value={jsonStringify(
-                                  simulationData.data.events
-                                )}
-                                className="[&>pre]:!bg-transparent"
-                              />
-                            </div>
-                          </div>
-                        </div>
+                        <h3 className="font-display text-lg font-semibold tracking-wide">
+                          Events
+                        </h3>
+                        <CodeBlock
+                          value={jsonStringify(simulationData.data.events)}
+                          className="[&>pre]:!bg-transparent [&>pre]:p-2 max-h-96 overflow-auto w-full border rounded-md text-xs bg-secondary"
+                        />
+                      </div>
+                    )}
+
+                    {page === 'confirm' && (
+                      <div className="col-span-2 xl:hidden">
+                        {renderConfirmationActions()}
                       </div>
                     )}
                   </CardContent>
@@ -428,6 +386,15 @@ export default function PublishContractPage() {
             </AnimatePresence>
           </ExpandingContainer>
         </Card>
+
+        <Button
+          disabled={!file || !jsonData || !isSimulationSuccess || !isOwner}
+          onClick={() => setPage('confirm')}
+          data-testid="publish-contract-confirm-draft-button"
+          className={cn('w-fit', page === 'confirm' && 'hidden')}
+        >
+          {!isSimulationError ? 'Confirm Draft' : 'Simulation Errors Found'}
+        </Button>
       </div>
     </div>
   );

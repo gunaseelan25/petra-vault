@@ -18,9 +18,9 @@ export default function PageVaultHeader({ title }: PageVaultHeaderProps) {
   return (
     <div className="flex items-center justify-between">
       <div className="tracking-wide">
-        <h1 className="font-display text-xl font-bold">
-          <VerticalCutReveal>{title}</VerticalCutReveal>
-        </h1>
+        <VerticalCutReveal containerClassName="text-lg md:text-xl font-bold font-display">
+          {title}
+        </VerticalCutReveal>
         <div className="flex items-center gap-2 text-muted-foreground">
           <h2
             className="hover:text-muted-foreground/80 text-sm flex items-center gap-2 cursor-pointer"

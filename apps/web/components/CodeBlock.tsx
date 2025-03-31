@@ -3,13 +3,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { createHighlighter } from 'shiki';
 import DOMPurify from 'dompurify';
+import { cn } from '@/lib/utils';
 
 interface CodeBlockProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;
   lang?: string;
 }
 
-export default function CodeBlock({ value, ...props }: CodeBlockProps) {
+export default function CodeBlock({
+  value,
+  className,
+  ...props
+}: CodeBlockProps) {
   const { data: highlighter } = useQuery({
     queryKey: ['highlighter'],
     queryFn: async () => {
@@ -30,7 +35,11 @@ export default function CodeBlock({ value, ...props }: CodeBlockProps) {
   const sanitizedHtml = out ? DOMPurify.sanitize(out) : null;
 
   return sanitizedHtml ? (
-    <div dangerouslySetInnerHTML={{ __html: sanitizedHtml }} {...props} />
+    <div
+      dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+      {...props}
+      className={cn('text-[10px] md:text-xs', className)}
+    />
   ) : (
     <div className="w-full h-32" />
   );

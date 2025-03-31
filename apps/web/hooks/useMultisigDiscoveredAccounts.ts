@@ -1,6 +1,9 @@
-import { NetworkInfo } from '@aptos-labs/js-pro';
+import {
+  FetchAccountTransactionsResult,
+  NetworkInfo
+} from '@aptos-labs/js-pro';
 import { useAptosCore } from '@aptos-labs/react';
-import { AccountAddress } from '@aptos-labs/ts-sdk';
+import { AccountAddress, GetEventsResponse } from '@aptos-labs/ts-sdk';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 type UseMultisigDiscoveredAccountResult = AccountAddress[];
@@ -35,70 +38,103 @@ export default function useMultisigDiscoveredAccounts({
 
       const { aptos } = core.client.getClients({ network });
 
-      // TODO: Add pagination
-      const events = await aptos.getEvents({
-        options: {
-          orderBy: [{ transaction_version: 'asc' }],
-          where: {
-            indexed_type: {
-              _in: [
-                '0x1::multisig_account::AddOwners',
-                '0x1::multisig_account::RemoveOwners',
-                '0x1::multisig_account::Vote'
-              ]
-            },
-            _or: [
-              {
-                data: { _contains: { owners_added: [address] } }
-              },
-              {
-                data: {
-                  _contains: { owners_removed: [address] }
+      // This promise may take a long time before it's fully resolved. It will paginate through all of the events and
+      // `create_with_owners` transactions to get all of the multisig accounts that have been created and interacted with.
+      const [events, { creationTransactions, creationMultisigRegisterEvents }] =
+        await Promise.all([
+          (async () => {
+            const data: GetEventsResponse = [];
+
+            let eventsResponse: GetEventsResponse = [];
+            let eventsOffset = 0;
+            do {
+              eventsResponse = await aptos.getEvents({
+                options: {
+                  orderBy: [{ transaction_version: 'asc' }],
+                  offset: eventsOffset,
+                  limit: 100,
+                  where: {
+                    indexed_type: {
+                      _in: [
+                        '0x1::multisig_account::AddOwners',
+                        '0x1::multisig_account::RemoveOwners',
+                        '0x1::multisig_account::Vote'
+                      ]
+                    },
+                    _or: [
+                      { data: { _contains: { owners_added: [address] } } },
+                      { data: { _contains: { owners_removed: [address] } } },
+                      { data: { _contains: { owner: address } } }
+                    ]
+                  }
                 }
-              },
-              { data: { _contains: { owner: address } } }
-            ]
-          }
-        }
-      });
+              });
+              eventsOffset += eventsResponse.length;
+              data.push(...eventsResponse);
+            } while (eventsResponse.length === 100);
 
-      // TODO: Add pagination
-      const creationTransactions = await core.client.fetchAccountTransactions({
-        address,
-        where: {
-          user_transaction: {
-            entry_function_id_str: {
-              _eq: '0x1::multisig_account::create_with_owners'
-            }
-          }
-        }
-      });
+            return data;
+          })(),
+          (async () => {
+            const creationTransactions = [];
+            const creationMultisigRegisterEvents = [];
 
-      // TODO: Add pagination
-      const creationMultisigRegisterEvents = await aptos.getEvents({
-        options: {
-          orderBy: [{ transaction_version: 'desc' }],
-          where: {
-            indexed_type: {
-              _in: [
-                '0x1::account::CoinRegister',
-                '0x1::account::CoinRegisterEvent'
-              ]
-            },
-            transaction_version: {
-              _in: creationTransactions.transactions.map((t) =>
-                Number(t.transactionVersion)
-              )
-            }
-          }
-        }
-      });
+            let creationTransactionsResponse: FetchAccountTransactionsResult;
+            let creationTransactionsOffset = 0;
+            do {
+              creationTransactionsResponse =
+                await core.client.fetchAccountTransactions({
+                  address,
+                  where: {
+                    user_transaction: {
+                      entry_function_id_str: {
+                        _eq: '0x1::multisig_account::create_with_owners'
+                      }
+                    }
+                  },
+                  limit: 100,
+                  offset: creationTransactionsOffset
+                });
+
+              const { transactions } = creationTransactionsResponse;
+
+              creationTransactionsOffset += transactions.length;
+              creationTransactions.push(...transactions);
+
+              const creationMultisigRegisterEventsResponse =
+                await aptos.getEvents({
+                  options: {
+                    orderBy: [{ transaction_version: 'desc' }],
+                    where: {
+                      indexed_type: {
+                        _in: [
+                          '0x1::account::CoinRegister',
+                          '0x1::account::CoinRegisterEvent'
+                        ]
+                      },
+                      transaction_version: {
+                        _in: transactions.map((t) =>
+                          Number(t.transactionVersion)
+                        )
+                      }
+                    }
+                  }
+                });
+
+              creationMultisigRegisterEvents.push(
+                ...creationMultisigRegisterEventsResponse
+              );
+            } while (creationTransactionsResponse.transactions.length === 100);
+
+            return { creationTransactions, creationMultisigRegisterEvents };
+          })()
+        ]);
 
       const discoveredAccounts: {
         [account: string]: { hasVoted: boolean };
       } = {};
 
-      creationTransactions.transactions.forEach((transaction) => {
+      creationTransactions.forEach((transaction) => {
         const multisigRegisterEvent = creationMultisigRegisterEvents.find(
           (t) =>
             t.transaction_version === Number(transaction.transactionVersion)

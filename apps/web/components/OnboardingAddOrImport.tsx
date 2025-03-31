@@ -149,8 +149,8 @@ export default function OnboardingAddOrImport() {
             Import Vault
           </Button>
         </div>
-        <Card className="flex gap-2 mt-2 p-0">
-          <CardContent className="py-6">
+        <Card className="flex gap-2 mt-2">
+          <CardContent>
             <div className="flex items-center justify-between mb-2">
               <div>
                 <h3 className="font-display text-sm font-semibold">
@@ -168,7 +168,7 @@ export default function OnboardingAddOrImport() {
                     className="py-0 text-xs h-fit"
                     data-testid="import-vaults-json-button"
                   >
-                    Backup Import
+                    Import Backup File
                   </Button>
                 </DialogTrigger>
                 <UploadImportJSONModal onImport={handleImportVaults} />

@@ -80,14 +80,14 @@ export default function VaultDetailsPendingTransactions() {
           transition={{ duration: 0.3 }}
         >
           <Card>
-            <CardHeader>
+            <CardHeader className="text-center py-2 md:text-left md:py-0">
               <CardTitle>Pending Transactions</CardTitle>
               <CardDescription data-testid="pending-transactions-empty">
                 No pending transactions found
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button asChild>
+              <Button asChild className="w-full md:w-auto">
                 <Link href={`/vault/${id}/proposal/create`}>
                   Create Proposal
                 </Link>
@@ -112,13 +112,13 @@ export default function VaultDetailsPendingTransactions() {
                   {pendingTransactions?.length !== 1 ? 's' : ''} pending
                 </CardDescription>
               </div>
-              <Button asChild>
+              <Button asChild size="sm">
                 <Link href={`/vault/${id}/proposal/create`}>
                   Create Proposal
                 </Link>
               </Button>
             </CardHeader>
-            <CardContent className="w-full p-0 px-2">
+            <CardContent className="w-full p-0 px-0 md:px-2">
               <div className="space-y-4 w-full">
                 {pendingTransactions.map((tx, index) => {
                   const proposalSequenceNumber = sequenceNumber + 1 + index;

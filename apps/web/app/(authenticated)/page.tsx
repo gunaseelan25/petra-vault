@@ -41,7 +41,7 @@ export default function Home() {
 
   return (
     <div className="flex items-center justify-center w-full h-full">
-      <div className="max-w-lg w-full flex flex-col gap-2 items-center">
+      <div className="max-w-lg w-full flex flex-col gap-2 items-center px-2">
         <h1 className="font-display text-2xl font-bold">
           <VerticalCutReveal
             splitBy="characters"

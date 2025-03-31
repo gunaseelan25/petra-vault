@@ -58,7 +58,7 @@ export function NavVaults() {
             <SidebarMenuButton
               size="lg"
               variant="outline"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground bg-secondary border"
             >
               {parsedVaultId && (
                 <div className="flex aspect-square size-8 items-center justify-center">

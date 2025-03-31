@@ -14,7 +14,6 @@ import {
   Cross1Icon,
   CrossCircledIcon,
   ExclamationTriangleIcon,
-  ExternalLinkIcon,
   GlobeIcon
 } from '@radix-ui/react-icons';
 import { motion } from 'motion/react';
@@ -22,7 +21,6 @@ import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
 import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
 import { getExplorerUrl } from '@aptos-labs/js-pro';
-import { Button } from './ui/button';
 import { AptosAvatar } from 'aptos-avatars-react';
 
 interface TransactionRowProps {
@@ -75,10 +73,18 @@ export default function TransactionRow({
   if (!transactionPayload) return null;
 
   return (
-    <motion.div className="flex items-center w-full p-2 px-4 rounded-md">
+    <motion.a
+      href={getExplorerUrl({
+        network: network,
+        path: `txn/${transaction.version}`
+      })}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center w-full p-2 px-4 rounded-md hover:bg-secondary cursor-pointer transition-all"
+    >
       <div
         className={cn(
-          'flex p-2 items-center justify-between rounded-full',
+          'flex p-1 md:p-2 items-center justify-between rounded-full w-fit',
           statusBackgroundColor,
           statusTextColor
         )}
@@ -86,11 +92,11 @@ export default function TransactionRow({
         {statusIcon}
       </div>
 
-      <div className="px-4 py-1">
-        <p className={cn('text-sm font-display font-semibold')}>
+      <div className="flex flex-col flex-1 px-2 md:px-4 py-1 overflow-hidden">
+        <p className="text-xs md:text-sm font-display w-full font-semibold truncate">
           {getEntryFunctionDisplayName(transactionPayload.function)}
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground w-full truncate">
           {transaction.timestamp && (
             <span className="text-xs">
               {new Date(Number(transaction.timestamp) / 1000).toLocaleString()}
@@ -99,36 +105,21 @@ export default function TransactionRow({
         </p>
       </div>
 
-      <div className="ml-auto flex text-sm py-1 gap-2">
-        <div className="flex items-center">
+      <div className="flex text-sm py-1 gap-4 w-fit">
+        <div className="items-center hidden sm:flex">
           <div className="flex items-center gap-2">
             <AptosAvatar value={transaction.sender} size={20} />
-            <p className="font-display text-sm font-medium ml-1">
+            <p className="font-display text-xs md:text-sm font-medium ml-1">
               {truncateAddress(transaction.sender)}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center mx-4">
-          <Button size="icon" variant="ghost" className="size-7" asChild>
-            <a
-              href={getExplorerUrl({
-                network: network,
-                path: `txn/${transaction.version}`
-              })}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ExternalLinkIcon />
-            </a>
-          </Button>
-        </div>
-
-        <div className="flex items-center">
+        <div className="flex items-center text-xs md:text-sm">
           {executionEvent?.approvals !== undefined ? (
             <div className="flex items-center gap-2 text-green-700">
               <p>{executionEvent?.approvals}</p>
-              <CheckCircledIcon className="size-4" />
+              <CheckCircledIcon className="md:size-4" />
             </div>
           ) : null}
           {executionEvent?.rejections !== undefined ? (
@@ -139,6 +130,6 @@ export default function TransactionRow({
           ) : null}
         </div>
       </div>
-    </motion.div>
+    </motion.a>
   );
 }

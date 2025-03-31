@@ -35,7 +35,13 @@ export default function CoinAvatar({
       : (props.logoUrl ?? props.fallbackUrl);
 
   const sizeClass = cva('', {
-    variants: { size: { sm: 'w-4 h-4', md: 'w-8 h-8', lg: 'w-10 h-10' } },
+    variants: {
+      size: {
+        sm: 'w-4 h-4',
+        md: 'w-6 h-6 md:w-8 md:h-8',
+        lg: 'w-8 h-8 md:w-10 md:h-10'
+      }
+    },
     defaultVariants: { size: 'md' }
   });
 

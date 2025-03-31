@@ -58,7 +58,7 @@ export class ProposalFixture {
     typeArguments: string[],
     functionArguments: (string | string[])[]
   ) {
-    await this.navigation.navigateTo('create proposal');
+    await this.navigation.navigateTo('proposals');
 
     await this.page.getByTestId('entry-function-input').fill(entryFunction);
 
@@ -90,13 +90,11 @@ export class ProposalFixture {
 
     await this.page.getByTestId('create-proposal-confirm-draft-button').click();
 
-    await this.page
-      .getByTestId('create-proposal-create-proposal-button')
-      .click();
+    await this.page.getByTestId('create-proposal-button').first().click();
   }
 
   async createPublishContractProposal(jsonFilePath: string) {
-    await this.navigation.navigateTo('publish contract');
+    await this.navigation.navigateTo('smart contracts');
 
     await this.page.getByTestId('drop-zone').setInputFiles(jsonFilePath);
 
@@ -104,8 +102,6 @@ export class ProposalFixture {
       .getByTestId('publish-contract-confirm-draft-button')
       .click();
 
-    await this.page
-      .getByTestId('publish-contract-create-proposal-button')
-      .click();
+    await this.page.getByTestId('create-proposal-button').first().click();
   }
 }

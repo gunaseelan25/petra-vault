@@ -33,11 +33,11 @@ importers:
   apps/web:
     dependencies:
       '@aptos-labs/js-pro':
-        specifier: 0.1.0-beta.9
-        version: 0.1.0-beta.9(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@types/react@18.3.12)(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))
+        specifier: 0.1.0-beta.11
+        version: 0.1.0-beta.11(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@types/react@18.3.12)(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))
       '@aptos-labs/react':
-        specifier: 0.1.0-beta.9
-        version: 0.1.0-beta.9(@aptos-labs/js-pro@0.1.0-beta.9(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@types/react@18.3.12)(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1)))(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@mizuwallet-sdk/core@1.4.0(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@mizuwallet-sdk/protocol@0.0.6)(graphql-request@7.1.2(graphql@16.10.0)))(@mizuwallet-sdk/protocol@0.0.6)(@tanstack/react-query@5.69.0(react@18.3.1))(@telegram-apps/bridge@1.9.2)(@types/react@18.3.12)(@wallet-standard/core@1.0.3)(aptos@1.19.0)(axios@1.8.4)(got@11.8.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))
+        specifier: 0.1.0-beta.11
+        version: 0.1.0-beta.11(@aptos-labs/js-pro@0.1.0-beta.11(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@types/react@18.3.12)(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1)))(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@mizuwallet-sdk/core@1.4.0(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@mizuwallet-sdk/protocol@0.0.6)(graphql-request@7.1.2(graphql@16.10.0)))(@mizuwallet-sdk/protocol@0.0.6)(@tanstack/react-query@5.69.0(react@18.3.1))(@telegram-apps/bridge@1.9.2)(@types/react@18.3.12)(@wallet-standard/core@1.0.3)(aptos@1.19.0)(axios@1.8.4)(got@11.8.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))
       '@aptos-labs/ts-sdk':
         specifier: 1.36.0
         version: 1.36.0(axios@1.8.4)(got@11.8.6)
@@ -316,15 +316,15 @@ packages:
   '@aptos-labs/aptos-dynamic-transaction-composer@0.1.3':
     resolution: {integrity: sha512-bJl+Zq5QbhpcPIJakAkl9tnT3T02mxCYhZThQDhUmjsOZ5wMRlKJ0P7aaq1dmlybSHkVj7vRgOy2t86/NDKKng==}
 
-  '@aptos-labs/js-pro@0.1.0-beta.9':
-    resolution: {integrity: sha512-kpNxHh5st+cnZITcCJn3b3k8FMz4T4B/ePOUA07BpJGsTEOqHA+XoHkhPgCYWIhIuMeRW6SY1IQiGcFJQGKkJQ==}
+  '@aptos-labs/js-pro@0.1.0-beta.11':
+    resolution: {integrity: sha512-Y7B14/++9aF4MEhbw95/7SxOiqEvnt8OZ9fDxS7r9NSa8RFd4wMraw4m6h1cUlEgsxWN0jf5emS5Q4elGSsS1g==}
     peerDependencies:
       '@aptos-labs/ts-sdk': '>=1.33.2'
 
-  '@aptos-labs/react@0.1.0-beta.9':
-    resolution: {integrity: sha512-00oOaERxpjNjASIc0MW983Hzt9CrCk64tOFWhGVi/NZ1ZdUTLx/KSPD5mu3jD8sZQyNQHpjqa6LzHSAyPXeesw==}
+  '@aptos-labs/react@0.1.0-beta.11':
+    resolution: {integrity: sha512-h/FtT/0xJhle5YSShNKgvd1NqMyaEx/V8o+v7uALysdDn8y0peIMXhSGYm4SosqaRiVx7jSoVk4IN/NjcSc8TQ==}
     peerDependencies:
-      '@aptos-labs/js-pro': 0.1.0-beta.9
+      '@aptos-labs/js-pro': 0.1.0-beta.11
       '@aptos-labs/ts-sdk': '>=1.35.0'
       '@tanstack/react-query': '>=5.0.0'
       react: ^18.0.0 || ^19.0.0
@@ -4745,7 +4745,7 @@ snapshots:
 
   '@aptos-labs/aptos-dynamic-transaction-composer@0.1.3': {}
 
-  '@aptos-labs/js-pro@0.1.0-beta.9(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@types/react@18.3.12)(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))':
+  '@aptos-labs/js-pro@0.1.0-beta.11(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@types/react@18.3.12)(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))':
     dependencies:
       '@aptos-labs/ts-sdk': 1.36.0(axios@1.8.4)(got@11.8.6)
       graphql: 16.10.0
@@ -4758,9 +4758,9 @@ snapshots:
       - react
       - use-sync-external-store
 
-  '@aptos-labs/react@0.1.0-beta.9(@aptos-labs/js-pro@0.1.0-beta.9(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@types/react@18.3.12)(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1)))(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@mizuwallet-sdk/core@1.4.0(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@mizuwallet-sdk/protocol@0.0.6)(graphql-request@7.1.2(graphql@16.10.0)))(@mizuwallet-sdk/protocol@0.0.6)(@tanstack/react-query@5.69.0(react@18.3.1))(@telegram-apps/bridge@1.9.2)(@types/react@18.3.12)(@wallet-standard/core@1.0.3)(aptos@1.19.0)(axios@1.8.4)(got@11.8.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))':
+  '@aptos-labs/react@0.1.0-beta.11(@aptos-labs/js-pro@0.1.0-beta.11(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@types/react@18.3.12)(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1)))(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@mizuwallet-sdk/core@1.4.0(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@mizuwallet-sdk/protocol@0.0.6)(graphql-request@7.1.2(graphql@16.10.0)))(@mizuwallet-sdk/protocol@0.0.6)(@tanstack/react-query@5.69.0(react@18.3.1))(@telegram-apps/bridge@1.9.2)(@types/react@18.3.12)(@wallet-standard/core@1.0.3)(aptos@1.19.0)(axios@1.8.4)(got@11.8.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))':
     dependencies:
-      '@aptos-labs/js-pro': 0.1.0-beta.9(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@types/react@18.3.12)(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))
+      '@aptos-labs/js-pro': 0.1.0-beta.11(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@types/react@18.3.12)(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))
       '@aptos-labs/ts-sdk': 1.36.0(axios@1.8.4)(got@11.8.6)
       '@aptos-labs/wallet-adapter-react': 4.1.5(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@mizuwallet-sdk/core@1.4.0(@aptos-labs/ts-sdk@1.36.0(axios@1.8.4)(got@11.8.6))(@mizuwallet-sdk/protocol@0.0.6)(graphql-request@7.1.2(graphql@16.10.0)))(@mizuwallet-sdk/protocol@0.0.6)(@telegram-apps/bridge@1.9.2)(@types/react@18.3.12)(@wallet-standard/core@1.0.3)(aptos@1.19.0)(axios@1.8.4)(got@11.8.6)(react@18.3.1)
       '@tanstack/react-query': 5.69.0(react@18.3.1)
