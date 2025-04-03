@@ -14,6 +14,7 @@ import {
 import { InputGenerateTransactionPayloadData } from '@aptos-labs/ts-sdk';
 import SignAndSubmitTransactionWithPayloadBody from './SignAndSubmitTransactionWithPayloadBody';
 import { useSignAndSubmitTransaction } from '@aptos-labs/react';
+import useAnalytics from '@/hooks/useAnalytics';
 
 interface SignAndSubmitTransactionRequestBodyProps {
   request: {
@@ -29,10 +30,13 @@ export default function SignAndSubmitTransactionRequestBody({
   request,
   resolve
 }: SignAndSubmitTransactionRequestBodyProps) {
+  const trackEvent = useAnalytics();
+
   const { signAndSubmitTransactionAsync, isPending } =
     useSignAndSubmitTransaction();
 
   const onHandleReject = () => {
+    trackEvent('sign_and_submit_transaction_rejected', {});
     resolve({ status: 'rejected' });
   };
 
@@ -44,6 +48,7 @@ export default function SignAndSubmitTransactionRequestBody({
       ...transactionPayload
     });
 
+    trackEvent('sign_and_submit_transaction_approved', { hash });
     resolve({ status: 'approved', args: { hash } });
   };
 

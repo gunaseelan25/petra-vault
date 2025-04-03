@@ -45,6 +45,13 @@ type AnalyticsEvent = {
     receive_copied: {};
     receive_scanned: {};
   };
+  explore: {
+    view_app: { app_name: string; app_url: string };
+  };
+  embedded_view: {
+    sign_and_submit_transaction_approved: { hash: string };
+    sign_and_submit_transaction_rejected: {};
+  };
   settings: {
     delete_vault_attempt: {};
     delete_vault_success: {};

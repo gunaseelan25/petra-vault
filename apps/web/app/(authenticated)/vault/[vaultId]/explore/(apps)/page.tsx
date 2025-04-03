@@ -12,8 +12,10 @@ import {
   groupAndSortWallets,
   useWallet
 } from '@aptos-labs/wallet-adapter-react';
+import useAnalytics from '@/hooks/useAnalytics';
 
 export default function VaultExplorePage() {
+  const trackEvent = useAnalytics();
   const { id } = useActiveVault();
 
   const { wallets = [], notDetectedWallets = [] } = useWallet();
@@ -51,6 +53,9 @@ export default function VaultExplorePage() {
           <Link
             key={app.name}
             href={`/vault/${id}/explore/embedded?url=${app.link}`}
+            onClick={() =>
+              trackEvent('view_app', { app_name: app.name, app_url: app.link })
+            }
           >
             <Card className="hover:bg-accent/30 transition-all cursor-pointer">
               <CardContent>
