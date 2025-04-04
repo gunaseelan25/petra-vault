@@ -151,28 +151,28 @@ export default function VaultTransactionsPage() {
                   </div>
                 </div>
               ))}
+            <motion.div
+              className="flex justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  if (hasNextPage) fetchNextPage();
+                }}
+                disabled={!hasNextPage}
+                isLoading={isFetchingNextPage}
+              >
+                {hasNextPage
+                  ? 'Load more transactions'
+                  : 'No more transactions to load'}
+              </Button>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-      <motion.div
-        className="flex justify-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        <Button
-          variant="secondary"
-          onClick={() => {
-            if (hasNextPage) fetchNextPage();
-          }}
-          disabled={!hasNextPage}
-          isLoading={isFetchingNextPage}
-        >
-          {hasNextPage
-            ? 'Load more transactions'
-            : 'No more transactions to load'}
-        </Button>
-      </motion.div>
     </div>
   );
 }
