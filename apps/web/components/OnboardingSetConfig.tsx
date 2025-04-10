@@ -9,7 +9,7 @@ export default function OnboardingSetConfig() {
   const { page, vaultSignaturesRequired, vaultSigners } = useOnboarding();
 
   return (
-    <Card>
+    <Card className="pb-12">
       <CardContent>
         <MultisigConfigurationsForm
           onSubmit={(values) => {

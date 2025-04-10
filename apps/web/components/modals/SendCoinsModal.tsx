@@ -25,7 +25,6 @@ import {
 } from '@aptos-labs/react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
 import VerticalCutReveal from '../ui/vertical-cut-reveal';
 import { AnimatePresence, motion } from 'motion/react';
 import { isAddress, isEns } from '@/lib/address';
@@ -38,6 +37,8 @@ import { useDebounce } from 'use-debounce';
 import { jsonStringify } from '@/lib/storage';
 import CoinAvatar from '../CoinAvatar';
 import useAnalytics from '@/hooks/useAnalytics';
+import AddressDisplay from '../AddressDisplay';
+
 interface SendCoinsModalProps {
   onClose?: () => void;
 }
@@ -560,7 +561,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                     <div className="flex items-center gap-2">
                       <AptosAvatar value={recipient} size={16} />
                       <p className="font-display font-medium ml-1">
-                        {truncateAddress(recipient)}
+                        <AddressDisplay address={recipient} />
                       </p>
                     </div>
                   </div>

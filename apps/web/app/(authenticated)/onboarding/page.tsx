@@ -20,7 +20,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="flex items-center justify-center w-full h-full">
-      <div className="max-w-lg w-full flex flex-col gap-2 items-center px-2">
+      <div className="max-w-lg w-full h-full flex flex-col gap-2 items-center px-2 py-24">
         <h1 className="font-display text-2xl font-bold">
           <VerticalCutReveal
             splitBy="characters"
@@ -51,7 +51,7 @@ export default function OnboardingPage() {
         </p>
         <br />
 
-        <div className="w-full">
+        <div className="w-full h-full">
           {page.current === 'add-or-import' ? (
             <OnboardingAddOrImport key="add-or-import" />
           ) : page.current === 'set-name' ? (

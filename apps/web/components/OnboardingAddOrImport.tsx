@@ -100,7 +100,7 @@ export default function OnboardingAddOrImport() {
 
   return (
     <motion.div
-      className="w-full flex flex-col gap-2"
+      className="w-full flex flex-col gap-2 pb-12"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}

@@ -69,7 +69,8 @@ export function NavUser() {
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
-                        {truncateAddress(account.address.toString())}
+                        {account.ansName ??
+                          truncateAddress(account.address.toString())}
                       </span>
                       <span className="truncate text-xs capitalize text-muted-foreground">
                         {network.name}
@@ -94,7 +95,8 @@ export function NavUser() {
                       </Avatar>
                       <div className="grid flex-1 text-left text-sm leading-tight">
                         <span className="truncate font-semibold">
-                          {truncateAddress(account.address.toString())}
+                          {account.ansName ??
+                            truncateAddress(account.address.toString())}
                         </span>
                         <span className="truncate text-xs capitalize text-muted-foreground">
                           {network.name}

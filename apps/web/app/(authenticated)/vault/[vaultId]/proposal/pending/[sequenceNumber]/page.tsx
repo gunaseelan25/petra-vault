@@ -31,7 +31,6 @@ import { useActiveVault } from '@/context/ActiveVaultProvider';
 import { Separator } from '@/components/ui/separator';
 import { AnimatePresence, motion } from 'motion/react';
 import { LoadingSpinner } from '@/components/LoaderSpinner';
-import SimulationParser from '@/lib/simulations/parsers/SimulationParser';
 import SimulationCoinRow from '@/components/SimulationCoinRow';
 import { PendingTransactionRow } from '@/components/PendingTransactionRow';
 import { useRouter } from 'next/navigation';
@@ -40,6 +39,7 @@ import Link from 'next/link';
 import useAnalytics from '@/hooks/useAnalytics';
 import ExecuteProposalConfirmationActions from '@/components/ExecuteProposalConfirmationActions';
 import { padEstimatedGas } from '@/lib/gas';
+import { TransactionParser } from '@aptos-labs/js-pro';
 
 export default function ProposalPage() {
   const trackEvent = useAnalytics();
@@ -69,9 +69,9 @@ export default function ProposalPage() {
   } = useActiveProposal();
 
   const balanceChanges = simulation.data
-    ? SimulationParser.parseTransaction(simulation.data)?.getBalanceChanges()[
-        vaultAddress
-      ]
+    ? TransactionParser.getBalanceChanges(
+        TransactionParser.create().parseTransaction(simulation.data)
+      )[vaultAddress]
     : undefined;
 
   // Voting

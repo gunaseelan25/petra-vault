@@ -19,9 +19,9 @@ import {
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
-import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
 import { getExplorerUrl } from '@aptos-labs/js-pro';
 import { AptosAvatar } from 'aptos-avatars-react';
+import AddressDisplay from './AddressDisplay';
 
 interface TransactionRowProps {
   transaction: UserTransactionResponse;
@@ -110,7 +110,7 @@ export default function TransactionRow({
           <div className="flex items-center gap-2">
             <AptosAvatar value={transaction.sender} size={20} />
             <p className="font-display text-xs md:text-sm font-medium ml-1">
-              {truncateAddress(transaction.sender)}
+              <AddressDisplay address={transaction.sender} />
             </p>
           </div>
         </div>

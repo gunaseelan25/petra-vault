@@ -6,9 +6,9 @@ import { DialogClose, DialogFooter } from '@/components/ui/dialog';
 import { useActiveVault } from '@/context/ActiveVaultProvider';
 import useEntryFunctionAbi from '@/hooks/useEntryFunctionAbi';
 import { createMultisigTransactionPayloadData } from '@/lib/payloads';
-import SimulationParser from '@/lib/simulations/parsers/SimulationParser';
 import { jsonStringify } from '@/lib/storage';
 import { useSimulateTransaction } from '@aptos-labs/react';
+import { TransactionParser } from '@aptos-labs/js-pro';
 import {
   AccountAddress,
   InputGenerateTransactionPayloadData,
@@ -99,9 +99,9 @@ export default function SignAndSubmitTransactionWithPayloadBody({
   });
 
   const balanceChanges = simulation.data
-    ? SimulationParser.parseTransaction(simulation.data)?.getBalanceChanges()[
-        vaultAddress
-      ]
+    ? TransactionParser.getBalanceChanges(
+        TransactionParser.create().parseTransaction(simulation.data)
+      )[vaultAddress]
     : undefined;
 
   const onHandleReject = () => {

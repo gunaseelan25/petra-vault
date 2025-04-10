@@ -22,7 +22,8 @@ const queryClient = new QueryClient({
 export const ALLOWED_PERSISTED_QUERY_KEYS: string[] = [
   'view-module',
   'multisig-discovered-accounts',
-  'multisig-execution-events'
+  'multisig-execution-events',
+  'name-from-address'
 ];
 
 const localStoragePersister = createSyncStoragePersister({

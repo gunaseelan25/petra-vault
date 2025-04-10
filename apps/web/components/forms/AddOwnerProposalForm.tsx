@@ -22,12 +22,17 @@ import {
   SelectValue,
   SelectTrigger
 } from '../ui/select';
+import { useClients } from '@aptos-labs/react';
+import { useMutation } from '@tanstack/react-query';
 
 const formSchema = z.object({
-  address: z
-    .string()
-    .min(1, 'Address is required')
-    .refine((val) => isAddress(val), { message: 'Invalid Aptos address' }),
+  address: z.union([
+    z
+      .string()
+      .min(1, 'Address is required')
+      .refine((val) => isAddress(val), { message: 'Invalid Aptos address' }),
+    z.string().endsWith('.apt')
+  ]),
   name: z.string().min(1, 'Name is required'),
   signaturesRequired: z.coerce
     .number()
@@ -49,6 +54,8 @@ export default function AddOwnerProposalForm({
   signaturesRequired,
   vaultAddress
 }: AddOwnerProposalFormProps) {
+  const { client } = useClients();
+
   const formSchemaWithOwners = formSchema.refine(
     (data) => ![...owners, vaultAddress].includes(data.address),
     { message: 'Address is already an owner', path: ['address'] }
@@ -63,9 +70,42 @@ export default function AddOwnerProposalForm({
     }
   });
 
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: async (values: AddOwnerProposalFormValues) => {
+      const { address } = values;
+
+      let resolvedAddress = address;
+      if (address.endsWith('.apt')) {
+        const addressFromName = await client.fetchAddressFromName({
+          name: address
+        });
+
+        if (!addressFromName) throw new Error('Unable to resolve Aptos name');
+
+        resolvedAddress = addressFromName.toString();
+      }
+
+      const result = formSchemaWithOwners.safeParse({
+        ...values,
+        address: resolvedAddress
+      });
+
+      if (!result.success)
+        throw new Error(
+          result.error.errors.at(0)?.message ??
+            'There was an error that occurred.'
+        );
+
+      onSubmit(result.data);
+    }
+  });
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full">
+      <form
+        onSubmit={form.handleSubmit((e) => mutate(e))}
+        className="space-y-6 w-full"
+      >
         <FormField
           control={form.control}
           name="name"
@@ -147,9 +187,19 @@ export default function AddOwnerProposalForm({
           </div>
         </div>
 
-        <Button type="submit" data-testid="add-owner-draft-button">
+        <Button
+          type="submit"
+          data-testid="add-owner-draft-button"
+          isLoading={isPending}
+        >
           Draft Proposal
         </Button>
+
+        {error && (
+          <p className="text-destructive text-sm text-center">
+            {error.message}
+          </p>
+        )}
       </form>
     </Form>
   );

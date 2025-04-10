@@ -22,9 +22,9 @@ import {
   TransactionPayloadEntryFunction,
   TransactionPayloadMultiSig
 } from '@aptos-labs/ts-sdk';
-import { getSimulationQueryErrors } from '@/lib/simulations/shared';
 import useMultisigSequenceNumber from '@/hooks/useMultisigSequenceNumber';
 import useMultisigPendingTransactions from '@/hooks/useMultisigPendingTransactions';
+import { getSimulationQueryErrors } from '@/lib/transactions';
 
 export const [ActiveProposalProvider, useActiveProposal] = constate(
   ({ sequenceNumber }: { sequenceNumber: number }) => {

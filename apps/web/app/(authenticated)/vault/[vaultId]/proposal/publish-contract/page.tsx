@@ -39,10 +39,7 @@ import Callout from '@/components/Callout';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Abis } from '@/lib/abis';
-import {
-  explainError,
-  getSimulationQueryErrors
-} from '@/lib/simulations/shared';
+import { explainError, getSimulationQueryErrors } from '@/lib/transactions';
 import { jsonStringify } from '@/lib/storage';
 import useAnalytics from '@/hooks/useAnalytics';
 import CreateProposalConfirmationActions from '@/components/CreateProposalConfirmationActions';

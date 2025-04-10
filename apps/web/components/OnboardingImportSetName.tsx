@@ -8,12 +8,12 @@ import { useOnboarding } from '@/context/OnboardingProvider';
 import useMultisigOwners from '@/hooks/useMultisigOwners';
 import { Label } from './ui/label';
 import { AptosAvatar } from 'aptos-avatars-react';
-import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
 import useMultisigSignaturesRequired from '@/hooks/useMultisigSignaturesRequired';
 import { toast } from 'sonner';
 import { AccountAddress } from '@aptos-labs/ts-sdk';
 import { useNetwork } from '@aptos-labs/react';
 import useAnalytics from '@/hooks/useAnalytics';
+import AddressDisplay from './AddressDisplay';
 
 export default function OnboardingImportSetName() {
   const trackEvent = useAnalytics();
@@ -59,6 +59,7 @@ export default function OnboardingImportSetName() {
   return (
     <motion.div
       key="set-name"
+      className="pb-12"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
@@ -85,7 +86,7 @@ export default function OnboardingImportSetName() {
                   >
                     <AptosAvatar value={e.toString()} size={20} />
                     <p className="font-display text-sm font-medium ml-1">
-                      {truncateAddress(e.toString())}
+                      <AddressDisplay address={e} />
                     </p>
                   </div>
                 ))}

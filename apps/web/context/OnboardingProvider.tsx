@@ -54,11 +54,9 @@ export const [OnboardingProvider, useOnboarding] = constate(() => {
       });
     }
   });
-  const {
-    data: transaction,
-    isSuccess,
-    isLoading: isWaitingForCreationTransaction
-  } = useWaitForTransaction({ hash });
+
+  const { data: transaction, isLoading: isWaitingForCreationTransaction } =
+    useWaitForTransaction({ hash });
 
   const onCreateVault = () => {
     signAndSubmitTransaction({
@@ -75,7 +73,7 @@ export const [OnboardingProvider, useOnboarding] = constate(() => {
   };
 
   useEffect(() => {
-    if (transaction && isSuccess) {
+    if (transaction) {
       toast.success('Vault created successfully');
 
       const writeMultisigAccountResource = (
@@ -104,7 +102,7 @@ export const [OnboardingProvider, useOnboarding] = constate(() => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transaction, isSuccess]);
+  }, [transaction]);
 
   return {
     page: { current: page, set: setPage },

@@ -15,7 +15,6 @@ import { ExternalLinkIcon, Pencil1Icon } from '@radix-ui/react-icons';
 import { toast } from 'sonner';
 import { getExplorerUrl } from '@aptos-labs/js-pro';
 import { AptosAvatar } from 'aptos-avatars-react';
-import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
 import {
   useSignAndSubmitTransaction,
   useWaitForTransaction
@@ -25,6 +24,7 @@ import { DialogClose } from '@radix-ui/react-dialog';
 import { Abis } from '@/lib/abis';
 import { jsonStringify } from '@/lib/storage';
 import useAnalytics from '@/hooks/useAnalytics';
+import AddressDisplay from '../AddressDisplay';
 
 export default function RemoveOwnerModal({
   ownerToRemove
@@ -103,7 +103,7 @@ export default function RemoveOwnerModal({
             <div className="flex items-center gap-2 mt-2">
               <AptosAvatar value={ownerToRemove} size={20} />
               <p className="font-display text-sm font-medium ml-1">
-                {truncateAddress(ownerToRemove)}
+                <AddressDisplay address={ownerToRemove} />
               </p>
               <div className="flex items-center gap-2">
                 <Button size="icon" variant="ghost" className="size-7" asChild>

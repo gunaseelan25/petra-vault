@@ -1,10 +1,9 @@
 import { useCoins } from '@/context/CoinsProvider';
 import { cn } from '@/lib/utils';
-import { formatUnits } from '@aptos-labs/js-pro';
+import { formatUnits, getPairedMetadata } from '@aptos-labs/js-pro';
 import { useFungibleAssetMetadata } from '@aptos-labs/react';
 import { useActiveVault } from '@/context/ActiveVaultProvider';
 import CoinAvatar from './CoinAvatar';
-import { getPairedMetadata } from '@/lib/fungibleAssets';
 
 interface SimulationCoinRowProps {
   asset: string;

@@ -13,8 +13,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Plus, Trash2 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useAccount } from '@aptos-labs/react';
-import { VaultSignerSchema } from '@/lib/types/signers';
+import { useAccount, useClients } from '@aptos-labs/react';
+import { VaultSigner, VaultSignerSchema } from '@/lib/types/signers';
 import { AccountAddress } from '@aptos-labs/ts-sdk';
 import { useEffect } from 'react';
 import {
@@ -25,11 +25,29 @@ import {
   SelectValue
 } from '../ui/select';
 import { cn } from '@/lib/utils';
+import { isAddress } from '@/lib/address';
+import { useMutation } from '@tanstack/react-query';
 
 const formSchema = z.object({
-  signers: z.array(VaultSignerSchema).min(1, {
-    message: 'At least one signer is required.'
-  }),
+  signers: z
+    .array(
+      VaultSignerSchema.omit({ address: true }).extend({
+        address: z.union([
+          z
+            .string()
+            .min(1, 'Address is required')
+            .refine((val) => isAddress(val), {
+              message: 'Invalid Aptos address'
+            })
+            .transform((val) => AccountAddress.fromString(val)),
+          z.instanceof(AccountAddress),
+          z.string().endsWith('.apt')
+        ])
+      })
+    )
+    .min(1, {
+      message: 'At least one signer is required.'
+    }),
   signaturesRequired: z.coerce
     .number()
     .min(1, { message: 'The signatures required must be at least 1.' })
@@ -42,12 +60,16 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface VaultConfigurationsFormProps {
-  onSubmit: (values: FormValues) => void;
+  onSubmit: (values: {
+    signers: VaultSigner[];
+    signaturesRequired: number;
+  }) => void;
 }
 
 export default function VaultConfigurationsForm({
   onSubmit
 }: VaultConfigurationsFormProps) {
+  const { client } = useClients();
   const account = useAccount();
 
   const form = useForm<FormValues>({
@@ -81,9 +103,49 @@ export default function VaultConfigurationsForm({
     }
   }, [fields, form]);
 
+  const { mutate, error, isPending } = useMutation({
+    mutationFn: async (values: FormValues) => {
+      const { signers, signaturesRequired } = values;
+
+      const signerAddresses = await Promise.all(
+        signers.map(async (signer) => {
+          if (
+            signer.address instanceof AccountAddress ||
+            isAddress(signer.address)
+          ) {
+            return AccountAddress.from(signer.address);
+          }
+
+          const address = await client.fetchAddressFromName({
+            name: signer.address
+          });
+
+          if (!address) {
+            throw new Error('Unable to resolve Aptos name');
+          }
+
+          return address;
+        })
+      );
+
+      onSubmit({
+        signers: signerAddresses.map((address, i) => {
+          const name = signers[i]?.name;
+          if (!name)
+            throw new Error('Name not found for corresponding address');
+          return { address, name };
+        }),
+        signaturesRequired
+      });
+    }
+  });
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit((e) => mutate(e))}
+        className="space-y-6"
+      >
         <div className="space-y-4">
           <div>
             <h3 className="font-display tracking-wide font-semibold">Owners</h3>
@@ -223,10 +285,17 @@ export default function VaultConfigurationsForm({
         <Button
           type="submit"
           className="w-full"
+          isLoading={isPending}
           data-testid="save-vault-config-button"
         >
           Save Configuration
         </Button>
+
+        {error && (
+          <p className="text-destructive text-sm text-center">
+            {error.message}
+          </p>
+        )}
       </form>
     </Form>
   );

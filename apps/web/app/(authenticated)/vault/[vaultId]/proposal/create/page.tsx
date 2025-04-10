@@ -20,7 +20,6 @@ import {
   InputGenerateTransactionPayloadData
 } from '@aptos-labs/ts-sdk';
 import { createMultisigTransactionPayloadData } from '@/lib/payloads';
-import SimulationParser from '@/lib/simulations/parsers/SimulationParser';
 import {
   Card,
   CardContent,
@@ -35,10 +34,6 @@ import { LoadingSpinner } from '@/components/LoaderSpinner';
 import { AnimatePresence, motion } from 'motion/react';
 import SimulationCoinRow from '@/components/SimulationCoinRow';
 import { cn } from '@/lib/utils';
-import {
-  explainError,
-  getSimulationQueryErrors
-} from '@/lib/simulations/shared';
 import { jsonStringify } from '@/lib/storage';
 import useAnalytics from '@/hooks/useAnalytics';
 import {
@@ -47,6 +42,8 @@ import {
 } from '@/lib/types/forms';
 import CreateProposalConfirmationActions from '@/components/CreateProposalConfirmationActions';
 import { padEstimatedGas } from '@/lib/gas';
+import { TransactionParser } from '@aptos-labs/js-pro';
+import { getSimulationQueryErrors, explainError } from '@/lib/transactions';
 
 export default function CreateProposalPage() {
   const trackEvent = useAnalytics();
@@ -144,9 +141,9 @@ export default function CreateProposalPage() {
 
   const balanceChanges =
     simulation.data &&
-    SimulationParser.parseTransaction(simulation.data)?.getBalanceChanges()[
-      vaultAddress
-    ];
+    TransactionParser.getBalanceChanges(
+      TransactionParser.create().parseTransaction(simulation.data)
+    )[vaultAddress];
 
   const [isSimulationError, simulationError] =
     getSimulationQueryErrors(simulation);

@@ -9,7 +9,7 @@ import {
 } from './ui/card';
 import { Button } from './ui/button';
 import { AptosAvatar } from 'aptos-avatars-react';
-import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
+import AddressDisplay from './AddressDisplay';
 
 export default function OnboardingReview() {
   const {
@@ -22,7 +22,7 @@ export default function OnboardingReview() {
   } = useOnboarding();
 
   return (
-    <Card className="w-full">
+    <Card className="w-full pb-12">
       <CardHeader className="border-b-1 pb-4">
         <CardTitle>Review</CardTitle>
         <CardDescription>Review your vault configuration.</CardDescription>
@@ -43,7 +43,7 @@ export default function OnboardingReview() {
                 >
                   <AptosAvatar value={e.address.toString()} size={20} />
                   <p className="font-display text-sm font-medium ml-1">
-                    {truncateAddress(e.address.toString())}
+                    <AddressDisplay address={e.address} />
                   </p>
                 </div>
               ))}
