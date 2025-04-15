@@ -111,7 +111,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         },
         {
           name: 'Feedback',
-          url: 'https://github.com/aptos-labs/petra-wallet',
+          url: 'https://github.com/aptos-labs/petra-vault/issues',
           icon: Send,
           size: 'sm',
           target: '_blank'

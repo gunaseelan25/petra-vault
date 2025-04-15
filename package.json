@@ -1,6 +1,7 @@
 {
   "name": "petra-vault",
   "private": true,
+  "license": "Apache-2.0",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -13,12 +14,12 @@
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
-    "@types/node": "^22.13.14",
-    "eslint": "^9.23.0",
+    "@types/node": "^22.14.1",
+    "eslint": "^9.25.0",
     "prettier": "^3.5.3",
-    "turbo": "^2.4.4",
+    "turbo": "^2.5.0",
     "typescript": "5.8.2",
-    "vitest": "^3.0.9"
+    "vitest": "^3.1.1"
   },
   "packageManager": "pnpm@10.6.5",
   "engines": {

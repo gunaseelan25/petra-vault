@@ -4,7 +4,8 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "out/**"]
+      "outputs": [".next/**", "!.next/cache/**", "out/**"],
+      "env": ["SENTRY_AUTH_TOKEN", "NEXT_RUNTIME"]
     },
     "start": {
       "dependsOn": ["build"],
@@ -12,12 +13,10 @@
       "persistent": true
     },
     "test": {
-      "dependsOn": ["build"],
-      "env": ["CI"]
+      "dependsOn": ["build"]
     },
     "test:e2e": {
-      "dependsOn": ["build"],
-      "env": ["CI"]
+      "dependsOn": ["build"]
     }
   }
 }

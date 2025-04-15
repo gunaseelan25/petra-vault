@@ -113,6 +113,9 @@ NEXT_PUBLIC_APTOS_TESTNET_API_KEY=<api_key>
 # Google Analytics ID (obtain from https://analytics.google.com)
 NEXT_PUBLIC_GA4_ID=<ga4_id>
 
+# Sentry Auth Token (obtain from https://sentry.io)
+SENTRY_AUTH_TOKEN=<sentry_auth_token>
+
 CI=false
 ```
 

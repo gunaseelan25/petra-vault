@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+env:
+  NEXT_PUBLIC_APTOS_DEVNET_API_KEY: ${{ secrets.NEXT_PUBLIC_APTOS_DEVNET_API_KEY }}
+
 jobs:
   run-all-checks:
     name: Run All Checks

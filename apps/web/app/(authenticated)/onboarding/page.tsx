@@ -65,23 +65,25 @@ export default function OnboardingPage() {
               <h1>Page not found</h1>
             </div>
           )}
-        </div>
 
-        {page.current in goBackRoutes && (
-          <div className="w-full flex justify-start">
-            <Button
-              variant="ghost"
-              onClick={() => {
-                page.set(
-                  goBackRoutes[page.current as keyof typeof goBackRoutes]
-                );
-              }}
-            >
-              <ArrowLeftIcon />
-              Go Back
-            </Button>
-          </div>
-        )}
+          {page.current in goBackRoutes && (
+            <div className="w-full h-fit flex justify-start py-2">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  page.set(
+                    goBackRoutes[page.current as keyof typeof goBackRoutes]
+                  );
+                }}
+              >
+                <ArrowLeftIcon />
+                Go Back
+              </Button>
+            </div>
+          )}
+
+          <br />
+        </div>
       </div>
     </div>
   );

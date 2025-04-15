@@ -13,10 +13,12 @@ import {
   useWallet
 } from '@aptos-labs/wallet-adapter-react';
 import useAnalytics from '@/hooks/useAnalytics';
+import { useIsMobile } from '@/hooks/useMobile';
 
 export default function VaultExplorePage() {
   const trackEvent = useAnalytics();
   const { id } = useActiveVault();
+  const isMobile = useIsMobile();
 
   const { wallets = [], notDetectedWallets = [] } = useWallet();
 
@@ -25,7 +27,20 @@ export default function VaultExplorePage() {
     ...notDetectedWallets
   ]);
 
-  if (!availableWallets.find((e) => e.name === 'Petra')) {
+  if (!isMobile) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center gap-8">
+          <img src="/petra_logo.png" alt="Petra Logo" className="w-12 mr-2" />
+          <p className="font-display text-center">
+            This feature is only available on Desktop.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!availableWallets.find((e) => e.name === 'Petra') && !isMobile) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
         <div className="flex flex-col items-center gap-8">
@@ -44,6 +59,7 @@ export default function VaultExplorePage() {
       </div>
     );
   }
+
   return (
     <div className="flex-1 flex flex-col">
       <br />

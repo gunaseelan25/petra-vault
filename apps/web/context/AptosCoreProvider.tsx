@@ -15,6 +15,9 @@ export default function AptosCoreProvider({ children }: PropsWithChildren) {
         }),
         ...(process.env.NEXT_PUBLIC_APTOS_TESTNET_API_KEY && {
           [Network.TESTNET]: process.env.NEXT_PUBLIC_APTOS_TESTNET_API_KEY
+        }),
+        ...(process.env.NEXT_PUBLIC_APTOS_DEVNET_API_KEY && {
+          [Network.DEVNET]: process.env.NEXT_PUBLIC_APTOS_DEVNET_API_KEY
         })
       }
     }

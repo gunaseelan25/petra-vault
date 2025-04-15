@@ -7,6 +7,7 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 import AptosCoreProvider from './AptosCoreProvider';
 import { storageOptionsSerializers } from '@/lib/storage';
 import { hasWindow } from '@/lib/utils';
+import * as Sentry from '@sentry/nextjs';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,6 +16,13 @@ const queryClient = new QueryClient({
       enabled: hasWindow(),
       queryKeyHashFn: (queryKey) =>
         JSON.stringify(queryKey, storageOptionsSerializers.replacer)
+    },
+    mutations: {
+      onError: (error) => {
+        if (error instanceof Error) {
+          Sentry.captureException(error);
+        }
+      }
     }
   }
 });

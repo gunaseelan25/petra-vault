@@ -31,11 +31,6 @@ import {
 } from '@aptos-labs/wallet-standard';
 import MockPetraWalletAccount from './MockPetraWalletAccount';
 
-export interface MockPetraWalletTransportRequest {
-  type: 'switchAccount' | 'switchNetwork';
-  args: { index: number };
-}
-
 export class MockPetraWallet implements AptosWallet {
   readonly name = 'MockPetra';
 
