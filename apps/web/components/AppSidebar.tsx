@@ -20,7 +20,9 @@ import {
   HomeIcon,
   Pencil1Icon,
   CubeIcon,
-  ReaderIcon
+  ReaderIcon,
+  InfoCircledIcon,
+  AvatarIcon
 } from '@radix-ui/react-icons';
 import { NavItemGroup } from './NavItemGroup';
 import { getExplorerUrl } from '@aptos-labs/js-pro';
@@ -91,6 +93,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           target: '_blank'
         },
         {
+          name: 'Documentation',
+          url: 'https://petra.app/vault',
+          icon: ReaderIcon,
+          target: '_blank',
+          size: 'sm'
+        },
+        {
           name: 'Settings',
           url: activeVaultId ? `/vault/${activeVaultId}/settings` : undefined,
           icon: GearIcon,
@@ -103,16 +112,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       secondary: [
         {
-          name: 'Documentation',
-          url: 'https://petra.app/vault',
-          icon: ReaderIcon,
-          target: '_blank',
-          size: 'sm'
-        },
-        {
           name: 'Feedback',
           url: 'https://github.com/aptos-labs/petra-vault/issues',
           icon: Send,
+          size: 'sm',
+          target: '_blank'
+        },
+        {
+          name: 'Terms of Service',
+          url: 'https://aptoslabs.com/terms-wallet',
+          icon: InfoCircledIcon,
+          size: 'sm',
+          target: '_blank'
+        },
+        {
+          name: 'Privacy Policy',
+          url: 'https://aptoslabs.com/privacy',
+          icon: AvatarIcon,
           size: 'sm',
           target: '_blank'
         }
