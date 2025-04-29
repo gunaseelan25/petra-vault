@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { WalletSelector } from './WalletSelector';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   Carousel,
   CarouselApi,
@@ -19,6 +19,7 @@ export default function Login({
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const { connected, account } = useWallet();
   const router = useRouter();
@@ -31,13 +32,32 @@ export default function Login({
 
     api.on('select', () => {
       setCurrent(api.selectedScrollSnap() + 1);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      startInterval();
     });
 
-    const interval = setInterval(() => {
-      api?.scrollNext();
-    }, 8000);
+    const startInterval = () => {
+      intervalRef.current = setInterval(() => {
+        console.log('scrolling');
+        api?.scrollNext();
+      }, 7000);
+    };
 
-    return () => clearInterval(interval);
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      } else {
+        startInterval();
+      }
+    };
+
+    startInterval();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [api]);
 
   useEffect(() => {

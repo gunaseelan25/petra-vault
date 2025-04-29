@@ -27,7 +27,7 @@ export default function VaultExplorePage() {
     ...notDetectedWallets
   ]);
 
-  if (!isMobile) {
+  if (isMobile) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
         <div className="flex flex-col items-center gap-8">
@@ -40,7 +40,7 @@ export default function VaultExplorePage() {
     );
   }
 
-  if (!availableWallets.find((e) => e.name === 'Petra') && !isMobile) {
+  if (!availableWallets.find((e) => e.name === 'Petra')) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
         <div className="flex flex-col items-center gap-8">

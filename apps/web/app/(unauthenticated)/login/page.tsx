@@ -1,4 +1,5 @@
 import Login from '@/components/Login';
+import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -11,7 +12,7 @@ export default function LoginPage() {
             className="flex items-center justify-center font-medium whitespace-pre"
           >
             <img src="/petra_logo.png" alt="Petra Logo" className="w-4 mr-2" />
-            Petra Vault
+            Petra Vault <Badge variant="outline">Beta</Badge>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">

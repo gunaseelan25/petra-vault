@@ -3,6 +3,8 @@ packages:
   - packages/*
 onlyBuiltDependencies:
   - '@sentry/cli'
+  - bufferutil
   - esbuild
   - msw
   - sharp
+  - utf-8-validate

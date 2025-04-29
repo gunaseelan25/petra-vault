@@ -45,6 +45,7 @@ import {
   DropdownMenuTrigger
 } from './ui/dropdown-menu';
 import { toast } from 'sonner';
+import ExpandingContainer from './ExpandingContainer';
 
 export function WalletSelector(walletSortingOptions: WalletSortingOptions) {
   const { account, connected, disconnect, wallet, isLoading } = useWallet();
@@ -178,27 +179,29 @@ function ConnectWalletDialog({
             <WalletRow key={wallet.name} wallet={wallet} onConnect={close} />
           ))}
           {!!installableWallets.length && (
-            <Collapsible className="flex flex-col gap-3">
-              <CollapsibleTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="gap-2"
-                  data-testid="more-wallets-button"
-                >
-                  More wallets <ChevronDown />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="flex flex-col gap-3">
-                {installableWallets.map((wallet) => (
-                  <WalletRow
-                    key={wallet.name}
-                    wallet={wallet}
-                    onConnect={close}
-                  />
-                ))}
-              </CollapsibleContent>
-            </Collapsible>
+            <ExpandingContainer>
+              <Collapsible className="flex flex-col gap-3">
+                <CollapsibleTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="gap-2"
+                    data-testid="more-wallets-button"
+                  >
+                    More wallets <ChevronDown />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="flex flex-col gap-3">
+                  {installableWallets.map((wallet) => (
+                    <WalletRow
+                      key={wallet.name}
+                      wallet={wallet}
+                      onConnect={close}
+                    />
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
+            </ExpandingContainer>
           )}
         </div>
       </AboutAptosConnect>

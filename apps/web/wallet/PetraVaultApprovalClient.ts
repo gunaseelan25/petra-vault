@@ -13,7 +13,7 @@ export class PetraVaultApprovalClient implements ApprovalClient {
   private resolutionQueue: Promise<ApprovalResponse> | null = null;
 
   constructor(
-    readonly approvalModalRef: RefObject<PetraVaultApprovalModalRef>
+    readonly approvalModalRef: RefObject<PetraVaultApprovalModalRef | null>
   ) {}
 
   private async enqueueRequest<T extends PetraApiResponseArgs>(
