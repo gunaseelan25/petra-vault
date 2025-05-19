@@ -19,12 +19,12 @@ export default function VaultPage() {
 
       aValue = a.price?.usd
         ? parseUnits(a.balance.amount.toString(), a.balance.metadata.decimals) *
-          parseUnits(a.price.usd.toString(), 2)
+          parseUnits(a.price.usd.toFixed(20), 2)
         : 0n;
 
       bValue = b.price?.usd
         ? parseUnits(b.balance.amount.toString(), b.balance.metadata.decimals) *
-          parseUnits(b.price.usd.toString(), 2)
+          parseUnits(b.price.usd.toFixed(20), 2)
         : 0n;
 
       return Number(bValue - aValue);
