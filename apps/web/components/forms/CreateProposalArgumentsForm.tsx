@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from 'react';
 import { z, ZodObject, ZodString, ZodTypeAny } from 'zod';
 import { getTypeTagDefaultZodValue, transformTypeTagToZod } from '@/lib/zod';
-import { EntryFunctionABI } from '@aptos-labs/ts-sdk';
+import { EntryFunctionABI, TypeTagVector } from '@aptos-labs/ts-sdk';
 import { FormField, FormLabel, FormMessage } from '../ui/form';
 import { FormControl } from '../ui/form';
 import { Input } from '../ui/input';
@@ -109,6 +109,19 @@ export default function CreateProposalArgumentsForm({
     onIsFormValidChange?.(form.formState.isValid);
   }, [form.formState.isValid, onIsFormValidChange]);
 
+  const getTypeTagVectorMaximumDepth = (
+    typeTag: TypeTagVector,
+    acc: number
+  ): number => {
+    if (typeTag.value.isVector()) {
+      return getTypeTagVectorMaximumDepth(
+        typeTag.value as TypeTagVector,
+        acc + 1
+      );
+    }
+    return acc;
+  };
+
   return (
     <Form {...form}>
       <form>
@@ -196,6 +209,10 @@ export default function CreateProposalArgumentsForm({
                                     form.getValues('functionArguments')
                                   );
                                 }}
+                                maximumDepth={getTypeTagVectorMaximumDepth(
+                                  argTypeTag as TypeTagVector,
+                                  0
+                                )}
                                 data-testid={`function-argument-array-input-${i}`}
                               />
                             ) : (

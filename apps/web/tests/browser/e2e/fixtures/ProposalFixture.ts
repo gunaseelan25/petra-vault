@@ -1,6 +1,8 @@
 import { AccountAddress } from '@aptos-labs/ts-sdk';
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 import { NavigationFixture } from './NavigationFixture';
+
+type FormArrayInputValue = string | FormArrayInputValue[];
 
 export class ProposalFixture {
   constructor(
@@ -56,7 +58,7 @@ export class ProposalFixture {
   async createProposal(
     entryFunction: string,
     typeArguments: string[],
-    functionArguments: (string | string[])[]
+    functionArguments: FormArrayInputValue
   ) {
     await this.navigation.navigateTo('proposals');
 
@@ -78,11 +80,7 @@ export class ProposalFixture {
 
         await argInput.click();
 
-        for (let j = 0; j < arg.length; j++) {
-          await argInput.getByTestId(`add-array-input`).click();
-
-          await argInput.getByTestId(`array-input-${j}`).fill(arg[j]!);
-        }
+        await this.fillArrayValues(argInput, arg, 0);
       } else {
         await this.page.getByTestId(`function-argument-input-${i}`).fill(arg);
       }
@@ -91,6 +89,30 @@ export class ProposalFixture {
     await this.page.getByTestId('create-proposal-confirm-draft-button').click();
 
     await this.page.getByTestId('create-proposal-button').first().click();
+  }
+
+  async fillArrayValues(
+    argInput: Locator,
+    arg: FormArrayInputValue[],
+    depth: number
+  ) {
+    for (let j = 0; j < arg.length; j++) {
+      if (Array.isArray(arg[j])) {
+        await argInput.getByTestId(`add-vector-button-${depth}`).click();
+
+        await this.fillArrayValues(
+          argInput,
+          arg[j] as FormArrayInputValue[],
+          depth + 1
+        );
+      } else {
+        await argInput.getByTestId(`add-argument-button-${depth}`).click();
+
+        await argInput
+          .getByTestId(`array-input-${depth}-${j}`)
+          .fill(arg[j] as string);
+      }
+    }
   }
 
   async createPublishContractProposal(jsonFilePath: string) {

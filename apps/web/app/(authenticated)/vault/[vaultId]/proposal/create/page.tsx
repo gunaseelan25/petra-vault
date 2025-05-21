@@ -44,6 +44,7 @@ import CreateProposalConfirmationActions from '@/components/CreateProposalConfir
 import { padEstimatedGas } from '@/lib/gas';
 import { TransactionParser } from '@aptos-labs/js-pro';
 import { getSimulationQueryErrors, explainError } from '@/lib/transactions';
+import { preprocessArgs } from '@/lib/abis';
 
 export default function CreateProposalPage() {
   const trackEvent = useAnalytics();
@@ -85,7 +86,7 @@ export default function CreateProposalPage() {
       const innerPayload = {
         function: entryFunction.value as `${string}::${string}::${string}`,
         typeArguments: typeArguments.value,
-        functionArguments: functionArguments.value
+        functionArguments: preprocessArgs(functionArguments.value, abi.value)
       } satisfies InputGenerateTransactionPayloadData;
 
       return {
@@ -258,7 +259,7 @@ export default function CreateProposalPage() {
           </CardHeader>
           <ExpandingContainer>
             <AnimatePresence mode="popLayout">
-              {!isFormValid.value ? (
+              {!isFormValid.value || !innerPayload ? (
                 <motion.div
                   key="simulation-idle"
                   initial={{ opacity: 0, filter: 'blur(10px)' }}
@@ -345,7 +346,7 @@ export default function CreateProposalPage() {
                           Payload
                         </h3>
                         <CodeBlock
-                          value={jsonStringify(innerPayload)}
+                          value={jsonStringify(simulation.data.payload)}
                           className="[&>pre]:!bg-transparent [&>pre]:p-2 max-h-96 overflow-auto w-full border rounded-md text-xs mt-4 bg-secondary"
                         />
                       </div>
