@@ -58,5 +58,32 @@ export const ecosystemApps = [
       'https://media.aptosfoundation.org/1699066253-project-icon_okx-dex.png?auto=format&fit=crop&h=100&w=100',
     name: 'OKX DEX',
     tester: 'okx.com'
+  },
+  {
+    categories: ['defi', 'swaps'],
+    platform: ['mobile', 'extension', 'web'],
+    type: 'dapp',
+    description: 'App for DeFi. Building the Future of web3',
+    isPopular: false,
+    link: 'https://app.kanalabs.io/',
+    logoUrl:
+      'https://media.aptosfoundation.org/1690445358-e55899f0b363-kanalabs_logo.png?auto=format&fit=crop&h=100&w=100',
+    logoUrlDark:
+      'https://media.aptosfoundation.org/1690445358-e55899f0b363-kanalabs_logo.png?auto=format&fit=crop&h=100&w=100',
+    name: 'Kana Labs',
+    supportsAptosConnect: true,
+    tester: 'kanalabs'
+  },
+  {
+    categories: ['defi', 'lending'],
+    description: 'Universal lending market connecting liquidity on Aptos',
+    isPopular: false,
+    link: 'https://echelon.market/',
+    logoUrl:
+      'https://imagedelivery.net/1v0lk1OFEOmesBikJtB8QQ/7ae9dda7-8964-4f18-bdcf-cf171e49fd00/small100x100',
+    logoUrlDark:
+      'https://imagedelivery.net/1v0lk1OFEOmesBikJtB8QQ/7ae9dda7-8964-4f18-bdcf-cf171e49fd00/small100x100',
+    name: 'Echelon',
+    tester: 'echelon'
   }
 ] as const;
