@@ -85,5 +85,30 @@ export const ecosystemApps = [
       'https://imagedelivery.net/1v0lk1OFEOmesBikJtB8QQ/7ae9dda7-8964-4f18-bdcf-cf171e49fd00/small100x100',
     name: 'Echelon',
     tester: 'echelon'
+  },
+  {
+    categories: ['defi', 'explorer'],
+    description: 'Aptos blockchain explorer by Aptos Labs',
+    isPopular: false,
+    link: 'https://explorer.aptoslabs.com/?network=mainnet',
+    logoUrl:
+      'https://media.aptosfoundation.org/1687171540-aptos-explorer-by-aptoslabs.png?auto=format&fit=crop&h=100&w=100',
+    logoUrlDark:
+      'https://media.aptosfoundation.org/1687171540-aptos-explorer-by-aptoslabs.png?auto=format&fit=crop&h=100&w=100',
+    name: 'Aptos Explorer',
+    tester: 'explorer.aptoslabs'
+  },
+  {
+    categories: ['defi', 'swaps'],
+    description:
+      'Fully on-chain hybrid orderbook AMM DEX built natively for Aptos.',
+    isPopular: true,
+    link: 'https://hyperion.xyz/',
+    logoUrl:
+      'https://imagedelivery.net/1v0lk1OFEOmesBikJtB8QQ/49da4d25-2e3b-49e6-cce5-bacb6f3b8b00/small100x100',
+    logoUrlDark:
+      'https://imagedelivery.net/1v0lk1OFEOmesBikJtB8QQ/49da4d25-2e3b-49e6-cce5-bacb6f3b8b00/small100x100',
+    name: 'Hyperion',
+    tester: 'Hyperion'
   }
 ] as const;

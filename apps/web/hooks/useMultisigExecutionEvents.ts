@@ -2,7 +2,6 @@ import { NetworkInfo } from '@aptos-labs/js-pro';
 import { useClients } from '@aptos-labs/react';
 import {
   AccountAddress,
-  Network,
   TransactionResponseType,
   UserTransactionResponse
 } from '@aptos-labs/ts-sdk';
@@ -63,30 +62,30 @@ export default function useMultisigExecutionEvents({
           orderBy: [{ transaction_version: 'desc' }],
           offset: pageParam,
           limit: 100,
-          where:
-            network?.network === Network.DEVNET
-              ? {
-                  indexed_type: {
-                    _in: [
-                      '0x1::multisig_account::TransactionExecutionSucceeded',
-                      '0x1::multisig_account::TransactionExecutionFailed',
-                      '0x1::multisig_account::ExecuteRejectedTransaction'
-                    ]
-                  },
-                  data: {
-                    _contains: { multisig_account: address }
-                  }
-                }
-              : {
-                  indexed_type: {
-                    _in: [
-                      '0x1::multisig_account::TransactionExecutionSucceededEvent',
-                      '0x1::multisig_account::TransactionExecutionFailedEvent',
-                      '0x1::multisig_account::ExecuteRejectedTransactionEvent'
-                    ]
-                  },
-                  account_address: { _eq: address }
-                }
+          where: {
+            _or: [
+              {
+                indexed_type: {
+                  _in: [
+                    '0x1::multisig_account::TransactionExecutionSucceeded',
+                    '0x1::multisig_account::TransactionExecutionFailed',
+                    '0x1::multisig_account::ExecuteRejectedTransaction'
+                  ]
+                },
+                data: { _contains: { multisig_account: address } }
+              },
+              {
+                indexed_type: {
+                  _in: [
+                    '0x1::multisig_account::TransactionExecutionSucceededEvent',
+                    '0x1::multisig_account::TransactionExecutionFailedEvent',
+                    '0x1::multisig_account::ExecuteRejectedTransactionEvent'
+                  ]
+                },
+                account_address: { _eq: address }
+              }
+            ]
+          }
         }
       });
 
