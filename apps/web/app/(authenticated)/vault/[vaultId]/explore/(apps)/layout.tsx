@@ -8,6 +8,11 @@ const tabs = [
     id: 'apps',
     label: 'Apps',
     href: '/vault/[vaultId]/explore'
+  },
+  {
+    id: 'search',
+    label: 'Search',
+    href: '/vault/[vaultId]/explore/search'
   }
 ];
 

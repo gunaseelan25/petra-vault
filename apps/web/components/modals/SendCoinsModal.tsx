@@ -67,12 +67,12 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
 
   const { data: resolvedAddress, isLoading: isResolvingAddress } =
     useAddressFromName({
-      name: isEns(recipient) ? recipient : undefined,
-      enabled: !!recipient && isEns(recipient)
+      name: isEns(recipient) ? recipient.toLowerCase() : undefined,
+      enabled: !!recipient && isEns(recipient.toLowerCase())
     });
 
   const recipientAddress = useMemo(() => {
-    if (isEns(recipient)) return resolvedAddress;
+    if (isEns(recipient)) return resolvedAddress?.toString();
     if (isAddress(recipient, { ignoreSpecial: true })) return recipient;
     return undefined;
   }, [resolvedAddress, recipient]);
@@ -100,17 +100,18 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
 
   const filteredCoins = coins?.filter((c) => {
     const formattedSearch = search?.toLowerCase() ?? '';
+    if (!formattedSearch) return true;
     return matchesSearch(c, formattedSearch);
   });
 
   const { transactionPayload, innerPayload } = useMemo(() => {
     const amount = debouncedAmount ?? '0';
 
-    if (!selectedCoin || !recipient || !amount || !isNumber(amount)) {
+    if (!selectedCoin || !recipientAddress || !amount || !isNumber(amount)) {
       return { transactionPayload: undefined, innerPayload: undefined };
     }
 
-    if (!isAddress(recipient)) {
+    if (!isAddress(recipientAddress)) {
       return { transactionPayload: undefined, innerPayload: undefined };
     }
 
@@ -125,7 +126,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
       innerPayload = {
         function: '0x1::aptos_account::transfer_coins',
         functionArguments: [
-          recipient,
+          recipientAddress,
           parseUnits(amount, selectedCoin.balance.metadata.decimals).toString()
         ],
         typeArguments: [selectedCoin.balance.assetType]
@@ -142,7 +143,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
         function: '0x1::primary_fungible_store::transfer',
         functionArguments: [
           selectedCoin.balance.assetType,
-          recipient,
+          recipientAddress,
           parseUnits(amount, selectedCoin.balance.metadata.decimals).toString()
         ],
         typeArguments: ['0x1::fungible_asset::Metadata']
@@ -157,10 +158,11 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
     }
 
     return { transactionPayload, innerPayload };
-  }, [selectedCoin, recipient, debouncedAmount, vaultAddress]);
+  }, [selectedCoin, recipientAddress, debouncedAmount, vaultAddress]);
 
   const { data: simulationData } = useSimulateTransaction({
     data: innerPayload,
+    sender: AccountAddress.from(vaultAddress),
     network: { network },
     options: {
       estimateGasUnitPrice: true,
@@ -192,7 +194,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
         Number(
           formatUnits(
             BigInt(selectedCoin.balance.amount),
-            selectedCoin.metadata?.decimals ?? 8
+            selectedCoin.balance.metadata.decimals ?? 8
           )
         )
       ) {
@@ -211,14 +213,15 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
   const { hash, signAndSubmitTransaction, isPending } =
     useSignAndSubmitTransaction({
       onSuccess: (data) => {
-        if (!selectedCoin) return;
+        if (!selectedCoin || !recipientAddress) return;
         trackEvent('create_send_coins_proposal', {
           hash: data.hash,
           asset: selectedCoin?.balance.assetType,
           asset_name: selectedCoin.balance.metadata.name,
           asset_symbol: selectedCoin.balance.metadata.symbol,
           amount: amount,
-          recipient: AccountAddress.from(recipient).toStringWithoutPrefix()
+          recipient:
+            AccountAddress.from(recipientAddress).toStringWithoutPrefix()
         });
       }
     });
@@ -373,7 +376,8 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                           data-testid="send-coins-amount-input"
                         />
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground font-display">
-                          {selectedCoin.metadata?.symbol}
+                          {selectedCoin.metadata?.symbol ??
+                            selectedCoin.balance.metadata.symbol}
                         </div>
                       </div>
                       <Button
@@ -383,8 +387,14 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                         onClick={() => setPage('select-coin')}
                       >
                         <div className="flex items-center gap-2">
-                          <CoinAvatar coin={selectedCoin} className="w-4 h-4" />
-                          <span>{selectedCoin.metadata?.symbol}</span>
+                          <CoinAvatar
+                            coin={selectedCoin}
+                            className="md:w-6 md:h-6"
+                          />
+                          <span>
+                            {selectedCoin.metadata?.symbol ??
+                              selectedCoin.balance.metadata.symbol}
+                          </span>
                         </div>
                       </Button>
                     </div>
@@ -402,7 +412,8 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                           BigInt(selectedCoin.balance.amount),
                           selectedCoin.balance.metadata.decimals
                         ).toLocaleString()}{' '}
-                        {selectedCoin.metadata?.symbol}
+                        {selectedCoin.metadata?.symbol ??
+                          selectedCoin.balance.metadata.symbol}
                       </button>
                     </div>
                   </div>
@@ -479,66 +490,58 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
               </div>
               <ul className="flex flex-col w-full gap-4">
                 {(filteredCoins?.length ?? 0) > 0 ? (
-                  filteredCoins
-                    ?.filter((c) => {
-                      const formattedSearch = search?.toLowerCase() ?? '';
-                      return matchesSearch(c, formattedSearch);
-                    })
-                    .map((c) => (
-                      <li
-                        key={c.balance.assetType}
-                        className="list-none w-full"
+                  filteredCoins?.map((c) => (
+                    <li key={c.balance.assetType} className="list-none w-full">
+                      <button
+                        type="button"
+                        className="border w-full px-4 py-2 rounded-md hover:bg-secondary cursor-pointer"
+                        onClick={() => {
+                          setSelectedCoin(c);
+                          setSearch('');
+                          setPage('recipient-and-amount');
+                        }}
+                        role="option"
                       >
-                        <button
-                          type="button"
-                          className="border w-full px-4 py-2 rounded-md hover:bg-secondary cursor-pointer"
-                          onClick={() => {
-                            setSelectedCoin(c);
-                            setSearch('');
-                            setPage('recipient-and-amount');
-                          }}
-                          role="option"
-                        >
-                          <div className="flex items-center gap-2">
-                            <CoinAvatar
-                              asset={c.balance.assetType}
-                              logoUrl={c.metadata?.logo_url}
-                              className="w-8 h-8"
-                            />
+                        <div className="flex items-center gap-2">
+                          <CoinAvatar
+                            asset={c.balance.assetType}
+                            logoUrl={c.metadata?.logo_url}
+                            className="w-8 h-8"
+                          />
 
-                            <div className="flex flex-col items-start pl-2">
-                              <span className="font-display">
-                                {c.metadata?.name}
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {c.metadata?.symbol}
-                              </span>
-                            </div>
-
-                            <div className="flex flex-col items-end ml-auto gap-1">
-                              <span className="text-xs font-medium">
-                                {formatUnits(
-                                  BigInt(c.balance.amount),
-                                  c.balance.metadata.decimals
-                                )}{' '}
-                                {c.balance.metadata.symbol}
-                              </span>
-                              {c.price?.usd && (
-                                <span className="text-xs text-muted-foreground">
-                                  $
-                                  {(
-                                    formatBigIntToNumber(
-                                      BigInt(c.balance.amount),
-                                      c.balance.metadata.decimals
-                                    ) * c.price.usd
-                                  ).toLocaleString()}
-                                </span>
-                              )}
-                            </div>
+                          <div className="flex flex-col items-start pl-2">
+                            <span className="font-display">
+                              {c.metadata?.name ?? c.balance.metadata.name}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {c.metadata?.symbol ?? c.balance.metadata.symbol}
+                            </span>
                           </div>
-                        </button>
-                      </li>
-                    ))
+
+                          <div className="flex flex-col items-end ml-auto gap-1">
+                            <span className="text-xs font-medium">
+                              {formatUnits(
+                                BigInt(c.balance.amount),
+                                c.balance.metadata.decimals
+                              )}{' '}
+                              {c.balance.metadata.symbol}
+                            </span>
+                            {c.price?.usd && (
+                              <span className="text-xs text-muted-foreground">
+                                $
+                                {(
+                                  formatBigIntToNumber(
+                                    BigInt(c.balance.amount),
+                                    c.balance.metadata.decimals
+                                  ) * c.price.usd
+                                ).toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    </li>
+                  ))
                 ) : (
                   <div className="text-center text-muted-foreground py-8">
                     No results found
@@ -551,7 +554,8 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
           {page === 'confirm' &&
             innerPayload &&
             transactionPayload &&
-            selectedCoin && (
+            selectedCoin &&
+            recipientAddress && (
               <div className="w-full flex flex-col gap-4">
                 <Separator className="w-full" />
 
@@ -561,7 +565,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                     <div className="flex items-center gap-2">
                       <AptosAvatar value={recipient} size={16} />
                       <p className="font-display font-medium ml-1">
-                        <AddressDisplay address={recipient} />
+                        <AddressDisplay address={recipientAddress} />
                       </p>
                     </div>
                   </div>
