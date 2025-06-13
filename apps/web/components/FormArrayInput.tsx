@@ -3,6 +3,8 @@ import { Button } from './ui/button';
 import { useState } from 'react';
 import { PlusIcon, Cross1Icon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
+import MoveOptionSwitch from './MoveOptionSwitch';
+import { MOVE_OPTION_NONE } from '@/lib/abis';
 
 export type FormArrayInputValue = string | FormArrayInputValue[];
 
@@ -74,12 +76,23 @@ export default function FormArrayInput({
                 maximumDepth={maximumDepth}
               />
             ) : (
-              <Input
-                value={item}
-                onChange={(e) => handleChange(index, e.target.value)}
-                data-testid={`array-input-${currentDepth}-${index}`}
-                disabled={currentDepth > maximumDepth}
-              />
+              <div className="flex items-center gap-2 w-full">
+                <Input
+                  value={item}
+                  onChange={(e) => handleChange(index, e.target.value)}
+                  data-testid={`array-input-${currentDepth}-${index}`}
+                  disabled={
+                    currentDepth > maximumDepth || item === MOVE_OPTION_NONE
+                  }
+                  className="flex-1 w-full"
+                />
+                <MoveOptionSwitch
+                  onCheckedChange={(checked) => {
+                    const value = checked ? MOVE_OPTION_NONE : '';
+                    handleChange(index, value);
+                  }}
+                />
+              </div>
             )}
             <Button
               type="button"

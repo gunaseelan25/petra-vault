@@ -3,6 +3,7 @@ import {
   EntryFunctionArgumentTypes,
   Hex,
   isEncodedEntryFunctionArgument,
+  MoveOption,
   MoveVector,
   parseTypeTag,
   SimpleEntryFunctionArgumentTypes,
@@ -12,6 +13,8 @@ import {
 import { TypeTagAddress } from '@aptos-labs/ts-sdk';
 
 import { TypeTagU64 } from '@aptos-labs/ts-sdk';
+
+export const MOVE_OPTION_NONE = 'Option::none';
 
 export const Abis = {
   '0x1::primary_fungible_store::transfer': {
@@ -43,7 +46,7 @@ export const Abis = {
 export const preprocessArgs = (
   args: SimpleEntryFunctionArgumentTypes[],
   abi: EntryFunctionABI
-) => {
+): (SimpleEntryFunctionArgumentTypes | EntryFunctionArgumentTypes)[] => {
   return args.map((arg, i) => {
     const typeTag = abi.parameters[i];
 
@@ -51,6 +54,12 @@ export const preprocessArgs = (
 
     if (typeTag.isVector()) {
       return preprocessVector(arg, typeTag);
+    }
+
+    if (typeTag.isStruct()) {
+      if (typeTag.isOption()) {
+        return arg === MOVE_OPTION_NONE ? new MoveOption() : arg;
+      }
     }
 
     return arg;
@@ -80,21 +89,33 @@ const preprocessVector = (
     }
   }
 
-  if (typeTag.value.isVector()) {
-    return new MoveVector(
-      arg.map((a) => {
-        const processedArg = preprocessVector(
-          a,
-          typeTag.value as TypeTagVector
-        );
-
-        if (isEncodedEntryFunctionArgument(processedArg)) {
-          return processedArg;
+  if (typeTag.value.isStruct()) {
+    if (typeTag.value.isOption()) {
+      return arg.map((a) => {
+        if (a === MOVE_OPTION_NONE) {
+          return new MoveOption<EntryFunctionArgumentTypes>(null);
         }
+        return a;
+      });
+    }
+  }
 
-        throw new Error('Unsupported argument when pre-processing vector');
-      })
-    );
+  if (typeTag.value.isVector()) {
+    const processedVector = arg.map((a) => {
+      const processedArg = preprocessVector(a, typeTag.value as TypeTagVector);
+
+      if (isEncodedEntryFunctionArgument(processedArg)) {
+        return processedArg;
+      }
+
+      return processedArg;
+    });
+
+    if (processedVector.every(isEncodedEntryFunctionArgument)) {
+      return new MoveVector(processedVector);
+    }
+
+    return processedVector;
   }
 
   return arg;

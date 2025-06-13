@@ -21,6 +21,8 @@ import {
 import React from 'react';
 import { EntryFunctionFormFunctionArguments } from '@/lib/types/forms';
 import { EntryFunctionFormTypeArguments } from '@/lib/types/forms';
+import MoveOptionSwitch from '../MoveOptionSwitch';
+import { MOVE_OPTION_NONE } from '@/lib/abis';
 
 interface CreateProposalArgumentsFormProps {
   abi: EntryFunctionABI;
@@ -216,20 +218,38 @@ export default function CreateProposalArgumentsForm({
                                 data-testid={`function-argument-array-input-${i}`}
                               />
                             ) : (
-                              <Input
-                                {...argField}
-                                {...field}
-                                onChange={(e) => {
-                                  field.onChange(e);
-                                  updateArg(i, {
-                                    value: e.target.value
-                                  });
-                                  onFunctionArgumentsChange?.(
-                                    form.getValues('functionArguments')
-                                  );
-                                }}
-                                data-testid={`function-argument-input-${i}`}
-                              />
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  {...argField}
+                                  {...field}
+                                  onChange={(e) => {
+                                    field.onChange(e);
+                                    updateArg(i, {
+                                      value: e.target.value
+                                    });
+                                    onFunctionArgumentsChange?.(
+                                      form.getValues('functionArguments')
+                                    );
+                                  }}
+                                  disabled={argField.value === 'Option::none'}
+                                  data-testid={`function-argument-input-${i}`}
+                                />
+                                <MoveOptionSwitch
+                                  onCheckedChange={(checked) => {
+                                    const value = checked
+                                      ? MOVE_OPTION_NONE
+                                      : '';
+
+                                    field.onChange({
+                                      target: { value }
+                                    });
+                                    updateArg(i, { value });
+                                    onFunctionArgumentsChange?.(
+                                      form.getValues('functionArguments')
+                                    );
+                                  }}
+                                />
+                              </div>
                             )}
                           </FormControl>
                           <FormMessage />
