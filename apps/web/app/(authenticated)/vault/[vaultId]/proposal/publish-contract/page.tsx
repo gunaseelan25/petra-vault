@@ -69,6 +69,14 @@ export default function PublishContractPage() {
     queryKey: ['publish-module', file?.lastModified],
     queryFn: async () => {
       if (!file) throw new Error('No file uploaded');
+
+      const maxFileSize = 1 * 1024 * 1024; // 1MB limit
+      if (file.size > maxFileSize) {
+        throw new Error(
+          'File size exceeds 1MB limit. Please upload a smaller file.'
+        );
+      }
+
       const json = JSON.parse(await file.text());
       return publishModuleJsonSchema.parse(json);
     },
