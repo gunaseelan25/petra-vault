@@ -14,11 +14,10 @@ import {
 } from '@/components/ui/form';
 import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
+import { VaultNameSchema } from '@/lib/types/vaults';
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: 'The name must be at least 2 characters.'
-  })
+  name: VaultNameSchema
 });
 
 interface VaultNameFormProps {

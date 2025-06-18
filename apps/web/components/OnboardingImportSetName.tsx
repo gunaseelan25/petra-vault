@@ -14,6 +14,7 @@ import { AccountAddress } from '@aptos-labs/ts-sdk';
 import { useNetwork } from '@aptos-labs/react';
 import useAnalytics from '@/hooks/useAnalytics';
 import AddressDisplay from './AddressDisplay';
+import { VaultNameSchema } from '@/lib/types/vaults';
 
 export default function OnboardingImportSetName() {
   const trackEvent = useAnalytics();
@@ -31,6 +32,13 @@ export default function OnboardingImportSetName() {
   const handleImportVault = (name: string) => {
     if (!owners || !signaturesRequired) {
       toast.error('Failed to fetch owners or signatures required');
+      return;
+    }
+
+    if (!VaultNameSchema.safeParse(name).success) {
+      toast.error(
+        'Invalid vault name. It must be between 2 and 50 characters and can only contain basic characters.'
+      );
       return;
     }
 
