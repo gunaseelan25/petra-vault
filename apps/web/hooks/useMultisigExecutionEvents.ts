@@ -30,7 +30,6 @@ interface UseMultisigExecutionEventsParameters
       ExecutionEvent[],
       DefaultError,
       InfiniteData<ExecutionEvent[]>,
-      ExecutionEvent[],
       QueryKey,
       number
     >,
