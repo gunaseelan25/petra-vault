@@ -1,6 +1,5 @@
 import { ProcessedCoin } from '@/context/CoinsProvider';
-import { Avatar } from '@radix-ui/react-avatar';
-import { AvatarFallback, AvatarImage } from './ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { AptosCoinAvatar } from 'aptos-avatars-react';
 import { cn } from '@/lib/utils';
 import { isApt } from '@/lib/address';

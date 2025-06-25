@@ -1,6 +1,6 @@
 import { Separator } from '../ui/separator';
 
-import { DialogTitle } from '../ui/dialog';
+import { DialogClose, DialogTitle } from '../ui/dialog';
 
 import { DialogContent, DialogHeader } from '../ui/dialog';
 
@@ -20,7 +20,6 @@ import {
   useWaitForTransaction
 } from '@aptos-labs/react';
 import { useRouter } from 'next/navigation';
-import { DialogClose } from '@radix-ui/react-dialog';
 import { Abis } from '@/lib/abis';
 import { jsonStringify } from '@/lib/storage';
 import useAnalytics from '@/hooks/useAnalytics';

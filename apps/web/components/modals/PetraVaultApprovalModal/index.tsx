@@ -1,4 +1,3 @@
-import { Dialog } from '@radix-ui/react-dialog';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import {
   ApprovalResponse,
@@ -7,6 +6,7 @@ import {
   SignAndSubmitTransactionResponseArgs
 } from '@aptos-labs/wallet-api';
 import SignAndSubmitTransactionRequestBody from './SignAndSubmitTransactionRequestBody';
+import { Dialog } from '@/components/ui/dialog';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface PetraVaultApprovalModalProps {}
