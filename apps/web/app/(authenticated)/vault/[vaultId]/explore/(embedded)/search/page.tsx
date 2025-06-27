@@ -12,11 +12,9 @@ import { PetraVaultApprovalClient } from '@/wallet/PetraVaultApprovalClient';
 import { PetraVaultRequestHandler } from '@/wallet/PetraVaultRequestHandler';
 import { useAptosCore } from '@aptos-labs/react';
 import { AccountAddress } from '@aptos-labs/ts-sdk';
-import { ArrowLeftIcon } from '@radix-ui/react-icons';
+import { ArrowLeftIcon, GlobeIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-const DEFAULT_URL = 'https://www.google.com/webhp?igu=1';
 
 export default function VaultExploreSearchPage() {
   const approvalModalRef = useRef<PetraVaultApprovalModalRef>(null);
@@ -27,12 +25,12 @@ export default function VaultExploreSearchPage() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const [isReady, setIsReady] = useState(false);
-  const [url, setUrl] = useState<string>(DEFAULT_URL);
+  const [url, setUrl] = useState<string>('');
   const [inputUrl, setInputUrl] = useState<string>('');
 
   const reset = () => {
     setInputUrl('');
-    setUrl(DEFAULT_URL);
+    setUrl('');
   };
 
   const handleUrlSubmit = (e: React.FormEvent) => {
@@ -46,10 +44,8 @@ export default function VaultExploreSearchPage() {
         new URL(formattedUrl);
         setUrl(formattedUrl);
       } catch (error) {
-        console.warn('Invalid URL provided, using as search query:', error);
-        const searchUrl = DEFAULT_URL;
-        setUrl(searchUrl);
-        setInputUrl('');
+        console.warn('Invalid URL provided:', error);
+        // Don't set URL if invalid
       }
     }
   };
@@ -60,18 +56,21 @@ export default function VaultExploreSearchPage() {
 
   const handleRequest = useCallback(
     async (e: MessageEvent) => {
+      if (!url) return;
+
       const { aptos } = core.client.getClients({ network: { network } });
 
       const handler = new PetraVaultRequestHandler({
         aptos,
         vaultAddress: AccountAddress.from(vaultAddress),
-        approvalClient: new PetraVaultApprovalClient(approvalModalRef)
+        approvalClient: new PetraVaultApprovalClient(approvalModalRef),
+        allowedOrigins: [new URL(url).origin]
       });
 
       const response = await handler.handleRequest(e);
       if (response) e.source?.postMessage(response, { targetOrigin: e.origin });
     },
-    [core.client, network, vaultAddress]
+    [core.client, network, url, vaultAddress]
   );
 
   useEffect(() => {
@@ -102,21 +101,34 @@ export default function VaultExploreSearchPage() {
               value={inputUrl}
               onChange={handleUrlChange}
               className="flex-1"
-              placeholder={url}
+              placeholder="Enter a URL (e.g., https://example.com)"
             />
-            <Button
-              type="button"
-              variant="outline"
-              disabled={!inputUrl.trim()}
-              onClick={reset}
-            >
-              Reset
+            <Button type="submit" disabled={!inputUrl.trim()}>
+              Go
             </Button>
+            {url && (
+              <Button type="button" variant="outline" onClick={reset}>
+                Reset
+              </Button>
+            )}
           </form>
         </div>
       </div>
 
-      {isReady ? (
+      {!url ? (
+        <div className="flex-1 rounded-md border flex flex-col items-center justify-center gap-4 text-muted-foreground">
+          <GlobeIcon className="size-12 opacity-50" />
+          <div className="text-center max-w-md">
+            <h3 className="text-lg font-medium mb-2">
+              Enter a URL to get started
+            </h3>
+            <p className="text-sm">
+              Type a website URL in the input field above to browse and interact
+              with web applications using your vault.
+            </p>
+          </div>
+        </div>
+      ) : isReady ? (
         <iframe
           ref={iframeRef}
           src={url}

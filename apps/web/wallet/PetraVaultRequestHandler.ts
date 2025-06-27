@@ -26,6 +26,7 @@ interface PetraVaultRequestHandlerOptions {
   aptos: Aptos;
   vaultAddress: AccountAddress;
   approvalClient: ApprovalClient;
+  allowedOrigins: string[];
 }
 
 export class PetraVaultRequestHandler implements RequestHandler {
@@ -34,7 +35,11 @@ export class PetraVaultRequestHandler implements RequestHandler {
   async handleRequest(message: MessageEvent): Promise<PetraApiResponse | null> {
     const request = message.data;
 
-    if (!isPetraVaultApiRequest(request) || message.origin === undefined) {
+    if (
+      !isPetraVaultApiRequest(request) ||
+      message.origin === undefined ||
+      !this.options.allowedOrigins.includes(new URL(message.origin).origin)
+    ) {
       return null;
     }
 

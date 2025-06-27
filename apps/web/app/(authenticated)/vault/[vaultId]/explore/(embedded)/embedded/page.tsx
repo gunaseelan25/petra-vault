@@ -30,18 +30,21 @@ export default function VaultExploreEmbeddedPage() {
 
   const handleRequest = useCallback(
     async (e: MessageEvent) => {
+      if (!url) return;
+
       const { aptos } = core.client.getClients({ network: { network } });
 
       const handler = new PetraVaultRequestHandler({
         aptos,
         vaultAddress: AccountAddress.from(vaultAddress),
-        approvalClient: new PetraVaultApprovalClient(approvalModalRef)
+        approvalClient: new PetraVaultApprovalClient(approvalModalRef),
+        allowedOrigins: [new URL(url).origin]
       });
 
       const response = await handler.handleRequest(e);
       if (response) e.source?.postMessage(response, { targetOrigin: e.origin });
     },
-    [core.client, network, vaultAddress]
+    [core.client, network, vaultAddress, url]
   );
 
   useEffect(() => {
