@@ -488,7 +488,7 @@ export default function SendCoinsModal({ onClose }: SendCoinsModalProps) {
                   className="rounded-full"
                 />
               </div>
-              <ul className="flex flex-col w-full gap-4">
+              <ul className="flex flex-col w-full gap-4 max-h-96 overflow-y-auto">
                 {(filteredCoins?.length ?? 0) > 0 ? (
                   filteredCoins?.map((c) => (
                     <li key={c.balance.assetType} className="list-none w-full">
