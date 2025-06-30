@@ -1,7 +1,21 @@
 import { withSentryConfig } from '@sentry/nextjs';
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self'"
+          }
+        ]
+      }
+    ];
+  }
+};
 
 export default withSentryConfig(nextConfig, {
   // For all available options, see:
