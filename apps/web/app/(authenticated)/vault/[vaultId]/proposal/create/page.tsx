@@ -113,11 +113,7 @@ export default function CreateProposalPage() {
     data: innerPayload,
     network: { network },
     sender: AccountAddress.from(vaultAddress),
-    options: {
-      estimateMaxGasAmount: true,
-      estimateGasUnitPrice: true,
-      estimatePrioritizedGasUnitPrice: true
-    },
+    withFeePayer: true,
     enabled: isFormValid.value
   });
 

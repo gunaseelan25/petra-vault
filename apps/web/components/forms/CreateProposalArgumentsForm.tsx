@@ -234,21 +234,24 @@ export default function CreateProposalArgumentsForm({
                                   disabled={argField.value === 'Option::none'}
                                   data-testid={`function-argument-input-${i}`}
                                 />
-                                <MoveOptionSwitch
-                                  onCheckedChange={(checked) => {
-                                    const value = checked
-                                      ? MOVE_OPTION_NONE
-                                      : '';
+                                {argTypeTag?.isStruct() &&
+                                  argTypeTag.isOption() && (
+                                    <MoveOptionSwitch
+                                      onCheckedChange={(checked) => {
+                                        const value = checked
+                                          ? MOVE_OPTION_NONE
+                                          : '';
 
-                                    field.onChange({
-                                      target: { value }
-                                    });
-                                    updateArg(i, { value });
-                                    onFunctionArgumentsChange?.(
-                                      form.getValues('functionArguments')
-                                    );
-                                  }}
-                                />
+                                        field.onChange({
+                                          target: { value }
+                                        });
+                                        updateArg(i, { value });
+                                        onFunctionArgumentsChange?.(
+                                          form.getValues('functionArguments')
+                                        );
+                                      }}
+                                    />
+                                  )}
                               </div>
                             )}
                           </FormControl>
