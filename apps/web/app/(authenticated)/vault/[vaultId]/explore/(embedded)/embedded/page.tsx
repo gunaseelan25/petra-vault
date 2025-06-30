@@ -6,25 +6,29 @@ import {
   PetraVaultApprovalModalRef
 } from '@/components/modals/PetraVaultApprovalModal';
 import { Button } from '@/components/ui/button';
+import { UnknownDappWarning } from '@/components/ui/UnknownDappWarning';
 import { useActiveVault } from '@/context/ActiveVaultProvider';
+import { isKnownEcosystemApp } from '@/lib/ecosystem';
 import { PetraVaultApprovalClient } from '@/wallet/PetraVaultApprovalClient';
 import { PetraVaultRequestHandler } from '@/wallet/PetraVaultRequestHandler';
 import { useAptosCore } from '@aptos-labs/react';
 import { AccountAddress } from '@aptos-labs/ts-sdk';
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function VaultExploreEmbeddedPage() {
   const approvalModalRef = useRef<PetraVaultApprovalModalRef>(null);
   const { id, vaultAddress, network } = useActiveVault();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const core = useAptosCore();
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const [isReady, setIsReady] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
 
   const url = searchParams.get('url');
 
@@ -50,12 +54,19 @@ export default function VaultExploreEmbeddedPage() {
   useEffect(() => {
     window.addEventListener('message', handleRequest);
 
-    setIsReady(true);
+    const isKnownApp = url ? isKnownEcosystemApp(url) : false;
+
+    // Show warning for unknown apps, but only if URL exists and is not known
+    if (url && !isKnownApp) {
+      setShowWarning(true);
+    } else {
+      setIsReady(true);
+    }
 
     return () => {
       window.removeEventListener('message', handleRequest);
     };
-  }, [handleRequest]);
+  }, [handleRequest, url]);
 
   if (!url) {
     return <div>No URL provided</div>;
@@ -69,17 +80,33 @@ export default function VaultExploreEmbeddedPage() {
           Go Back
         </Button>
       </Link>
-      {isReady ? (
-        <iframe
-          ref={iframeRef}
-          src={url}
-          className="flex-1 rounded-md border"
-        />
-      ) : (
-        <div className="flex-1 rounded-md border flex items-center justify-center">
-          <LoadingSpinner />
-        </div>
-      )}
+      <div className="relative flex-1">
+        {isReady ? (
+          <iframe
+            ref={iframeRef}
+            src={url}
+            className="w-full h-full rounded-md border"
+          />
+        ) : (
+          <div className="w-full h-full rounded-md border flex items-center justify-center">
+            <LoadingSpinner />
+          </div>
+        )}
+
+        {showWarning && url && (
+          <UnknownDappWarning
+            url={url}
+            onContinue={() => {
+              setShowWarning(false);
+              setIsReady(true);
+            }}
+            onGoBack={() => {
+              router.push(`/vault/${id}/explore`);
+            }}
+          />
+        )}
+      </div>
+
       <PetraVaultApprovalModal ref={approvalModalRef} />
     </div>
   );

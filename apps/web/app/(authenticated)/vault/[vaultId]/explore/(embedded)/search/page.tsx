@@ -7,7 +7,9 @@ import {
 } from '@/components/modals/PetraVaultApprovalModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { UnknownDappWarning } from '@/components/ui/UnknownDappWarning';
 import { useActiveVault } from '@/context/ActiveVaultProvider';
+import { isKnownEcosystemApp } from '@/lib/ecosystem';
 import { PetraVaultApprovalClient } from '@/wallet/PetraVaultApprovalClient';
 import { PetraVaultRequestHandler } from '@/wallet/PetraVaultRequestHandler';
 import { useAptosCore } from '@aptos-labs/react';
@@ -25,12 +27,15 @@ export default function VaultExploreSearchPage() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const [isReady, setIsReady] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
   const [url, setUrl] = useState<string>('');
   const [inputUrl, setInputUrl] = useState<string>('');
 
   const reset = () => {
     setInputUrl('');
     setUrl('');
+    setShowWarning(false);
+    setIsReady(false);
   };
 
   const handleUrlSubmit = (e: React.FormEvent) => {
@@ -43,6 +48,17 @@ export default function VaultExploreSearchPage() {
       try {
         new URL(formattedUrl);
         setUrl(formattedUrl);
+
+        // Check if it's a known app and show warning if not
+        const isKnown = isKnownEcosystemApp(formattedUrl);
+
+        if (!isKnown) {
+          setShowWarning(true);
+          setIsReady(false);
+        } else {
+          setShowWarning(false);
+          setIsReady(true);
+        }
       } catch (error) {
         console.warn('Invalid URL provided:', error);
         // Don't set URL if invalid
@@ -76,15 +92,13 @@ export default function VaultExploreSearchPage() {
   useEffect(() => {
     window.addEventListener('message', handleRequest);
 
-    setIsReady(true);
-
     return () => {
       window.removeEventListener('message', handleRequest);
     };
   }, [handleRequest]);
 
   return (
-    <div className="relative flex flex-col h-full gap-4">
+    <div className="flex flex-col h-full gap-4">
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-4">
           <Link href={`/vault/${id}/explore`}>
@@ -115,30 +129,51 @@ export default function VaultExploreSearchPage() {
         </div>
       </div>
 
-      {!url ? (
-        <div className="flex-1 rounded-md border flex flex-col items-center justify-center gap-4 text-muted-foreground">
-          <GlobeIcon className="size-12 opacity-50" />
-          <div className="text-center max-w-md">
-            <h3 className="text-lg font-medium mb-2">
-              Enter a URL to get started
-            </h3>
-            <p className="text-sm">
-              Type a website URL in the input field above to browse and interact
-              with web applications using your vault.
-            </p>
+      <div className="relative flex-1">
+        {!url ? (
+          <div className="w-full h-full rounded-md border flex flex-col items-center justify-center gap-4 text-muted-foreground">
+            <GlobeIcon className="size-12 opacity-50" />
+            <div className="text-center max-w-md">
+              <h3 className="text-lg font-medium mb-2">
+                Enter a URL to get started
+              </h3>
+              <p className="text-sm">
+                Type a website URL in the input field above to browse and
+                interact with web applications using your vault.
+              </p>
+            </div>
           </div>
-        </div>
-      ) : isReady ? (
-        <iframe
-          ref={iframeRef}
-          src={url}
-          className="flex-1 rounded-md border"
-        />
-      ) : (
-        <div className="flex-1 rounded-md border flex items-center justify-center">
-          <LoadingSpinner />
-        </div>
-      )}
+        ) : isReady ? (
+          <iframe
+            ref={iframeRef}
+            src={url}
+            className="w-full h-full rounded-md border"
+          />
+        ) : showWarning ? (
+          <div className="w-full h-full rounded-md border flex items-center justify-center">
+            <div className="text-center text-muted-foreground">
+              <p>Please review the warning overlay before continuing.</p>
+            </div>
+          </div>
+        ) : (
+          <div className="w-full h-full rounded-md border flex items-center justify-center">
+            <LoadingSpinner />
+          </div>
+        )}
+
+        {showWarning && url && (
+          <UnknownDappWarning
+            url={url}
+            onContinue={() => {
+              setShowWarning(false);
+              setIsReady(true);
+            }}
+            onGoBack={() => {
+              reset();
+            }}
+          />
+        )}
+      </div>
 
       <PetraVaultApprovalModal ref={approvalModalRef} />
     </div>

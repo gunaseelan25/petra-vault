@@ -112,3 +112,31 @@ export const ecosystemApps = [
     tester: 'Hyperion'
   }
 ] as const;
+
+/**
+ * Check if a given URL matches any of the known ecosystem apps
+ */
+export function isKnownEcosystemApp(url: string): boolean {
+  try {
+    const targetUrl = new URL(url);
+    const targetOrigin = targetUrl.origin;
+    const targetHostname = targetUrl.hostname;
+
+    return ecosystemApps.some((app) => {
+      try {
+        const appUrl = new URL(app.link);
+        const appOrigin = appUrl.origin;
+        const appHostname = appUrl.hostname;
+
+        // Check if origins match or if hostnames match (for subdomain flexibility)
+        return appOrigin === targetOrigin || appHostname === targetHostname;
+      } catch {
+        // If app.link is not a valid URL, fall back to string comparison
+        return app.link === url;
+      }
+    });
+  } catch {
+    // If url is not valid, fall back to exact string matching
+    return ecosystemApps.some((app) => app.link === url);
+  }
+}
