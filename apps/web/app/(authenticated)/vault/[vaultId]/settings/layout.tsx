@@ -14,6 +14,11 @@ const tabs = [
     id: 'export',
     label: 'Export',
     href: '/vault/[vaultId]/settings/export'
+  },
+  {
+    id: 'apps',
+    label: 'Apps',
+    href: '/vault/[vaultId]/settings/apps'
   }
 ];
 

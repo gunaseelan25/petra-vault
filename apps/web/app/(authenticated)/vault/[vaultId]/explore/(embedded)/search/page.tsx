@@ -9,18 +9,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UnknownDappWarning } from '@/components/ui/UnknownDappWarning';
 import { useActiveVault } from '@/context/ActiveVaultProvider';
+import { useAppSettings } from '@/context/useAppSettings';
 import { isKnownEcosystemApp } from '@/lib/ecosystem';
 import { PetraVaultApprovalClient } from '@/wallet/PetraVaultApprovalClient';
 import { PetraVaultRequestHandler } from '@/wallet/PetraVaultRequestHandler';
 import { useAptosCore } from '@aptos-labs/react';
 import { AccountAddress } from '@aptos-labs/ts-sdk';
-import { ArrowLeftIcon, GlobeIcon } from '@radix-ui/react-icons';
+import { ArrowLeftIcon, GlobeIcon, GearIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function VaultExploreSearchPage() {
   const approvalModalRef = useRef<PetraVaultApprovalModalRef>(null);
   const { id, vaultAddress, network } = useActiveVault();
+  const { getSettingsForUrl, updateSettingsForUrl } = useAppSettings();
 
   const core = useAptosCore();
 
@@ -30,20 +32,25 @@ export default function VaultExploreSearchPage() {
   const [showWarning, setShowWarning] = useState(false);
   const [url, setUrl] = useState<string>('');
   const [inputUrl, setInputUrl] = useState<string>('');
+  const [isIframeLoading, setIsIframeLoading] = useState(false);
 
   const reset = () => {
     setInputUrl('');
     setUrl('');
     setShowWarning(false);
     setIsReady(false);
+    setIsIframeLoading(false);
   };
 
   const handleUrlSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (inputUrl.trim()) {
       const formattedUrl = inputUrl.startsWith('http')
         ? inputUrl
         : `https://${inputUrl}`;
+
+      if (formattedUrl === url) return;
 
       try {
         new URL(formattedUrl);
@@ -53,12 +60,24 @@ export default function VaultExploreSearchPage() {
         const isKnown = isKnownEcosystemApp(formattedUrl);
 
         if (!isKnown) {
-          setShowWarning(true);
-          setIsReady(false);
+          // Check if user has settings to ignore warnings for this domain
+          const settings = getSettingsForUrl(formattedUrl);
+
+          if (settings.ignoreUnknownAppWarning) {
+            // Skip warning and go directly to the app
+            setShowWarning(false);
+            setIsReady(true);
+          } else {
+            // Show warning as usual
+            setShowWarning(true);
+            setIsReady(false);
+          }
         } else {
           setShowWarning(false);
           setIsReady(true);
         }
+
+        setIsIframeLoading(true);
       } catch (error) {
         console.warn('Invalid URL provided:', error);
         // Don't set URL if invalid
@@ -68,6 +87,10 @@ export default function VaultExploreSearchPage() {
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputUrl(e.target.value);
+  };
+
+  const handleIframeLoad = () => {
+    setIsIframeLoading(false);
   };
 
   const handleRequest = useCallback(
@@ -100,11 +123,17 @@ export default function VaultExploreSearchPage() {
   return (
     <div className="flex flex-col h-full gap-4">
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between gap-4">
           <Link href={`/vault/${id}/explore`}>
             <Button variant="secondary" className="w-fit z-30">
               <ArrowLeftIcon className="size-4" />
               Go Back
+            </Button>
+          </Link>
+
+          <Link href={`/vault/${id}/settings/apps`}>
+            <Button variant="outline" size="icon">
+              <GearIcon />
             </Button>
           </Link>
         </div>
@@ -144,11 +173,19 @@ export default function VaultExploreSearchPage() {
             </div>
           </div>
         ) : isReady ? (
-          <iframe
-            ref={iframeRef}
-            src={url}
-            className="w-full h-full rounded-md border"
-          />
+          <>
+            <iframe
+              ref={iframeRef}
+              src={url}
+              className="w-full h-full rounded-md border"
+              onLoad={handleIframeLoad}
+            />
+            {isIframeLoading && (
+              <div className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-md flex items-center justify-center gap-2">
+                <LoadingSpinner />
+              </div>
+            )}
+          </>
         ) : showWarning ? (
           <div className="w-full h-full rounded-md border flex items-center justify-center">
             <div className="text-center text-muted-foreground">
@@ -164,9 +201,14 @@ export default function VaultExploreSearchPage() {
         {showWarning && url && (
           <UnknownDappWarning
             url={url}
-            onContinue={() => {
+            onContinue={(rememberChoice) => {
+              if (rememberChoice) {
+                // Save the user's choice to ignore warnings for this domain
+                updateSettingsForUrl(url, { ignoreUnknownAppWarning: true });
+              }
               setShowWarning(false);
               setIsReady(true);
+              setIsIframeLoading(true);
             }}
             onGoBack={() => {
               reset();

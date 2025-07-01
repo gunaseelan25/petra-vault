@@ -8,12 +8,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { UnknownDappWarning } from '@/components/ui/UnknownDappWarning';
 import { useActiveVault } from '@/context/ActiveVaultProvider';
+import { useAppSettings } from '@/context/useAppSettings';
 import { isKnownEcosystemApp } from '@/lib/ecosystem';
 import { PetraVaultApprovalClient } from '@/wallet/PetraVaultApprovalClient';
 import { PetraVaultRequestHandler } from '@/wallet/PetraVaultRequestHandler';
 import { useAptosCore } from '@aptos-labs/react';
 import { AccountAddress } from '@aptos-labs/ts-sdk';
-import { ArrowLeftIcon } from '@radix-ui/react-icons';
+import { ArrowLeftIcon, GearIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -21,6 +22,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 export default function VaultExploreEmbeddedPage() {
   const approvalModalRef = useRef<PetraVaultApprovalModalRef>(null);
   const { id, vaultAddress, network } = useActiveVault();
+  const { getSettingsForUrl, updateSettingsForUrl } = useAppSettings();
   const searchParams = useSearchParams();
   const router = useRouter();
   const core = useAptosCore();
@@ -29,8 +31,13 @@ export default function VaultExploreEmbeddedPage() {
 
   const [isReady, setIsReady] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+  const [isIframeLoading, setIsIframeLoading] = useState(false);
 
   const url = searchParams.get('url');
+
+  const handleIframeLoad = () => {
+    setIsIframeLoading(false);
+  };
 
   const handleRequest = useCallback(
     async (e: MessageEvent) => {
@@ -58,15 +65,28 @@ export default function VaultExploreEmbeddedPage() {
 
     // Show warning for unknown apps, but only if URL exists and is not known
     if (url && !isKnownApp) {
-      setShowWarning(true);
+      // Check if user has settings to ignore warnings for this domain
+      const settings = getSettingsForUrl(url);
+
+      if (settings.ignoreUnknownAppWarning) {
+        // Skip warning and go directly to the app
+        setShowWarning(false);
+        setIsReady(true);
+        setIsIframeLoading(true);
+      } else {
+        // Show warning as usual
+        setShowWarning(true);
+        setIsReady(false);
+      }
     } else {
       setIsReady(true);
+      setIsIframeLoading(true);
     }
 
     return () => {
       window.removeEventListener('message', handleRequest);
     };
-  }, [handleRequest, url]);
+  }, [handleRequest, url, getSettingsForUrl]);
 
   if (!url) {
     return <div>No URL provided</div>;
@@ -74,19 +94,35 @@ export default function VaultExploreEmbeddedPage() {
 
   return (
     <div className="flex flex-col h-full gap-4">
-      <Link href={`/vault/${id}/explore`}>
-        <Button variant="secondary" className="w-fit">
-          <ArrowLeftIcon className="size-4" />
-          Go Back
-        </Button>
-      </Link>
+      <div className="flex items-center justify-between gap-4">
+        <Link href={`/vault/${id}/explore`}>
+          <Button variant="secondary" className="w-fit">
+            <ArrowLeftIcon className="size-4" />
+            Go Back
+          </Button>
+        </Link>
+
+        <Link href={`/vault/${id}/settings/apps`}>
+          <Button variant="outline" size="icon">
+            <GearIcon />
+          </Button>
+        </Link>
+      </div>
       <div className="relative flex-1">
         {isReady ? (
-          <iframe
-            ref={iframeRef}
-            src={url}
-            className="w-full h-full rounded-md border"
-          />
+          <>
+            <iframe
+              ref={iframeRef}
+              src={url}
+              className="w-full h-full rounded-md border"
+              onLoad={handleIframeLoad}
+            />
+            {isIframeLoading && (
+              <div className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-md flex items-center justify-center gap-2">
+                <LoadingSpinner />
+              </div>
+            )}
+          </>
         ) : (
           <div className="w-full h-full rounded-md border flex items-center justify-center">
             <LoadingSpinner />
@@ -96,9 +132,14 @@ export default function VaultExploreEmbeddedPage() {
         {showWarning && url && (
           <UnknownDappWarning
             url={url}
-            onContinue={() => {
+            onContinue={(rememberChoice) => {
+              if (rememberChoice) {
+                // Save the user's choice to ignore warnings for this domain
+                updateSettingsForUrl(url, { ignoreUnknownAppWarning: true });
+              }
               setShowWarning(false);
               setIsReady(true);
+              setIsIframeLoading(true);
             }}
             onGoBack={() => {
               router.push(`/vault/${id}/explore`);
