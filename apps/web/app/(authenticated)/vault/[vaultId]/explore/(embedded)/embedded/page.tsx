@@ -112,12 +112,14 @@ export default function VaultExploreEmbeddedPage() {
   return (
     <div className="flex flex-col h-full gap-4">
       <div className="flex items-center justify-between gap-4">
-        <Link href={`/vault/${id}/explore`}>
-          <Button variant="secondary" className="w-fit">
-            <ArrowLeftIcon className="size-4" />
-            Go Back
-          </Button>
-        </Link>
+        <Button
+          variant="secondary"
+          className="w-fit"
+          onClick={() => router.back()}
+        >
+          <ArrowLeftIcon className="size-4" />
+          Go Back
+        </Button>
 
         <Link href={`/vault/${id}/settings/apps`}>
           <Button variant="outline" size="icon">
